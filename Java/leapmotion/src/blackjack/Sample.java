@@ -14,6 +14,7 @@ import com.leapmotion.leap.*;
 import com.leapmotion.leap.Gesture.State;
 
 class SampleListener extends Listener {
+    EventSender m_sender = new EventSender();
 
     public void onInit(Controller controller) {
         System.out.println("Initialized");
@@ -23,12 +24,24 @@ class SampleListener extends Listener {
         for (Device dev: devices) {
             System.out.println(dev.serialNumber());
         }
+        try {
+            m_sender.initialize(EventSender.BROADCAST_ADDRESS, EventSender.DEFAULT_PORT);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
+    private void sendEvent() {
+        String playerId = "1";
+        String msg = "HIT" + playerId;
+        m_sender.sendMessage(msg.getBytes());
+    }
 
     public void onConnect(Controller controller) {
         System.out.println("Connected");
-        controller.enableGesture(Gesture.Type.TYPE_SWIPE);
+        //controller.enableGesture(Gesture.Type.TYPE_SWIPE);
         //controller.enableGesture(Gesture.Type.TYPE_CIRCLE);
         //controller.enableGesture(Gesture.Type.TYPE_SCREEN_TAP);
         //controller.enableGesture(Gesture.Type.TYPE_KEY_TAP);
@@ -54,6 +67,9 @@ class SampleListener extends Listener {
                          + ", gestures " + frame.gestures().count());
 
         //Get hands
+        /*if (frame.hands().count() > 0) {
+            info("Hand present");
+        }*/
         for(Hand hand : frame.hands()) {
             String handType = hand.isLeft() ? "Left hand" : "Right hand";
             debug("  " + handType + ", id: " + hand.id()
@@ -62,6 +78,12 @@ class SampleListener extends Listener {
             // Get the hand's normal vector and direction
             Vector normal = hand.palmNormal();
             Vector direction = hand.direction();
+
+            double handNormalRoll = Math.toDegrees(normal.roll());
+            if (Math.abs(handNormalRoll) <= 25) {
+                info("Hand present");
+                sendEvent();
+            }
 
             // Calculate the hand's pitch, roll, and yaw angles
             debug("  pitch: " + Math.toDegrees(direction.pitch()) + " degrees, "
