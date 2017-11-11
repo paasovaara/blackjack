@@ -33,12 +33,12 @@ public class GameResult {
 
     public String toString() {
         StringBuffer buf = new StringBuffer();
-        buf.append("== Results =====================\n");
+        buf.append("\n.. Results ...................\n");
         for(String key: m_results.keySet()) {
             Result result = m_results.get(key);
             buf.append(key + " => " + result.toString() + "\n");
         }
-        buf.append("================================\n");
+        buf.append("............................\n");
 
         return buf.toString();
     }
