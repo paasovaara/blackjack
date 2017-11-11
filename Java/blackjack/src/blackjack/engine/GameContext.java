@@ -9,6 +9,7 @@ public class GameContext extends ExecutionContext {
     public static final String KEY_PLAYER_HAND_PREFIX = "playerhand_";
     public static final String KEY_PLAYER1_HAND = "playerhand_0";
     public static final String KEY_PLAYER2_HAND = "playerhand_1";
+    public static final String KEY_RESULTS = "results";
 
     public String toString() {
         StringBuffer buf = new StringBuffer();

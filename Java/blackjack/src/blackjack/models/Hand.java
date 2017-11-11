@@ -28,6 +28,12 @@ public class Hand {
         return false;
     }
 
+    public void revealeHiddenCards() {
+        for(Card c: m_cards) {
+            c.setHidden(false);
+        }
+    }
+
     public boolean isBusted() {
         return getMinPipCount() > 21;
     }

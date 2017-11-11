@@ -10,6 +10,7 @@ import blackjack.engine.InputManager;
 import blackjack.models.Card;
 import blackjack.models.Deck;
 import blackjack.engine.GameContext;
+import blackjack.models.GameResult;
 import blackjack.models.Hand;
 import sun.awt.image.ImageWatched;
 
@@ -65,6 +66,7 @@ public class GameNode extends CompositeNode.SequenceNode {
     private void createTree() {
         addChild(new InitGameVariablesNode());
         addChild(new DealInitCardsNode());
+        addChild(new DetermineWinnerNode());
     }
 
     //////////////////////////////////////////////////////////////////
@@ -76,6 +78,10 @@ public class GameNode extends CompositeNode.SequenceNode {
         public Types.Status tick(ExecutionContext context) {
             int playerCount = m_input.getPlayerCount();
             m_context.setVariable(GameContext.KEY_PLAYER_COUNT, playerCount);
+
+            GameResult result = new GameResult();
+            m_context.setVariable(GameContext.KEY_RESULTS, result);
+
             notifyListeners("Player count determined as " + playerCount);
             return Types.Status.Success;
         }
@@ -109,6 +115,7 @@ public class GameNode extends CompositeNode.SequenceNode {
                 addChild(new NotifyTurnChangeNode(key));
                 addChild(new DealInitHandNode(h, false));
             }
+            //addChild(new CheckDealerHiddenCardNode());
 
             super.initialize(context);
         }
@@ -136,6 +143,87 @@ public class GameNode extends CompositeNode.SequenceNode {
             m_hand.addCard(c);
             notifyListeners("Dealt card " + c);
             return Types.Status.Success;
+        }
+    }
+    /*
+    private class CheckDealerHiddenCardNode extends LeafNode {
+        @Override
+        public Types.Status tick(ExecutionContext context) {
+            Hand hand = (Hand)context.getVariable(GameContext.KEY_DEALER_HAND);
+            //In this point we could offer insurance if visible card would be 10 or 11.
+            if (hand.isBlackJack()) {
+                hand.revealeHiddenCards();
+                notifyListeners("Dealer has BlackJack!");
+            }
+            return Types.Status.Success;
+        }
+    }*/
+
+    // Actual game is in this node: =============================
+    private class DetermineWinnerNode extends SelectorNode {
+        public DetermineWinnerNode() {
+            addChild(new CheckBlackJacksNode());
+            addChild(new PlayAllHandsNode());
+        }
+    }
+
+    private class CheckBlackJacksNode extends LeafNode {
+        @Override
+        public Types.Status tick(ExecutionContext context) {
+            Types.Status status = Types.Status.Failure;
+
+            GameResult result = (GameResult)context.getVariable(GameContext.KEY_RESULTS);
+            Hand hand = (Hand)context.getVariable(GameContext.KEY_DEALER_HAND);
+            //In this point we could offer insurance if visible card would be 10 or 11.
+            boolean dealerHasBj = false;
+            if (hand.isBlackJack()) {
+                hand.revealeHiddenCards();
+                notifyListeners("Dealer has BlackJack!");
+                result.setResult(GameContext.KEY_DEALER_HAND, GameResult.Result.Won);
+                status = Types.Status.Success;
+                dealerHasBj = true;
+            }
+
+            int playerCount = (int)m_context.getVariable(GameContext.KEY_PLAYER_COUNT);
+            for (int n = 0; n < playerCount; n++) {
+                String key = GameContext.KEY_PLAYER_HAND_PREFIX + n;
+                Hand playerHand = (Hand)m_context.getVariable(key);
+                if (playerHand.isBlackJack()) {
+                    notifyListeners("Player " + key + " has BlackJack!");
+                    GameResult.Result playerRes = dealerHasBj ? GameResult.Result.Tied : GameResult.Result.Won;
+                    result.setResult(key, playerRes);
+                    status = Types.Status.Success;
+                }
+                else if (dealerHasBj) {
+                    result.setResult(key, GameResult.Result.Lost);
+                }
+            }
+            return status;
+        }
+    }
+
+    private class PlayAllHandsNode extends SequenceNode {
+        @Override public void initialize(ExecutionContext context) {
+            int playerCount = (int)m_context.getVariable(GameContext.KEY_PLAYER_COUNT); // Some type safety would be nice..
+            for (int n = 0; n < playerCount; n++) {
+
+            }
+            super.initialize(context);
+        }
+    }
+
+    private class PlayPlayerHandNode extends SequenceNode { // or leaf?
+        private String m_keyForHand;
+        public PlayPlayerHandNode(String keyForPlayerHand) {
+            m_keyForHand = keyForPlayerHand;
+        }
+
+        @Override public void initialize(ExecutionContext context) {
+            Hand hand = (Hand)m_context.getVariable(m_keyForHand);
+
+
+
+            super.initialize(context);
         }
     }
 
