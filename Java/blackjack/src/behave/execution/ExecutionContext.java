@@ -2,6 +2,7 @@ package behave.execution;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class ExecutionContext {
 
@@ -14,6 +15,10 @@ public class ExecutionContext {
 
     public Object getVariable(String key) {
         return m_variables.get(key);
+    }
+
+    public Set<String> keySet() {
+        return m_variables.keySet();
     }
 
     protected void setLastTimeStep(float step) {

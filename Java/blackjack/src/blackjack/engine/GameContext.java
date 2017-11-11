@@ -23,14 +23,14 @@ public class GameContext extends ExecutionContext {
 
     public String toString() {
         StringBuffer buf = new StringBuffer();
-        buf.append("== CONTEXT ==\n");
-        for(String key: KEYSET) {
+        buf.append("\n== CONTEXT =====================\n");
+        for(String key: keySet()) {
             Object o = getVariable(key);
             if (o != null) {
                 buf.append(key + "=" + o.toString() + "\n");
             }
         }
-        buf.append("== ENDOFCONTEXT ==\n");
+        buf.append("== ENDOFCONTEXT =====================\n");
         return buf.toString();
     }
 }
