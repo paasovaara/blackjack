@@ -54,4 +54,22 @@ public class Hand {
         }
         return sum;
     }
+
+    public String toString() {
+        StringBuffer buf = new StringBuffer();
+        buf.append("Hand => ");
+        int min = getMinPipCount();
+        int max = getMaxPipCount();
+        if (min == max) {
+            buf.append(Integer.toString(min) + " [");
+        }
+        else {
+            buf.append(min + "/" + max + " [");
+        }
+        for(Card c: m_cards) {
+            buf.append(c.toString()+ ", ");
+        }
+        buf.append("]");
+        return buf.toString();
+    }
 }
