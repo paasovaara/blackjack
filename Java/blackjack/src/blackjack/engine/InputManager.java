@@ -1,6 +1,6 @@
 package blackjack.engine;
 
-import blackjack.models.Input;
+import blackjack.models.PlayerAction;
 
 import java.util.Set;
 
@@ -12,7 +12,7 @@ public interface InputManager {
      * @param gameState
      * @return
      */
-    //Input getInput(int playerId, GameContext gameState);
+    //PlayerAction getInput(int playerId, GameContext gameState);
 
-    Input getInput(int playerId, GameContext gameState, Set<Input> options);
+    PlayerAction getInput(int playerId, GameContext gameState, Set<PlayerAction> options);
 }

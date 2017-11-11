@@ -1,6 +1,6 @@
 package blackjack.engine;
 
-import blackjack.models.Input;
+import blackjack.models.PlayerAction;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -39,7 +39,7 @@ public class ConsoleInput implements InputManager {
     }
 
     @Override
-    public Input getInput(int playerId, GameContext gameState, Set<Input> options) {
+    public PlayerAction getInput(int playerId, GameContext gameState, Set<PlayerAction> options) {
         return null;
     }
 }

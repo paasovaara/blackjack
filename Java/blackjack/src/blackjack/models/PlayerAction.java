@@ -1,5 +1,5 @@
 package blackjack.models;
 
-public enum Input {
+public enum PlayerAction {
     Hit, Stay, QuitGame;
 }
