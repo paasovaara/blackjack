@@ -37,6 +37,7 @@ public class Executor {
                 Types.Status status = m_root.tick(m_context);
                 if (status != Types.Status.Running) {
                     Log.info("Root node has finished with status " + status + ". Ending execution.");
+                    Log.info(m_context.toString());
                     stop();
                 }
             }
