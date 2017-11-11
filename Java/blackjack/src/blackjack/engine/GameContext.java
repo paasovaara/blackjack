@@ -11,6 +11,10 @@ public class GameContext extends ExecutionContext {
     public static final String KEY_PLAYER2_HAND = "playerhand_1";
     public static final String KEY_RESULTS = "results";
 
+    public static String playerHandKey(int id) {
+        return KEY_PLAYER_HAND_PREFIX + id;
+    }
+
     public String toString() {
         StringBuffer buf = new StringBuffer();
         buf.append("\n== CONTEXT =====================\n");

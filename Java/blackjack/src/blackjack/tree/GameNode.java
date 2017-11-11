@@ -110,7 +110,7 @@ public class GameNode extends CompositeNode.SequenceNode {
             int playerCount = (int)m_context.getVariable(GameContext.KEY_PLAYER_COUNT); // Some type safety would be nice..
             for (int n = 0; n < playerCount; n++) {
                 Hand h = new Hand();
-                String key = GameContext.KEY_PLAYER_HAND_PREFIX + n;
+                String key = GameContext.playerHandKey(n);
                 m_context.setVariable(key, h); //Not nice, TODO better
                 addChild(new NotifyTurnChangeNode(key));
                 addChild(new DealInitHandNode(h, false));
@@ -170,8 +170,6 @@ public class GameNode extends CompositeNode.SequenceNode {
     private class CheckBlackJacksNode extends LeafNode {
         @Override
         public Types.Status tick(ExecutionContext context) {
-            Types.Status status = Types.Status.Failure;
-
             GameResult result = (GameResult)context.getVariable(GameContext.KEY_RESULTS);
             Hand hand = (Hand)context.getVariable(GameContext.KEY_DEALER_HAND);
             //In this point we could offer insurance if visible card would be 10 or 11.
@@ -180,25 +178,33 @@ public class GameNode extends CompositeNode.SequenceNode {
                 hand.revealeHiddenCards();
                 notifyListeners("Dealer has BlackJack!");
                 result.setResult(GameContext.KEY_DEALER_HAND, GameResult.Result.Won);
-                status = Types.Status.Success;
                 dealerHasBj = true;
             }
 
             int playerCount = (int)m_context.getVariable(GameContext.KEY_PLAYER_COUNT);
+            int blackjackCount = 0;
             for (int n = 0; n < playerCount; n++) {
-                String key = GameContext.KEY_PLAYER_HAND_PREFIX + n;
+                String key = GameContext.playerHandKey(n);
                 Hand playerHand = (Hand)m_context.getVariable(key);
                 if (playerHand.isBlackJack()) {
                     notifyListeners("Player " + key + " has BlackJack!");
                     GameResult.Result playerRes = dealerHasBj ? GameResult.Result.Tied : GameResult.Result.Won;
                     result.setResult(key, playerRes);
-                    status = Types.Status.Success;
+                    blackjackCount++;
                 }
                 else if (dealerHasBj) {
                     result.setResult(key, GameResult.Result.Lost);
                 }
             }
-            return status;
+
+            // return Success if we want the game round to end immediately after this node
+            // This is the case if dealer has BlackJack and/or all players have blackjack
+            if (dealerHasBj || blackjackCount == playerCount) {
+                return Types.Status.Success;
+            }
+            else {
+                return Types.Status.Failure;
+            }
         }
     }
 
@@ -206,8 +212,13 @@ public class GameNode extends CompositeNode.SequenceNode {
         @Override public void initialize(ExecutionContext context) {
             int playerCount = (int)m_context.getVariable(GameContext.KEY_PLAYER_COUNT); // Some type safety would be nice..
             for (int n = 0; n < playerCount; n++) {
-
+                String key = GameContext.playerHandKey(n);
+                addChild(new NotifyTurnChangeNode(key));
+                addChild(new PlayPlayerHandNode(key));
             }
+            addChild(new NotifyTurnChangeNode(GameContext.KEY_DEALER_HAND));
+            addChild(new PlayPlayerHandNode(GameContext.KEY_DEALER_HAND));
+
             super.initialize(context);
         }
     }
@@ -220,7 +231,6 @@ public class GameNode extends CompositeNode.SequenceNode {
 
         @Override public void initialize(ExecutionContext context) {
             Hand hand = (Hand)m_context.getVariable(m_keyForHand);
-
 
 
             super.initialize(context);
