@@ -81,23 +81,37 @@ public class GameNode extends CompositeNode.SequenceNode {
         }
     }
 
+    private class NotifyTurnChangeNode extends LeafNode {
+        String m_key;
+        public NotifyTurnChangeNode(String playerKey) {
+            m_key = playerKey;
+        }
+
+        @Override
+        public Types.Status tick(ExecutionContext context) {
+            notifyListeners("__ Player " + m_key + " turn. __");
+            return Types.Status.Success;
+        }
+    }
+
     private class DealInitCardsNode extends SequenceNode {
         @Override public void initialize(ExecutionContext context) {
             Hand dealerHand = new Hand();
+            addChild(new NotifyTurnChangeNode(GameContext.KEY_DEALER_HAND));
             addChild(new DealInitHandNode(dealerHand, true));
             context.setVariable(GameContext.KEY_DEALER_HAND, dealerHand);
 
             int playerCount = (int)m_context.getVariable(GameContext.KEY_PLAYER_COUNT); // Some type safety would be nice..
             for (int n = 0; n < playerCount; n++) {
                 Hand h = new Hand();
-                m_context.setVariable(GameContext.KEY_PLAYER_HAND_PREFIX + n, h); //Not nice, TODO better
+                String key = GameContext.KEY_PLAYER_HAND_PREFIX + n;
+                m_context.setVariable(key, h); //Not nice, TODO better
+                addChild(new NotifyTurnChangeNode(key));
                 addChild(new DealInitHandNode(h, false));
             }
 
             super.initialize(context);
-
         }
-
     }
 
     private class DealInitHandNode extends SequenceNode {
@@ -106,8 +120,6 @@ public class GameNode extends CompositeNode.SequenceNode {
             addChild(new DealSingleCardNode(hand, dealer));
         }
     }
-
-
 
     private class DealSingleCardNode extends LeafNode {
         private Hand m_hand;
