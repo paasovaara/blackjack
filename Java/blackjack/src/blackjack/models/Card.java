@@ -2,15 +2,24 @@ package blackjack.models;
 
 public class Card {
     Suite m_suite;
-    int m_value; // TODO create enum
+    Rank m_rank; // TODO create enum
+    private boolean m_hidden = false;
 
-    public Card(Suite suite, int value) {
-        m_suite = suite;
-        m_value = value;
+
+    public Card(Suite suite, Rank rank) {
+        this(suite, rank, false);
     }
 
+    public Card(Suite suite, Rank rank, boolean hidden) {
+        m_suite = suite;
+        m_rank = rank;
+        m_hidden = hidden;
+    }
+
+    public boolean isHidden() { return m_hidden; }
+
     public String toString() {
-        return m_value + " of " + m_suite.toString();
+        return m_rank + " of " + m_suite.toString();
     }
 
 }

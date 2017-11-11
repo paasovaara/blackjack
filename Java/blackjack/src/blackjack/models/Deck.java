@@ -27,11 +27,12 @@ public class Deck {
         m_cardsDealt = new Stack<>();
 
         for(int m = 0; m < howMany; m++) {
-            for(int n = 0; n < 13; n++) {
-                m_cardsRemaining.push(new Card(Suite.Hearts, n));
-                m_cardsRemaining.push(new Card(Suite.Diamonds, n));
-                m_cardsRemaining.push(new Card(Suite.Clubs, n));
-                m_cardsRemaining.push(new Card(Suite.Spades, n));
+            for(int n = Rank.MIN_ID; n < Rank.MAX_ID; n++) {
+                Rank rank = Rank.fromId(n);
+                m_cardsRemaining.push(new Card(Suite.Hearts, rank));
+                m_cardsRemaining.push(new Card(Suite.Diamonds, rank));
+                m_cardsRemaining.push(new Card(Suite.Clubs, rank));
+                m_cardsRemaining.push(new Card(Suite.Spades, rank));
             }
         }
     }
