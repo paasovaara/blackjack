@@ -2,12 +2,20 @@ package blackjack.engine;
 
 import behave.execution.Executor;
 import behave.models.Node;
+import blackjack.models.Card;
 import blackjack.tree.GameNode;
 
+import java.util.Random;
+
+/**
+ * Bunch of static methods for creating the game
+ */
 public class BlackJack {
     public static final int DEFAULT_DECK_COUNT = 1;
 
     private static Executor m_executor = new Executor(); // TODO think if we need custom executor
+
+    private static Random m_random = new Random();
 
     public static GameNode createConsoleGame() {
         InputManager input = new ConsoleInput();

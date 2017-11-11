@@ -40,6 +40,11 @@ public class ConsoleInput implements InputManager {
 
     @Override
     public PlayerAction getInput(int playerId, GameContext gameState, Set<PlayerAction> options) {
+        print("Choose option player " + playerId + ": ");
+        for(PlayerAction option: options) {
+            print(option.toString());
+        }
+
         return null;
     }
 }

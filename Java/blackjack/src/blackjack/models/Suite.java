@@ -5,7 +5,7 @@ public enum Suite {
 
     private int m_asInt;
 
-    private Suite(int asInt) {
+    Suite(int asInt) {
         m_asInt = asInt;
     }
 
