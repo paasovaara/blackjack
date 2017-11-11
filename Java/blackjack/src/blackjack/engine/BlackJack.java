@@ -19,7 +19,9 @@ public class BlackJack {
 
     public static GameNode createConsoleGame() {
         InputManager input = new ConsoleInput();
-        return new GameNode(input, DEFAULT_DECK_COUNT);
+        GameNode game = new GameNode(input, DEFAULT_DECK_COUNT);
+        game.addListener(new ConsoleOutput());
+        return game;
     }
 
     public static void playGame() {
