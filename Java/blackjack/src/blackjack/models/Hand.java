@@ -12,16 +12,46 @@ public class Hand {
 
     public boolean isBlackJack() {
         if (m_cards.size() == 2) {
-            Rank first = m_cards.get(0).m_rank;
-            Rank second = m_cards.get(1).m_rank;
-            if (first == Rank.Ace && second.pips() == 10) {
-                return true;
-            }
-            else if (second == Rank.Ace && first.pips() == 10) {
+            return getMaxPipCount() == 21;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public boolean hasHiddenCards() {
+        for(Card c: m_cards) {
+            if (c.isHidden()) {
                 return true;
             }
         }
         return false;
     }
 
+    public boolean isBusted() {
+        return getMinPipCount() > 21;
+    }
+
+    public int getMinPipCount() {
+        return calcSum(true);
+    }
+
+    public int getMaxPipCount() {
+        return calcSum(false);
+    }
+
+    private int calcSum(boolean aceIsOne) {
+        int sum = 0;
+        for(Card c: m_cards) {
+            Rank r = c.m_rank;
+            if (r == Rank.Ace) {
+                int add = aceIsOne ? 1 : 11;
+                sum += add;
+            }
+            else {
+                sum += r.pips();
+            }
+        }
+        return sum;
+    }
 }
