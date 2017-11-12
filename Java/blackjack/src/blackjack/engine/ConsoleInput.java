@@ -1,5 +1,7 @@
 package blackjack.engine;
 
+import blackjack.models.GameResult;
+import blackjack.models.Hand;
 import blackjack.models.PlayerAction;
 
 import java.io.BufferedReader;
@@ -40,11 +42,32 @@ public class ConsoleInput implements InputManager {
 
     @Override
     public PlayerAction getInput(int playerId, GameContext gameState, Set<PlayerAction> options) {
-        print("Choose option player " + playerId + ": ");
-        for(PlayerAction option: options) {
-            print(option.toString());
+        while(true) {
+            try {
+                String key = GameContext.playerHandKey(playerId);
+                Hand hand = (Hand)gameState.getVariable(key);
+                print("Player[" + playerId + "]: Your hand is " + hand.toString() + "\nChoose (h)it, (s)tay, (q)uit or (d)ebug: ");
+                //Now hardcoding the options, TODO read from options-set
+                String input = readInput().trim().toLowerCase();
+                if (input.equals("h")) {
+                    return PlayerAction.Hit;
+                }
+                else if (input.equals("s")) {
+                    return PlayerAction.Stay;
+                }
+                else if (input.equals("q")) {
+                    return PlayerAction.QuitGame;
+                }
+                else if (input.equals("d")) {
+                    print(gameState.toString());
+                }
+                else {
+                    print("Not a valid option");
+                }
+            }
+            catch (Exception e) {
+                print("Really bad option");
+            }
         }
-
-        return null;
     }
 }

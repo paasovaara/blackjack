@@ -1,6 +1,7 @@
 package blackjack.engine;
 
 import behave.execution.Executor;
+import behave.models.DecoratorNode;
 import behave.models.Node;
 import blackjack.models.Card;
 import blackjack.tree.GameNode;
@@ -26,7 +27,9 @@ public class BlackJack {
 
     public static void playGame() {
         GameNode game = createConsoleGame();
-        m_executor.initialize(game, game.getContext());
+        Node root = new DecoratorNode.InfiniteRepeaterNode();
+        root.addChild(game);
+        m_executor.initialize(root, game.getContext());
         m_executor.start(100, 0);
     }
 

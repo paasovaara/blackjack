@@ -6,6 +6,7 @@ import java.util.Map;
 public class GameResult {
 
     public enum Result {
+        Busted,
         Lost,
         Tied,
         Won;
@@ -13,6 +14,7 @@ public class GameResult {
         @Override
         public String toString() {
             switch (this) {
+                case Busted: return "Busted";
                 case Lost: return "Lost";
                 case Tied: return "Tied";
                 case Won: return "Won";

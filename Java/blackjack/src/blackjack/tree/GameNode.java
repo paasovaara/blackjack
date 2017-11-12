@@ -1,20 +1,16 @@
 package blackjack.tree;
 
 import behave.execution.ExecutionContext;
-import behave.models.CompositeNode;
-import behave.models.LeafNode;
-import behave.models.Types;
+import behave.models.*;
 import behave.tools.Log;
+import blackjack.engine.BlackJack;
 import blackjack.engine.GameListener;
 import blackjack.engine.InputManager;
-import blackjack.models.Card;
-import blackjack.models.Deck;
+import blackjack.models.*;
 import blackjack.engine.GameContext;
-import blackjack.models.GameResult;
-import blackjack.models.Hand;
 import sun.awt.image.ImageWatched;
 
-import java.util.LinkedList;
+import java.util.*;
 
 /**
  * Plays a single game of blackjack.
@@ -214,26 +210,68 @@ public class GameNode extends CompositeNode.SequenceNode {
             for (int n = 0; n < playerCount; n++) {
                 String key = GameContext.playerHandKey(n);
                 addChild(new NotifyTurnChangeNode(key));
-                addChild(new PlayPlayerHandNode(key));
+                addChild(new PlayPlayerHandNode(n));
             }
             addChild(new NotifyTurnChangeNode(GameContext.KEY_DEALER_HAND));
-            addChild(new PlayPlayerHandNode(GameContext.KEY_DEALER_HAND));
+            //addChild(new PlayPlayerHandNode(GameContext.DEALER_PLAYER_ID));//TODO add node for dealer hand.
 
             super.initialize(context);
         }
     }
 
-    private class PlayPlayerHandNode extends SequenceNode { // or leaf?
-        private String m_keyForHand;
-        public PlayPlayerHandNode(String keyForPlayerHand) {
-            m_keyForHand = keyForPlayerHand;
+    private class PlayPlayerHandNode extends SequenceNode {
+        private int m_playerId;
+        public PlayPlayerHandNode(int playerId) {
+            m_playerId = playerId;
+            Node repeater = new DecoratorNode.RepeatUntilSuccessNode();
+            addChild(repeater);
+
+            Node seq = new SequenceNode();
+            repeater.addChild(seq);
+
+            seq.addChild(new ChooseOptionNode(playerId));
+            seq.addChild(new HandleActionNode());
         }
 
         @Override public void initialize(ExecutionContext context) {
-            Hand hand = (Hand)m_context.getVariable(m_keyForHand);
-
-
+            m_context.setVariable(GameContext.KEY_PLAYER_IN_TURN_ID, m_playerId);
             super.initialize(context);
+        }
+    }
+
+    private class HandleActionNode extends LeafNode {
+
+        @Override
+        public Types.Status tick(ExecutionContext context) {
+            notifyListeners("I'll just ignore everything right now.."); //TODO add logic here
+            return Types.Status.Success;
+        }
+    }
+
+    private class ChooseOptionNode extends LeafNode.AsyncLeafNode { // or leaf?
+        private int m_playerId;
+
+        public ChooseOptionNode(int playerId) {
+            m_playerId = playerId;
+        }
+
+        @Override
+        protected Types.Status runBlockingTask() {
+            Set<PlayerAction> options = new HashSet<>();
+            options.add(PlayerAction.Hit);
+            options.add(PlayerAction.Stay);
+            options.add(PlayerAction.QuitGame);
+            //we could add the other options like double, split, etc here also but let's keep it simple for now.
+            PlayerAction action = m_input.getInput(m_playerId, m_context, options);
+
+            m_context.setVariable(GameContext.KEY_PLAYER_IN_TURN_ID, m_playerId); //This should prob be set somewhere else but let's make sure
+            m_context.setVariable(GameContext.KEY_PLAYER_ACTION, action);
+            if (action == PlayerAction.QuitGame) {
+                //Should this action handler be here or somewhere else?
+                BlackJack.quitGame();
+                return Types.Status.Failure;
+            }
+            return Types.Status.Success;
         }
     }
 

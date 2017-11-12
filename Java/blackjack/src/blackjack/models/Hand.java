@@ -63,7 +63,7 @@ public class Hand {
 
     public String toString() {
         StringBuffer buf = new StringBuffer();
-        buf.append("Hand => ");
+        //buf.append("Hand => ");
         int min = getMinPipCount();
         int max = getMaxPipCount();
         if (min == max) {
