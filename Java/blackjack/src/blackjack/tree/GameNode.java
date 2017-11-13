@@ -40,7 +40,7 @@ public class GameNode extends CompositeNode.SequenceNode {
     }
 
     //TODO should this block?
-    private void listenerAction(int playerId, Card latestCard, Hand hand, PlayerAction action) {
+    private void notifyPlayerAction(int playerId, Card latestCard, Hand hand, PlayerAction action) {
         for (GameListener l: m_listeners) {
             if (action == PlayerAction.Hit) {
                 l.hitMe(playerId, latestCard, hand, m_context);
@@ -50,6 +50,15 @@ public class GameNode extends CompositeNode.SequenceNode {
             }
         }
     }
+
+    private void notifyDealerAction(int playerId, Card latestCard, Hand hand, DealerAction action) {
+        for (GameListener l: m_listeners) {
+            if (action == DealerAction.DealCard) {
+                l.dealCard(playerId, latestCard, hand, m_context);
+            }
+        }
+    }
+
 
     /**
      * Context contains the state of this whole game
@@ -114,7 +123,7 @@ public class GameNode extends CompositeNode.SequenceNode {
 
             Hand dealerHand = new Hand();
             addChild(new NotifyTurnChangeNode(GameContext.KEY_DEALER_HAND));
-            addChild(new DealInitHandNode(dealerHand, true));
+            addChild(new DealInitHandNode(GameContext.DEALER_PLAYER_ID, dealerHand, true));
             context.setVariable(GameContext.KEY_DEALER_HAND, dealerHand);
 
             int playerCount = (int)m_context.getVariable(GameContext.KEY_PLAYER_COUNT); // Some type safety would be nice..
@@ -123,7 +132,7 @@ public class GameNode extends CompositeNode.SequenceNode {
                 String key = GameContext.playerHandKey(n);
                 m_context.setVariable(key, h); //Not nice, TODO better
                 addChild(new NotifyTurnChangeNode(key));
-                addChild(new DealInitHandNode(h, false));
+                addChild(new DealInitHandNode(n, h, false));
             }
             addChild(new RevealDealerHandNode());
 
@@ -132,18 +141,20 @@ public class GameNode extends CompositeNode.SequenceNode {
     }
 
     private class DealInitHandNode extends SequenceNode {
-        public DealInitHandNode(Hand hand, boolean dealer) {
-            addChild(new DealSingleCardNode(hand, false));
-            addChild(new DealSingleCardNode(hand, dealer));
+        public DealInitHandNode(int playerId, Hand hand, boolean dealer) {
+            addChild(new DealSingleCardNode(playerId, hand, false));
+            addChild(new DealSingleCardNode(playerId, hand, dealer));
         }
     }
 
     private class DealSingleCardNode extends LeafNode {
         private Hand m_hand;
         private boolean m_asHidden;
-        public DealSingleCardNode(Hand hand, boolean asHidden) {
+        private int m_playerId;
+        public DealSingleCardNode(int playerId, Hand hand, boolean asHidden) {
             m_hand = hand;
             m_asHidden = asHidden;
+            m_playerId = playerId;
         }
 
         @Override
@@ -151,23 +162,10 @@ public class GameNode extends CompositeNode.SequenceNode {
             Card c = m_deck.getNextCard();
             c.setHidden(m_asHidden);
             m_hand.addCard(c);
-            notifyListeners("Dealt card " + c);
+            notifyDealerAction(m_playerId, c, m_hand, DealerAction.DealCard);
             return Types.Status.Success;
         }
     }
-    /*
-    private class CheckDealerHiddenCardNode extends LeafNode {
-        @Override
-        public Types.Status tick(ExecutionContext context) {
-            Hand hand = (Hand)context.getVariable(GameContext.KEY_DEALER_HAND);
-            //In this point we could offer insurance if visible card would be 10 or 11.
-            if (hand.isBlackJack()) {
-                hand.revealeHiddenCards();
-                notifyListeners("Dealer has BlackJack!");
-            }
-            return Types.Status.Success;
-        }
-    }*/
 
     // Actual game is in this node: =============================
     private class PlayTheGameNode extends SelectorNode {
@@ -305,7 +303,7 @@ public class GameNode extends CompositeNode.SequenceNode {
                 return Types.Status.Success;
             }
             else if (hand.getMaxPipCount() >= 17) {
-                listenerAction(GameContext.DEALER_PLAYER_ID, null, hand, PlayerAction.Stay);
+                notifyPlayerAction(GameContext.DEALER_PLAYER_ID, null, hand, PlayerAction.Stay);
                 return Types.Status.Success;
             }
             else {
@@ -313,7 +311,7 @@ public class GameNode extends CompositeNode.SequenceNode {
                 Card c = m_deck.getNextCard();
                 hand.addCard(c);
 
-                listenerAction(GameContext.DEALER_PLAYER_ID, c, hand, PlayerAction.Hit);
+                notifyPlayerAction(GameContext.DEALER_PLAYER_ID, c, hand, PlayerAction.Hit);
                 return Types.Status.Failure;
             }
         }
@@ -357,7 +355,7 @@ public class GameNode extends CompositeNode.SequenceNode {
                 status = Types.Status.Success;
             }
             //TODO should this block?! and/or read return code to determine status?
-            listenerAction(playerId, card, hand, action);
+            notifyPlayerAction(playerId, card, hand, action);
             return status;
         }
     }

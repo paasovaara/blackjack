@@ -10,6 +10,11 @@ public class ConsoleOutput implements GameListener {
     }
 
     @Override
+    public void dealCard(int playerId, Card card, Hand hand, GameContext context) {
+        System.out.println("Dealt player " + playerId + " card " + card);
+    }
+
+    @Override
     public void hitMe(int playerId, Card card, Hand hand, GameContext context) {
         System.out.println("Dealt player " + playerId + " card " + card);
         System.out.println("Current hand " + hand);
