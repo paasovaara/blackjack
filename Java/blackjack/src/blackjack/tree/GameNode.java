@@ -228,8 +228,7 @@ public class GameNode extends CompositeNode.SequenceNode {
                 addChild(new NotifyTurnChangeNode(key));
                 addChild(new PlayPlayerHandNode(n));
             }
-            addChild(new NotifyTurnChangeNode(GameContext.KEY_DEALER_HAND));
-            addChild(new PlayDealerHandNode());
+            addChild(new PlayDealerHandIfNecessary());
 
             addChild(new DetermineWinnerNode());
             super.initialize(context);
@@ -255,6 +254,34 @@ public class GameNode extends CompositeNode.SequenceNode {
             super.initialize(context);
         }
     }
+
+    private class PlayDealerHandIfNecessary extends SelectorNode {
+        public PlayDealerHandIfNecessary() {
+            addChild(new CheckIfAllBustedNode());
+            //Use decorator so that notifyNode doesn't stop the execution
+            Node wrapper = new DecoratorNode.FailureNode();
+            wrapper.addChild(new NotifyTurnChangeNode(GameContext.KEY_DEALER_HAND));
+            addChild(wrapper);
+            addChild(new PlayDealerHandNode());
+        }
+    }
+
+    private class CheckIfAllBustedNode extends LeafNode {
+        @Override
+        public Types.Status tick(ExecutionContext context) {
+            int playerCount = (int)m_context.getVariable(GameContext.KEY_PLAYER_COUNT);
+            int busted = 0;
+            for (int n = 0; n < playerCount; n++) {
+                String key = GameContext.playerHandKey(n);
+                Hand hand = (Hand) m_context.getVariable(key);
+                if (hand.isBusted())
+                    busted++;
+            }
+            //if all busted we stop execution, otherwise we continue
+            return (busted == playerCount) ? Types.Status.Success : Types.Status.Failure;
+        }
+    }
+
 
     private class PlayDealerHandNode extends SequenceNode {
         public PlayDealerHandNode() {
