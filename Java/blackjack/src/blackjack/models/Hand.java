@@ -46,6 +46,17 @@ public class Hand {
         return calcSum(false);
     }
 
+    public int getBestPipCount() {
+        int min = getMinPipCount();
+        int max = getMaxPipCount();
+        if (max > 21) {
+            return min;
+        }
+        else {
+            return max;
+        }
+    }
+
     private int calcSum(boolean aceIsOne) {
         int sum = 0;
         for(Card c: m_cards) {

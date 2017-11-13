@@ -28,4 +28,8 @@ public class ExecutionContext {
     public float getLastTimeStep() {
         return m_lastTimeStemp;
     }
+
+    public void clear() {
+        m_variables.clear();
+    }
 }

@@ -2,13 +2,11 @@ package blackjack.tree;
 
 import behave.execution.ExecutionContext;
 import behave.models.*;
-import behave.tools.Log;
 import blackjack.engine.BlackJack;
 import blackjack.engine.GameListener;
 import blackjack.engine.InputManager;
 import blackjack.models.*;
 import blackjack.engine.GameContext;
-import sun.awt.image.ImageWatched;
 
 import java.util.*;
 
@@ -74,7 +72,7 @@ public class GameNode extends CompositeNode.SequenceNode {
     private void createTree() {
         addChild(new InitGameVariablesNode());
         addChild(new DealInitCardsNode());
-        addChild(new DetermineWinnerNode());
+        addChild(new PlayTheGameNode());
     }
 
     //////////////////////////////////////////////////////////////////
@@ -84,6 +82,8 @@ public class GameNode extends CompositeNode.SequenceNode {
     private class InitGameVariablesNode extends LeafNode {
         @Override
         public Types.Status tick(ExecutionContext context) {
+            m_context.clear();
+
             int playerCount = m_input.getPlayerCount();
             m_context.setVariable(GameContext.KEY_PLAYER_COUNT, playerCount);
 
@@ -103,7 +103,7 @@ public class GameNode extends CompositeNode.SequenceNode {
 
         @Override
         public Types.Status tick(ExecutionContext context) {
-            notifyListeners("__ Player " + m_key + " turn. __");
+            notifyListeners("== Player " + m_key + " turn. ==");
             return Types.Status.Success;
         }
     }
@@ -168,10 +168,10 @@ public class GameNode extends CompositeNode.SequenceNode {
     }*/
 
     // Actual game is in this node: =============================
-    private class DetermineWinnerNode extends SelectorNode {
-        public DetermineWinnerNode() {
+    private class PlayTheGameNode extends SelectorNode {
+        public PlayTheGameNode() {
             addChild(new CheckBlackJacksNode());
-            addChild(new PlayAllHandsNode());
+            addChild(new PlayUntilWinnerFoundNode());
         }
     }
 
@@ -216,7 +216,7 @@ public class GameNode extends CompositeNode.SequenceNode {
         }
     }
 
-    private class PlayAllHandsNode extends SequenceNode {
+    private class PlayUntilWinnerFoundNode extends SequenceNode {
         @Override public void initialize(ExecutionContext context) {
             int playerCount = (int)m_context.getVariable(GameContext.KEY_PLAYER_COUNT); // Some type safety would be nice..
             for (int n = 0; n < playerCount; n++) {
@@ -226,6 +226,8 @@ public class GameNode extends CompositeNode.SequenceNode {
             }
             addChild(new NotifyTurnChangeNode(GameContext.KEY_DEALER_HAND));
             addChild(new PlayDealerHandNode());
+
+            addChild(new DetermineWinnerNode());
             super.initialize(context);
         }
     }
@@ -268,19 +270,19 @@ public class GameNode extends CompositeNode.SequenceNode {
         @Override
         public Types.Status tick(ExecutionContext context) {
             Hand hand = (Hand)m_context.getVariable(GameContext.KEY_DEALER_HAND);
-            Card c = m_deck.getNextCard();
-            hand.addCard(c);
-
-            listenerAction(GameContext.DEALER_PLAYER_ID, c, hand, PlayerAction.Hit);
             if (hand.isBusted()) {
                 return Types.Status.Success;
             }
             else if (hand.getMaxPipCount() >= 17) {
-                listenerAction(GameContext.DEALER_PLAYER_ID, c, hand, PlayerAction.Stay);
+                listenerAction(GameContext.DEALER_PLAYER_ID, null, hand, PlayerAction.Stay);
                 return Types.Status.Success;
             }
             else {
-                //Keep hitting
+                //Hit, check result on next run
+                Card c = m_deck.getNextCard();
+                hand.addCard(c);
+
+                listenerAction(GameContext.DEALER_PLAYER_ID, c, hand, PlayerAction.Hit);
                 return Types.Status.Failure;
             }
         }
@@ -356,4 +358,41 @@ public class GameNode extends CompositeNode.SequenceNode {
         }
     }
 
+
+    private class DetermineWinnerNode extends LeafNode {
+        @Override
+        public Types.Status tick(ExecutionContext context) {
+            GameResult gameResults = (GameResult)context.getVariable(GameContext.KEY_RESULTS);
+
+            Hand dealerHand = (Hand)m_context.getVariable(GameContext.KEY_DEALER_HAND);
+            int dealerTicks = dealerHand.getBestPipCount();
+
+            notifyListeners("Calculating results, dealer hand is " + dealerTicks);
+            int playerCount = (int)m_context.getVariable(GameContext.KEY_PLAYER_COUNT);
+            for (int n = 0; n < playerCount; n++) {
+                String key= GameContext.playerHandKey(n);
+                Hand hand = (Hand)m_context.getVariable(key);
+                int playerTicks = hand.getBestPipCount();
+                GameResult.Result result = GameResult.Result.Busted;
+                if (hand.isBusted()) {
+                    result = GameResult.Result.Busted;
+                }
+                else if (hand.isBlackJack()) {
+                    result = dealerHand.isBlackJack() ? GameResult.Result.Tied : GameResult.Result.Won;
+                }
+                else if (playerTicks > dealerTicks) {
+                    result = GameResult.Result.Won;
+                }
+                else if (playerTicks == dealerTicks) {
+                    result = GameResult.Result.Tied;
+                }
+                else {
+                    result = GameResult.Result.Lost;
+                }
+                notifyListeners("Player " + n + " result is " + result + " with hand " + playerTicks);
+                gameResults.setResult(key, result);
+            }
+            return Types.Status.Success;
+        }
+    }
 }
