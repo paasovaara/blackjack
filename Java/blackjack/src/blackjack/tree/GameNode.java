@@ -41,6 +41,18 @@ public class GameNode extends CompositeNode.SequenceNode {
         }
     }
 
+    //TODO should this block?
+    private void listenerAction(int playerId, Card latestCard, Hand hand, PlayerAction action) {
+        for (GameListener l: m_listeners) {
+            if (action == PlayerAction.Hit) {
+                l.hitMe(playerId, latestCard, hand, m_context);
+            }
+            else if (action == PlayerAction.Stay) {
+                l.stay(playerId, hand, m_context);
+            }
+        }
+    }
+
     /**
      * Context contains the state of this whole game
      */
@@ -243,8 +255,31 @@ public class GameNode extends CompositeNode.SequenceNode {
 
         @Override
         public Types.Status tick(ExecutionContext context) {
-            notifyListeners("I'll just ignore everything right now.."); //TODO add logic here
-            return Types.Status.Success;
+            Types.Status status = Types.Status.Success;
+
+            int playerId = (int)m_context.getVariable(GameContext.KEY_PLAYER_IN_TURN_ID);
+            PlayerAction action = (PlayerAction)m_context.getVariable(GameContext.KEY_PLAYER_ACTION);
+            Hand hand = (Hand)m_context.getVariable(GameContext.playerHandKey(playerId));
+            Card card = null;
+            if (action == PlayerAction.Hit) {
+                card = m_deck.getNextCard();
+                hand.addCard(card);
+
+                if (hand.isBusted()) {
+                    notifyListeners("BUSTED");
+                    status = Types.Status.Success;
+                }
+                else {
+                    //report failure so we keep coming back to this node after selecting the option
+                    status = Types.Status.Failure;
+                }
+            }
+            else {
+                status = Types.Status.Success;
+            }
+            //TODO should this block?! and/or read return code to determine status?
+            listenerAction(playerId, card, hand, action);
+            return status;
         }
     }
 
