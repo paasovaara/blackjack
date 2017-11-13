@@ -56,6 +56,9 @@ public class GameNode extends CompositeNode.SequenceNode {
             if (action == DealerAction.DealCard) {
                 l.dealCard(playerId, latestCard, hand, m_context);
             }
+            else if (action == DealerAction.ChangeTurn) {
+                l.turnChanged(playerId, m_context);
+            }
         }
     }
 
@@ -105,14 +108,14 @@ public class GameNode extends CompositeNode.SequenceNode {
     }
 
     private class NotifyTurnChangeNode extends LeafNode {
-        String m_key;
-        public NotifyTurnChangeNode(String playerKey) {
-            m_key = playerKey;
+        int m_id;
+        public NotifyTurnChangeNode(int playerId) {
+            m_id = playerId;
         }
 
         @Override
         public Types.Status tick(ExecutionContext context) {
-            notifyListeners("== Player " + m_key + " turn. ==");
+            notifyDealerAction(m_id, null, null, DealerAction.ChangeTurn);
             return Types.Status.Success;
         }
     }
@@ -122,16 +125,16 @@ public class GameNode extends CompositeNode.SequenceNode {
             removeChildren();
 
             Hand dealerHand = new Hand();
-            addChild(new NotifyTurnChangeNode(GameContext.KEY_DEALER_HAND));
+            addChild(new NotifyTurnChangeNode(GameContext.DEALER_PLAYER_ID));
             addChild(new DealInitHandNode(GameContext.DEALER_PLAYER_ID, dealerHand, true));
             context.setVariable(GameContext.KEY_DEALER_HAND, dealerHand);
-
+            //TODO we cannot actually just count id's from zero, we'd need to check each player -> in or out
             int playerCount = (int)m_context.getVariable(GameContext.KEY_PLAYER_COUNT); // Some type safety would be nice..
             for (int n = 0; n < playerCount; n++) {
                 Hand h = new Hand();
                 String key = GameContext.playerHandKey(n);
                 m_context.setVariable(key, h); //Not nice, TODO better
-                addChild(new NotifyTurnChangeNode(key));
+                addChild(new NotifyTurnChangeNode(n));
                 addChild(new DealInitHandNode(n, h, false));
             }
             addChild(new RevealDealerHandNode());
@@ -223,7 +226,7 @@ public class GameNode extends CompositeNode.SequenceNode {
             int playerCount = (int)m_context.getVariable(GameContext.KEY_PLAYER_COUNT); // Some type safety would be nice..
             for (int n = 0; n < playerCount; n++) {
                 String key = GameContext.playerHandKey(n);
-                addChild(new NotifyTurnChangeNode(key));
+                addChild(new NotifyTurnChangeNode(n));
                 addChild(new PlayPlayerHandNode(n));
             }
             addChild(new PlayDealerHandIfNecessary());
@@ -258,7 +261,7 @@ public class GameNode extends CompositeNode.SequenceNode {
             addChild(new CheckIfAllBustedNode());
             //Use decorator so that notifyNode doesn't stop the execution
             Node wrapper = new DecoratorNode.FailureNode();
-            wrapper.addChild(new NotifyTurnChangeNode(GameContext.KEY_DEALER_HAND));
+            wrapper.addChild(new NotifyTurnChangeNode(GameContext.DEALER_PLAYER_ID));
             addChild(wrapper);
             addChild(new PlayDealerHandNode());
         }

@@ -10,13 +10,33 @@ public class ConsoleOutput implements GameListener {
     }
 
     @Override
+    public void turnChanged(int playerId, GameContext context) {
+        if (playerId >= 0) {
+            System.out.println("Player " + playerId + " turn");
+        }
+        else {
+            System.out.println("Dealers turn");
+        }
+    }
+
+    @Override
     public void dealCard(int playerId, Card card, Hand hand, GameContext context) {
-        System.out.println("Dealt player " + playerId + " card " + card);
+        if (playerId >= 0) {
+            System.out.println("\tDealt player " + playerId + " card " + card);
+        }
+        else {
+            System.out.println("\tDealt dealer a card " + card);
+        }
     }
 
     @Override
     public void hitMe(int playerId, Card card, Hand hand, GameContext context) {
-        System.out.println("Dealt player " + playerId + " card " + card);
+        if (playerId >= 0) {
+            System.out.println("\tDealt player " + playerId + " card " + card);
+        }
+        else {
+            System.out.println("\tDealt dealer a card " + card);
+        }
         System.out.println("Current hand " + hand);
     }
 
