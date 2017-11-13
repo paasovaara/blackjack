@@ -28,10 +28,14 @@ public class Hand {
         return false;
     }
 
-    public void revealeHiddenCards() {
+    public Card revealHiddenCard() {
         for(Card c: m_cards) {
-            c.setHidden(false);
+            if (c.isHidden()) {
+                c.setHidden(false);
+                return c;
+            }
         }
+        return null;
     }
 
     public boolean isBusted() {
@@ -47,6 +51,7 @@ public class Hand {
     }
 
     public int getBestPipCount() {
+        //TODO this fails if there's multiple aces! we should calc all permutations.
         int min = getMinPipCount();
         int max = getMaxPipCount();
         if (max > 21) {

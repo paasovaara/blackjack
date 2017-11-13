@@ -20,6 +20,12 @@ public class ConsoleOutput implements GameListener {
     }
 
     @Override
+    public void revealDealerCard(Card card, Hand hand, GameContext context) {
+        System.out.println("\tDealer hidden card " + card);
+        System.out.println("Current dealer hand " + hand);
+    }
+
+    @Override
     public void dealCard(int playerId, Card card, Hand hand, GameContext context) {
         if (playerId >= 0) {
             System.out.println("\tDealt player " + playerId + " card " + card);

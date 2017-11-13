@@ -59,6 +59,9 @@ public class GameNode extends CompositeNode.SequenceNode {
             else if (action == DealerAction.ChangeTurn) {
                 l.turnChanged(playerId, m_context);
             }
+            else if (action == DealerAction.RevealDealerCard) {
+                l.revealDealerCard(latestCard, hand, m_context);
+            }
         }
     }
 
@@ -186,7 +189,7 @@ public class GameNode extends CompositeNode.SequenceNode {
             //In this point we could offer insurance if visible card would be 10 or 11.
             boolean dealerHasBj = false;
             if (hand.isBlackJack()) {
-                hand.revealeHiddenCards();
+                hand.revealHiddenCard();
                 notifyListeners("Dealer has BlackJack!");
                 result.setResult(GameContext.KEY_DEALER_HAND, GameResult.Result.Won);
                 dealerHasBj = true;
@@ -325,8 +328,8 @@ public class GameNode extends CompositeNode.SequenceNode {
         @Override
         public Types.Status tick(ExecutionContext context) {
             Hand hand = (Hand)m_context.getVariable(GameContext.KEY_DEALER_HAND);
-            hand.revealeHiddenCards();
-            notifyListeners("Dealer hand revealed: " + hand);
+            Card c = hand.revealHiddenCard();
+            notifyDealerAction(GameContext.DEALER_PLAYER_ID, c, hand, DealerAction.RevealDealerCard);
             return Types.Status.Success;
         }
     }
