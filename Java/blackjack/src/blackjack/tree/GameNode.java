@@ -140,7 +140,6 @@ public class GameNode extends CompositeNode.SequenceNode {
                 addChild(new NotifyTurnChangeNode(n));
                 addChild(new DealInitHandNode(n, h, false));
             }
-            addChild(new RevealDealerHandNode());
 
             super.initialize(context);
         }
@@ -232,6 +231,8 @@ public class GameNode extends CompositeNode.SequenceNode {
                 addChild(new NotifyTurnChangeNode(n));
                 addChild(new PlayPlayerHandNode(n));
             }
+            addChild(new NotifyTurnChangeNode(GameContext.DEALER_PLAYER_ID));
+            addChild(new RevealDealerHandNode());
             addChild(new PlayDealerHandIfNecessary());
 
             addChild(new DetermineWinnerNode());
@@ -262,10 +263,6 @@ public class GameNode extends CompositeNode.SequenceNode {
     private class PlayDealerHandIfNecessary extends SelectorNode {
         public PlayDealerHandIfNecessary() {
             addChild(new CheckIfAllBustedNode());
-            //Use decorator so that notifyNode doesn't stop the execution
-            Node wrapper = new DecoratorNode.FailureNode();
-            wrapper.addChild(new NotifyTurnChangeNode(GameContext.DEALER_PLAYER_ID));
-            addChild(wrapper);
             addChild(new PlayDealerHandNode());
         }
     }
