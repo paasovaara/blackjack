@@ -225,7 +225,7 @@ public class GameNode extends CompositeNode.SequenceNode {
                 addChild(new PlayPlayerHandNode(n));
             }
             addChild(new NotifyTurnChangeNode(GameContext.KEY_DEALER_HAND));
-            //TODO play dealer hand
+            addChild(new PlayDealerHandNode());
             super.initialize(context);
         }
     }
@@ -247,6 +247,42 @@ public class GameNode extends CompositeNode.SequenceNode {
         @Override public void initialize(ExecutionContext context) {
             m_context.setVariable(GameContext.KEY_PLAYER_IN_TURN_ID, m_playerId);
             super.initialize(context);
+        }
+    }
+
+    private class PlayDealerHandNode extends SequenceNode {
+        public PlayDealerHandNode() {
+            Node repeater = new DecoratorNode.RepeatUntilSuccessNode();
+            addChild(repeater);
+
+            repeater.addChild(new DealerHitUnder17Node());
+        }
+
+        @Override public void initialize(ExecutionContext context) {
+            m_context.setVariable(GameContext.KEY_PLAYER_IN_TURN_ID, GameContext.DEALER_PLAYER_ID);
+            super.initialize(context);
+        }
+    }
+
+    private class DealerHitUnder17Node extends LeafNode {
+        @Override
+        public Types.Status tick(ExecutionContext context) {
+            Hand hand = (Hand)m_context.getVariable(GameContext.KEY_DEALER_HAND);
+            Card c = m_deck.getNextCard();
+            hand.addCard(c);
+
+            listenerAction(GameContext.DEALER_PLAYER_ID, c, hand, PlayerAction.Hit);
+            if (hand.isBusted()) {
+                return Types.Status.Success;
+            }
+            else if (hand.getMaxPipCount() >= 17) {
+                listenerAction(GameContext.DEALER_PLAYER_ID, c, hand, PlayerAction.Stay);
+                return Types.Status.Success;
+            }
+            else {
+                //Keep hitting
+                return Types.Status.Failure;
+            }
         }
     }
 
