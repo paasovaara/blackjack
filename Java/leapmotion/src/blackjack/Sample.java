@@ -15,6 +15,7 @@ import com.leapmotion.leap.Gesture.State;
 
 class SampleListener extends Listener {
     EventSender m_sender = new EventSender();
+    String m_payload = "HIT-1";
 
     public void onInit(Controller controller) {
         System.out.println("Initialized");
@@ -25,7 +26,9 @@ class SampleListener extends Listener {
             System.out.println(dev.serialNumber());
         }
         try {
-            m_sender.initialize(EventSender.BROADCAST_ADDRESS, EventSender.DEFAULT_PORT);
+            Config c = Config.readFromFile("config.properties");
+            m_payload = c.payload;
+            m_sender.initialize(c.host, c.port);
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -34,8 +37,7 @@ class SampleListener extends Listener {
     }
 
     private void sendEvent() {
-        String playerId = "1";
-        String msg = "HIT" + playerId;
+        String msg = m_payload;
         m_sender.sendMessage(msg.getBytes());
     }
 

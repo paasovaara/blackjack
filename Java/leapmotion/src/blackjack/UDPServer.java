@@ -58,8 +58,10 @@ public class UDPServer extends Thread {
 
     public static void main(String[] args) {
         try {
+            Config c = Config.readFromFile("config.properties");
+
             UDPServer server = new UDPServer();
-            server.initialize(DEFAULT_PORT);
+            server.initialize(c.port);
             server.start();
 
             System.out.println("Press any key to quit...");
