@@ -305,7 +305,7 @@ public class GameNode extends CompositeNode.SequenceNode {
             if (hand.isBusted()) {
                 return Types.Status.Success;
             }
-            else if (hand.getMaxPipCount() >= 17) {
+            else if (hand.getBestPipCount() >= 17) {
                 notifyPlayerAction(GameContext.DEALER_PLAYER_ID, null, hand, PlayerAction.Stay);
                 return Types.Status.Success;
             }
@@ -408,6 +408,9 @@ public class GameNode extends CompositeNode.SequenceNode {
                 GameResult.Result result = GameResult.Result.Busted;
                 if (hand.isBusted()) {
                     result = GameResult.Result.Busted;
+                }
+                else if (dealerHand.isBusted() && !hand.isBusted()) {
+                    result = GameResult.Result.Won;
                 }
                 else if (hand.isBlackJack()) {
                     result = dealerHand.isBlackJack() ? GameResult.Result.Tied : GameResult.Result.Won;
