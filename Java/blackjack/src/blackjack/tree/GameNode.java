@@ -110,6 +110,8 @@ public class GameNode extends CompositeNode.SequenceNode {
 
     private class DealInitCardsNode extends SequenceNode {
         @Override public void initialize(ExecutionContext context) {
+            removeChildren();
+
             Hand dealerHand = new Hand();
             addChild(new NotifyTurnChangeNode(GameContext.KEY_DEALER_HAND));
             addChild(new DealInitHandNode(dealerHand, true));
@@ -218,6 +220,8 @@ public class GameNode extends CompositeNode.SequenceNode {
 
     private class PlayUntilWinnerFoundNode extends SequenceNode {
         @Override public void initialize(ExecutionContext context) {
+            removeChildren();
+
             int playerCount = (int)m_context.getVariable(GameContext.KEY_PLAYER_COUNT); // Some type safety would be nice..
             for (int n = 0; n < playerCount; n++) {
                 String key = GameContext.playerHandKey(n);
