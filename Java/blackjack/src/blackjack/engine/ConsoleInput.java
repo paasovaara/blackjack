@@ -20,8 +20,13 @@ public class ConsoleInput implements InputManager {
         return m_in.readLine();
     }
 
-    private void print(String msg) {
+    private void printInfo(String msg) {
         System.out.println(msg);
+    }
+
+    private void printInput(String msg) {
+        System.out.println(msg);
+        System.out.print(">");
     }
 
     @Override
@@ -29,12 +34,12 @@ public class ConsoleInput implements InputManager {
         int players = -1;
         while(players <= 0) {
             try {
-                print("How many players?");
+                printInput("How many players?");
                 String in = readInput();
                 players = Integer.parseInt(in.trim());
             }
             catch (Exception e) {
-                print("Not a valid number, try again");
+                printInfo("Not a valid number, try again");
             }
         }
         return players;
@@ -46,7 +51,8 @@ public class ConsoleInput implements InputManager {
             try {
                 String key = GameContext.playerHandKey(playerId);
                 Hand hand = (Hand)gameState.getVariable(key);
-                print("Player[" + playerId + "]: Your hand is " + hand.toString() + "\nChoose (h)it, (s)tay, (q)uit or (d)ebug: ");
+                Hand dealerHand =(Hand)gameState.getVariable(GameContext.KEY_DEALER_HAND);
+                printInput("Player[" + playerId + "]: Your hand is " + hand.toString() + " while Dealer has " +dealerHand.toString()+"\nChoose (h)it, (s)tay, (q)uit or (d)ebug:");
                 //Now hardcoding the options, TODO read from options-set
                 String input = readInput().trim().toLowerCase();
                 if (input.equals("h")) {
@@ -59,14 +65,14 @@ public class ConsoleInput implements InputManager {
                     return PlayerAction.QuitGame;
                 }
                 else if (input.equals("d")) {
-                    print(gameState.toString());
+                    printInfo(gameState.toString());
                 }
                 else {
-                    print("Not a valid option");
+                    printInfo("Not a valid option");
                 }
             }
             catch (Exception e) {
-                print("Really bad option");
+                printInfo("Really bad option");
             }
         }
     }

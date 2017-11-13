@@ -63,8 +63,15 @@ public class Hand {
     }
 
     private int calcSum(boolean aceIsOne) {
+        return calcSum(aceIsOne, true);
+    }
+
+    private int calcSum(boolean aceIsOne, boolean includeHidden) {
         int sum = 0;
         for(Card c: m_cards) {
+            if (!includeHidden && c.isHidden())
+                continue;
+
             Rank r = c.m_rank;
             if (r == Rank.Ace) {
                 int add = aceIsOne ? 1 : 11;
@@ -80,8 +87,8 @@ public class Hand {
     public String toString() {
         StringBuffer buf = new StringBuffer();
         //buf.append("Hand => ");
-        int min = getMinPipCount();
-        int max = getMaxPipCount();
+        int min = calcSum(true, false);
+        int max = calcSum(false, false);
         if (min == max) {
             buf.append(Integer.toString(min) + " [");
         }
