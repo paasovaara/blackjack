@@ -123,7 +123,7 @@ public class GameNode extends CompositeNode.SequenceNode {
                 addChild(new NotifyTurnChangeNode(key));
                 addChild(new DealInitHandNode(h, false));
             }
-            //addChild(new CheckDealerHiddenCardNode());
+            addChild(new RevealDealerHandNode());
 
             super.initialize(context);
         }
@@ -225,8 +225,7 @@ public class GameNode extends CompositeNode.SequenceNode {
                 addChild(new PlayPlayerHandNode(n));
             }
             addChild(new NotifyTurnChangeNode(GameContext.KEY_DEALER_HAND));
-            //addChild(new PlayPlayerHandNode(GameContext.DEALER_PLAYER_ID));//TODO add node for dealer hand.
-
+            //TODO play dealer hand
             super.initialize(context);
         }
     }
@@ -248,6 +247,17 @@ public class GameNode extends CompositeNode.SequenceNode {
         @Override public void initialize(ExecutionContext context) {
             m_context.setVariable(GameContext.KEY_PLAYER_IN_TURN_ID, m_playerId);
             super.initialize(context);
+        }
+    }
+
+    private class RevealDealerHandNode extends LeafNode {
+
+        @Override
+        public Types.Status tick(ExecutionContext context) {
+            Hand hand = (Hand)m_context.getVariable(GameContext.KEY_DEALER_HAND);
+            hand.revealeHiddenCards();
+            notifyListeners("Dealer hand revealed: " + hand);
+            return Types.Status.Success;
         }
     }
 
