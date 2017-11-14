@@ -1,4 +1,4 @@
-package blackjack;
+package blackjack.utils;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -9,7 +9,8 @@ public class Config {
     //Too lazy to code getters for this one
     public String host;
     public int port;
-    public String payload;
+    public String delayMsBefore;
+    public String delayMsAfter;
 
     public static Config readFromFile(String filename) throws IOException {
         Config c = null;
@@ -26,7 +27,8 @@ public class Config {
             c.host = prop.getProperty("targethost");
             String portStr = prop.getProperty("port");
             c.port = Integer.parseInt(portStr.trim());
-            c.payload = prop.getProperty("payload");
+            c.delayMsBefore = prop.getProperty("delayMsBefore");
+            c.delayMsAfter = prop.getProperty("delayMsAfter");
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {

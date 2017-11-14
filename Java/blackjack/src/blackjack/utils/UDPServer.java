@@ -1,4 +1,4 @@
-package blackjack;
+package blackjack.utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -58,7 +58,7 @@ public class UDPServer extends Thread {
 
     public static void main(String[] args) {
         try {
-            Config c = Config.readFromFile("config.properties");
+            Config c = Config.readFromFile("ui.properties");
 
             UDPServer server = new UDPServer();
             server.initialize(c.port);

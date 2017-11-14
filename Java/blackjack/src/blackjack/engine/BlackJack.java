@@ -3,8 +3,11 @@ package blackjack.engine;
 import behave.execution.Executor;
 import behave.models.DecoratorNode;
 import behave.models.Node;
-import blackjack.models.Card;
+import blackjack.io.ConsoleInput;
+import blackjack.io.ConsoleOutput;
+import blackjack.io.UnityOutput;
 import blackjack.tree.GameNode;
+import blackjack.utils.Config;
 
 import java.util.Random;
 
@@ -21,7 +24,15 @@ public class BlackJack {
     public static GameNode createConsoleGame() {
         InputManager input = new ConsoleInput();
         GameNode game = new GameNode(input, DEFAULT_DECK_COUNT);
-        game.addListener(new ConsoleOutput());
+        //game.addListener(new ConsoleOutput());
+        try {
+            UnityOutput output = new UnityOutput();
+            output.init(Config.readFromFile("ui.properties"));
+            game.addListener(output);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
         return game;
     }
 

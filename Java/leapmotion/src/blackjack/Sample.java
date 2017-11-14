@@ -10,6 +10,8 @@ package blackjack;
 
 import java.io.IOException;
 import java.lang.Math;
+
+import blackjack.utils.*;
 import com.leapmotion.leap.*;
 import com.leapmotion.leap.Gesture.State;
 
@@ -26,7 +28,7 @@ class SampleListener extends Listener {
             System.out.println(dev.serialNumber());
         }
         try {
-            Config c = Config.readFromFile("config.properties");
+            blackjack.utils.Config c = blackjack.utils.Config.readFromFile("config.properties");
             m_payload = c.payload;
             m_sender.initialize(c.host, c.port);
         }

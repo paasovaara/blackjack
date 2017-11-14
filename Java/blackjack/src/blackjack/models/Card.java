@@ -18,6 +18,9 @@ public class Card {
     public boolean isHidden() { return m_hidden; }
     public void setHidden(boolean hidden) { m_hidden = hidden; }
 
+    public Suite getSuite() { return m_suite; }
+    public Rank getRank() { return m_rank; }
+
     public String toString() {
         if (m_hidden) {
             return "Card hidden";
