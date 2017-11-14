@@ -1,12 +1,18 @@
 package blackjack.engine;
 
 import blackjack.models.Card;
+import blackjack.models.Deck;
 import blackjack.models.Hand;
 
 public class ConsoleOutput implements GameListener {
     @Override
     public void showMessage(String msg, GameContext context) {
         System.out.println(msg);
+    }
+
+    @Override
+    public void shuffle(Deck deck) {
+        System.out.println("~ Shuffling deck ~");
     }
 
     @Override

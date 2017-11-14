@@ -27,7 +27,7 @@ public class Deck {
         m_cardsDealt = new Stack<>();
 
         for(int m = 0; m < howMany; m++) {
-            for(int n = Rank.MIN_ID; n < Rank.MAX_ID; n++) {
+            for(int n = Rank.MIN_ID; n <= Rank.MAX_ID; n++) {
                 Rank rank = Rank.fromId(n);
                 m_cardsRemaining.push(new Card(Suite.Hearts, rank));
                 m_cardsRemaining.push(new Card(Suite.Diamonds, rank));
@@ -35,9 +35,12 @@ public class Deck {
                 m_cardsRemaining.push(new Card(Suite.Spades, rank));
             }
         }
+        Log.info("Deck size: " + m_cardsRemaining.size());
     }
 
     public void shuffle() {
+        m_cardsRemaining.addAll(m_cardsDealt);
+        m_cardsDealt.clear();
         Collections.shuffle(m_cardsRemaining);
     }
 

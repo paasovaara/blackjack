@@ -19,6 +19,7 @@ public class GameNode extends CompositeNode.SequenceNode {
     GameContext m_context;
     private int m_deckCount = 1;
 
+    private static final float SHUFFLE_DECK_RATIO = 0.5f;
     private LinkedList<GameListener> m_listeners = new LinkedList<>();
 
     public GameNode(InputManager input, int howManyDecks) {
@@ -62,6 +63,9 @@ public class GameNode extends CompositeNode.SequenceNode {
             else if (action == DealerAction.RevealDealerCard) {
                 l.revealDealerCard(latestCard, hand, m_context);
             }
+            else if (action == DealerAction.Shuffle) {
+                l.shuffle(m_deck);
+            }
         }
     }
 
@@ -76,6 +80,7 @@ public class GameNode extends CompositeNode.SequenceNode {
     public void reset() {
         m_deck = new Deck(m_deckCount);
         m_deck.shuffle();
+        notifyDealerAction(GameContext.DEALER_PLAYER_ID, null, null, DealerAction.Shuffle);
 
         m_context = new GameContext();
         m_context.setVariable(GameContext.KEY_DECK, m_deck);
@@ -98,6 +103,10 @@ public class GameNode extends CompositeNode.SequenceNode {
         @Override
         public Types.Status tick(ExecutionContext context) {
             m_context.clear();
+            if (m_deck.deckRemaining() < SHUFFLE_DECK_RATIO) {
+                m_deck.shuffle();
+                notifyDealerAction(GameContext.DEALER_PLAYER_ID, null, null, DealerAction.Shuffle);
+            }
 
             int playerCount = m_input.getPlayerCount();
             m_context.setVariable(GameContext.KEY_PLAYER_COUNT, playerCount);
