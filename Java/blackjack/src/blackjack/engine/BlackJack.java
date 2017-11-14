@@ -3,9 +3,7 @@ package blackjack.engine;
 import behave.execution.Executor;
 import behave.models.DecoratorNode;
 import behave.models.Node;
-import blackjack.io.ConsoleInput;
-import blackjack.io.ConsoleOutput;
-import blackjack.io.UnityOutput;
+import blackjack.io.*;
 import blackjack.tree.GameNode;
 import blackjack.utils.Config;
 
@@ -24,8 +22,14 @@ public class BlackJack {
     public static GameNode createConsoleGame() {
         InputManager input = new ConsoleInput();
         GameNode game = new GameNode(input, DEFAULT_DECK_COUNT);
-        //game.addListener(new ConsoleOutput());
-        try {
+        game.addListener(new ConsoleOutput());
+        return game;
+    }
+
+    public static GameNode createRobotWithUIGame() {
+        InputManager input = new ConsoleInput();
+        GameNode game = new GameNode(input, DEFAULT_DECK_COUNT);
+        /*try {
             UnityOutput output = new UnityOutput();
             output.init(Config.readFromFile("ui.properties"));
             game.addListener(output);
@@ -33,11 +37,17 @@ public class BlackJack {
         catch (Exception e) {
             e.printStackTrace();
         }
+        RobotOutput robot = new RobotOutput();
+        game.addListener(robot);*/
+        RobotUIProxy listener = new RobotUIProxy(true, true, true);
+        game.addListener(listener);
         return game;
     }
 
-    public static void playGame() {
-        GameNode game = createConsoleGame();
+
+    public static void playGame(boolean console) {
+
+        GameNode game = console ? createConsoleGame() : createRobotWithUIGame();
         Node root = new DecoratorNode.InfiniteRepeaterNode();
         root.addChild(game);
         m_executor.initialize(root, game.getContext());
