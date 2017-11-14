@@ -1,8 +1,26 @@
-= README Leap Motion reader app = 
+# README Leap Motion reader app
 
-This app reads no-more-cards gesture from leap motion and sends those as events.
+This app reads no-more-cards gesture from leap motion and sends those as UDP events to configured host
 
-== Setup ==
+Requirements: 
+
+- MUST: 
+  - Java JDK (8)
+- Optional: 
+  - IntelliJ
+  - Ant
+
+Project structure:
+
+- /src contains code
+- (*) /lib must contain dependencies (read Setup)
+- /out contains the compiled files
+- (*) /dist contains the final jar built with Ant
+- (*) config.properties is the config files
+
+Items marked with * are required in prod.
+
+## Setup
 
 https://developer.leapmotion.com/documentation/v2/java/devguide/Project_Setup.html
 
@@ -18,3 +36,18 @@ https://developer.leapmotion.com/documentation/v2/java/devguide/Project_Setup.ht
 
 After previous steps compile and run.
 
+## Building
+
+ant
+(or use build.bat)
+
+## Running
+
+1. Attach leap motion to the PC (can only have one per PC!)
+
+2. run.bat
+(or java -jar -Djava.library.path=.\lib\x64 dist\leapmotion.jar)
+
+## Developer notes
+
+There's a utility class for running the UDP server for debugging. 
