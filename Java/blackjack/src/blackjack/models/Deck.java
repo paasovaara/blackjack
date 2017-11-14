@@ -22,6 +22,14 @@ public class Deck {
         this(1);
     }
 
+    public Deck(Deck copy) {
+        m_cardsDealt = new Stack<>();
+        //Should we deep-copy the cards also?
+        m_cardsDealt.addAll(copy.m_cardsDealt);
+        m_cardsRemaining = new Stack<>();
+        m_cardsRemaining.addAll(copy.m_cardsRemaining);
+    }
+
     private void createDeck(int howMany) {
         m_cardsRemaining = new Stack<>();
         m_cardsDealt = new Stack<>();
@@ -39,8 +47,14 @@ public class Deck {
     }
 
     public void shuffle() {
-        m_cardsRemaining.addAll(m_cardsDealt);
-        m_cardsDealt.clear();
+        shuffle(true);
+    }
+
+    public void shuffle(boolean mergeDecks) {
+        if (mergeDecks) {
+            m_cardsRemaining.addAll(m_cardsDealt);
+            m_cardsDealt.clear();
+        }
         Collections.shuffle(m_cardsRemaining);
     }
 

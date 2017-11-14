@@ -5,8 +5,6 @@ import behave.models.DecoratorNode;
 import behave.models.Node;
 import blackjack.io.*;
 import blackjack.tree.GameNode;
-import blackjack.utils.Config;
-
 import java.util.Random;
 
 /**

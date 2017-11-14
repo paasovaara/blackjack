@@ -6,6 +6,12 @@ public class Hand {
 
     LinkedList<Card> m_cards = new LinkedList<>();
 
+    public Hand() {}
+
+    public Hand(Hand copy) {
+        m_cards.addAll(copy.m_cards);
+    }
+
     public void addCard(Card c) {
         m_cards.add(c);
     }
