@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Based on this tutorial https://docs.oracle.com/javase/tutorial/networking/datagrams/examples/QuoteServerThread.java
@@ -21,6 +23,8 @@ public class UDPServer extends Thread {
     protected final LinkedList<String> m_queue = new LinkedList<>();
     EventHandlerThread m_eventLoop = new EventHandlerThread();
 
+    protected final LinkedList<PacketListener> m_listeners = new LinkedList<>();
+
     public void initialize(int port) throws Exception {
         m_port = port;
         m_socket = new DatagramSocket(port);
@@ -32,6 +36,28 @@ public class UDPServer extends Thread {
         this.start();
     }
 
+
+    public static abstract class PacketListener {
+        private Pattern p = null;
+
+        public Pattern regexPattern() {
+            //if (p == null) {
+                p = Pattern.compile(regex());
+            //}
+            return p;
+        }
+        public String regex() {
+            return ".*";
+        }
+        public abstract void packetArrived(String payload);
+    }
+
+    public void addListener(PacketListener l) {
+        synchronized (m_listeners) {
+            m_listeners.add(l);
+        }
+    }
+
     public void run() {
         while(m_running) {
             try {
@@ -41,7 +67,7 @@ public class UDPServer extends Thread {
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
                 m_socket.receive(packet);
                 String msg = new String(buf);
-                System.out.println(msg);
+                //System.out.println(msg);
                 synchronized (m_queue) {
                     m_queue.add(msg);
                     m_queue.notify();
@@ -68,6 +94,19 @@ public class UDPServer extends Thread {
                 } catch (InterruptedException ie) {
                 }
                 System.out.println("Read " + localQueue.size() + " Events, processing them");
+                synchronized (m_listeners) {
+                    ListIterator<String> itr = localQueue.listIterator();
+                    while(itr.hasNext()) {
+                        String msg = itr.next();
+                        for(PacketListener l: m_listeners) {
+                            Matcher matcher = l.regexPattern().matcher(msg);
+                            if (matcher.lookingAt()) {
+                                l.packetArrived(msg);
+                            }
+                        }
+                        itr.remove();
+                    }
+                }
             }
         }
     }
@@ -92,6 +131,25 @@ public class UDPServer extends Thread {
 
             UDPServer server = new UDPServer();
             server.initialize(c.port);
+
+            server.addListener(new PacketListener() {
+                @Override
+                public String regex() {
+                    return "^(deal\\{1\\})";
+                }
+                @Override
+                public void packetArrived(String payload) {
+                    System.out.println("DEAL FROM PLAYER 1: " + payload);
+                }
+            });
+
+            server.addListener(new PacketListener() {
+                @Override
+                public void packetArrived(String payload) {
+                    System.out.println("ANY MESSAGE: " + payload);
+                }
+            });
+
             server.startServer();
 
             System.out.println("Press any key to quit...");
