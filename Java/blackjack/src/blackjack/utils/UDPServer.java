@@ -1,5 +1,7 @@
 package blackjack.utils;
 
+import behave.tools.Log;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -26,11 +28,13 @@ public class UDPServer extends Thread {
     protected final LinkedList<PacketListener> m_listeners = new LinkedList<>();
 
     public void initialize(int port) throws Exception {
+        Log.info("Binding UDP server to port " + port);
         m_port = port;
         m_socket = new DatagramSocket(port);
     }
 
     public void startServer() {
+        Log.info("Starting UDP server");
         m_running = true;
         m_eventLoop.start();
         this.start();
@@ -38,14 +42,18 @@ public class UDPServer extends Thread {
 
 
     public static abstract class PacketListener {
-        private Pattern p = null;
+        /*private Pattern p = null;
+        public Pattern regexPattern() {
+            if (p == null) {
+                p = Pattern.compile(regex());
+            }
+            return p;
+        }*/
 
         public Pattern regexPattern() {
-            //if (p == null) {
-                p = Pattern.compile(regex());
-            //}
-            return p;
+            return Pattern.compile(regex());
         }
+
         public String regex() {
             return ".*";
         }
@@ -84,7 +92,7 @@ public class UDPServer extends Thread {
             final LinkedList<String> localQueue = new LinkedList<>();
 
             while (m_running) {
-                System.out.println("Waiting for events");
+                //System.out.println("Waiting for events");
                 try {
                     synchronized (m_queue) {
                         m_queue.wait();
@@ -93,7 +101,7 @@ public class UDPServer extends Thread {
                     }
                 } catch (InterruptedException ie) {
                 }
-                System.out.println("Read " + localQueue.size() + " Events, processing them");
+                //System.out.println("Read " + localQueue.size() + " Events, processing them");
                 synchronized (m_listeners) {
                     ListIterator<String> itr = localQueue.listIterator();
                     while(itr.hasNext()) {
@@ -127,7 +135,7 @@ public class UDPServer extends Thread {
 
     public static void main(String[] args) {
         try {
-            Config c = Config.readFromFile("ui.properties");
+            Config c = Config.readFromFile("sensors.properties");
 
             UDPServer server = new UDPServer();
             server.initialize(c.port);
@@ -135,11 +143,12 @@ public class UDPServer extends Thread {
             server.addListener(new PacketListener() {
                 @Override
                 public String regex() {
-                    return "^(deal\\{1\\})";
+                    return"^(stay|hit)";
+                    //return "^(stay\\{0\\})";
                 }
                 @Override
                 public void packetArrived(String payload) {
-                    System.out.println("DEAL FROM PLAYER 1: " + payload);
+                    System.out.println("stay/hit from player!: " + payload);
                 }
             });
 

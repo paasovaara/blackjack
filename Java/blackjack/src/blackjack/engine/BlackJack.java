@@ -5,6 +5,8 @@ import behave.models.DecoratorNode;
 import behave.models.Node;
 import blackjack.io.*;
 import blackjack.tree.GameNode;
+import blackjack.utils.Config;
+
 import java.util.Random;
 
 /**
@@ -25,7 +27,14 @@ public class BlackJack {
     }
 
     public static GameNode createRobotWithUIGame() {
-        InputManager input = new ConsoleInput();
+        //InputManager input = new ConsoleInput();
+        SensorInput input = new SensorInput();
+        try {
+            input.initialize(Config.readFromFile("sensors.properties").port);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
         GameNode game = new GameNode(input, DEFAULT_DECK_COUNT);
         /*try {
             UnityOutput output = new UnityOutput();
