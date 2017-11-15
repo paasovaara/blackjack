@@ -71,15 +71,25 @@ public class Simulator {
     }
 
     public static Statistics simulateHit(final Hand hand, final Hand dealerHand, final Deck deck) {
+        return simulateAction(PlayerAction.Hit, hand, dealerHand, deck);
+    }
+
+    public static Statistics simulateStay(final Hand hand, final Hand dealerHand, final Deck deck) {
+        return simulateAction(PlayerAction.Stay, hand, dealerHand, deck);
+    }
+
+    private static Statistics simulateAction(PlayerAction action, final Hand hand, final Hand dealerHand, final Deck deck) {
         Statistics s = new Statistics();
         final int iterations = 100000;
         s.iterations = iterations;
 
         for(int n = 0; n < iterations; n++) {
-            Card c = simulateCard(deck);
-
             Hand copyHand = new Hand(hand);
-            copyHand.addCard(c);
+
+            if (action == PlayerAction.Hit) {
+                Card c = simulateCard(deck);
+                copyHand.addCard(c);
+            }
 
             if (copyHand.isBusted()) {
                 s.busted += 1;
@@ -109,15 +119,22 @@ public class Simulator {
     public static void main(String[] args) {
         Hand h = new Hand();
         h.addCard(new Card(Suite.Clubs, Rank.Six));
-        h.addCard(new Card(Suite.Clubs, Rank.Five));
+        h.addCard(new Card(Suite.Clubs, Rank.Seven));
 
         Hand dealer = new Hand();
         //Deal only one initial card, to simulate a hidden card which is randomly picked
-        dealer.addCard(new Card(Suite.Hearts, Rank.Ten));
+        dealer.addCard(new Card(Suite.Hearts, Rank.Two));
 
         Deck d = new Deck(1);
-        Statistics s = Simulator.simulateHit(h, dealer, d);
-        System.out.println(s.toString());
+
+        Statistics stay = Simulator.simulateStay(h, dealer, d);
+        System.out.println("= STAY ================");
+        System.out.println(stay.toString());
+
+        Statistics hit = Simulator.simulateHit(h, dealer, d);
+        System.out.println("= HIT ================");
+        System.out.println(hit.toString());
+
     }
 
 }
