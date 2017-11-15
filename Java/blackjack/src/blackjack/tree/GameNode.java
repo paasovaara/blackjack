@@ -413,27 +413,10 @@ public class GameNode extends CompositeNode.SequenceNode {
             for (int n = 0; n < playerCount; n++) {
                 String key= GameContext.playerHandKey(n);
                 Hand hand = (Hand)m_context.getVariable(key);
-                int playerTicks = hand.getBestPipCount();
-                GameResult.Result result = GameResult.Result.Busted;
-                if (hand.isBusted()) {
-                    result = GameResult.Result.Busted;
-                }
-                else if (dealerHand.isBusted() && !hand.isBusted()) {
-                    result = GameResult.Result.Won;
-                }
-                else if (hand.isBlackJack()) {
-                    result = dealerHand.isBlackJack() ? GameResult.Result.Tied : GameResult.Result.Won;
-                }
-                else if (playerTicks > dealerTicks) {
-                    result = GameResult.Result.Won;
-                }
-                else if (playerTicks == dealerTicks) {
-                    result = GameResult.Result.Tied;
-                }
-                else {
-                    result = GameResult.Result.Lost;
-                }
-                notifyListeners("Player " + n + " result is " + result + " with hand " + playerTicks);
+
+                GameResult.Result result = Hand.compareHands(hand, dealerHand);
+
+                notifyListeners("Player " + n + " result is " + result + " with hand " + hand.getBestPipCount());
                 gameResults.setResult(key, result);
             }
             return Types.Status.Success;

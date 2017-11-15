@@ -16,6 +16,31 @@ public class Hand {
         m_cards.add(c);
     }
 
+    public static GameResult.Result compareHands(Hand playerHand, Hand dealerHand) {
+        int dealerTicks = dealerHand.getBestPipCount();
+        int playerTicks = playerHand.getBestPipCount();
+        GameResult.Result result = GameResult.Result.Lost;
+        if (playerHand.isBusted()) {
+            result = GameResult.Result.Busted;
+        }
+        else if (dealerHand.isBusted() && !playerHand.isBusted()) {
+            result = GameResult.Result.Won;
+        }
+        else if (playerHand.isBlackJack()) {
+            result = dealerHand.isBlackJack() ? GameResult.Result.Tied : GameResult.Result.Won;
+        }
+        else if (playerTicks > dealerTicks) {
+            result = GameResult.Result.Won;
+        }
+        else if (playerTicks == dealerTicks) {
+            result = GameResult.Result.Tied;
+        }
+        else {
+            result = GameResult.Result.Lost;
+        }
+        return result;
+    }
+
     public boolean isBlackJack() {
         if (m_cards.size() == 2) {
             return getMaxPipCount() == 21;
@@ -69,13 +94,10 @@ public class Hand {
     }
 
     private int calcSum(boolean aceIsOne) {
-        return calcSum(aceIsOne, true);
-    }
-
-    private int calcSum(boolean aceIsOne, boolean includeHidden) {
         int sum = 0;
         for(Card c: m_cards) {
-            if (!includeHidden && c.isHidden())
+            //Hidden card basically doesn't exist until it's turned.
+            if (c.isHidden())
                 continue;
 
             Rank r = c.m_rank;
@@ -93,8 +115,8 @@ public class Hand {
     public String toString() {
         StringBuffer buf = new StringBuffer();
         //buf.append("Hand => ");
-        int min = calcSum(true, false);
-        int max = calcSum(false, false);
+        int min = getMinPipCount();
+        int max = getMaxPipCount();
         if (min == max) {
             buf.append(Integer.toString(min) + " [");
         }
