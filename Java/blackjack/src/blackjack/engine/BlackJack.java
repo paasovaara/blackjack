@@ -37,7 +37,7 @@ public class BlackJack {
         }
         RobotOutput robot = new RobotOutput();
         game.addListener(robot);*/
-        RobotUIProxy listener = new RobotUIProxy(true, true, true);
+        RobotUIProxy listener = new RobotUIProxy(true, true, false);
         game.addListener(listener);
         return game;
     }
