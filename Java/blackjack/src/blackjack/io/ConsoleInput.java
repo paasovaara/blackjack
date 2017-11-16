@@ -2,7 +2,6 @@ package blackjack.io;
 
 import blackjack.engine.GameContext;
 import blackjack.engine.InputManager;
-import blackjack.models.GameResult;
 import blackjack.models.Hand;
 import blackjack.models.PlayerAction;
 
@@ -54,7 +53,7 @@ public class ConsoleInput implements InputManager {
                 String key = GameContext.playerHandKey(playerId);
                 Hand hand = (Hand)gameState.getVariable(key);
                 Hand dealerHand =(Hand)gameState.getVariable(GameContext.KEY_DEALER_HAND);
-                printInput("Player[" + playerId + "]: Your hand is " + hand.toString() + " while Dealer has " +dealerHand.toString()+"\nChoose (h)it, (s)tay, (q)uit or (d)ebug:");
+                printInput("Player[" + playerId + "]: Your hand " + hand.toString() + ";  Dealer hand " +dealerHand.toString()+"\nChoose (h)it, (s)tay, (q)uit, (a)dvice or (d)ebug:");
                 //Now hardcoding the options, TODO read from options-set
                 String input = readInput().trim().toLowerCase();
                 if (input.equals("h")) {
@@ -68,6 +67,9 @@ public class ConsoleInput implements InputManager {
                 }
                 else if (input.equals("d")) {
                     printInfo(gameState.toString());
+                }
+                else if (input.equals("a")) {
+                    return PlayerAction.Undecided;
                 }
                 else {
                     printInfo("Not a valid option");

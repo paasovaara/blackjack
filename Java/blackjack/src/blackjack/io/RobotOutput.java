@@ -2,6 +2,7 @@ package blackjack.io;
 
 import blackjack.engine.GameContext;
 import blackjack.engine.GameListener;
+import blackjack.engine.Simulator;
 import blackjack.models.Card;
 import blackjack.models.Deck;
 import blackjack.models.Hand;
@@ -35,6 +36,11 @@ public class RobotOutput implements GameListener {
 
     @Override
     public void showMessage(String msg, GameContext context) {
+    }
+
+    @Override
+    public void giveAdvice(Simulator.Statistics hitOdds, Simulator.Statistics stayOdds) {
+
     }
 
     @Override

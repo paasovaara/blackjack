@@ -2,6 +2,7 @@ package blackjack.io;
 
 import blackjack.engine.GameContext;
 import blackjack.engine.GameListener;
+import blackjack.engine.Simulator;
 import blackjack.models.Card;
 import blackjack.models.Deck;
 import blackjack.models.Hand;
@@ -16,6 +17,7 @@ public class RobotUIProxy implements GameListener {
         public long dealCard = 0;
         public long hitMe = 0;
         public long stay = 0;
+        public long giveAdvice = 0;
         public long busted = 0;
     }
 
@@ -32,6 +34,7 @@ public class RobotUIProxy implements GameListener {
         UI_DELAYS.dealCard = 500;
         UI_DELAYS.hitMe = 500;
         UI_DELAYS.stay = 0;
+        UI_DELAYS.giveAdvice = 0;
 
         ROBOT_DELAYS.shuffle = 1000;
         ROBOT_DELAYS.turnChanged = 500;
@@ -39,6 +42,8 @@ public class RobotUIProxy implements GameListener {
         ROBOT_DELAYS.dealCard = 2200;
         ROBOT_DELAYS.hitMe = 500;
         ROBOT_DELAYS.stay = 0;
+        ROBOT_DELAYS.giveAdvice = 5000;
+
     }
 
     /**
@@ -97,6 +102,15 @@ public class RobotUIProxy implements GameListener {
         m_console.showMessage(msg, context);
         m_robot.showMessage(msg, context);
         m_ui.showMessage(msg, context);
+    }
+
+    @Override
+    public void giveAdvice(Simulator.Statistics hitOdds, Simulator.Statistics stayOdds) {
+        m_console.giveAdvice(hitOdds, stayOdds);
+        m_robot.giveAdvice(hitOdds, stayOdds);
+        sleepMs(m_robotDelays.giveAdvice);
+        m_ui.giveAdvice(hitOdds, stayOdds);
+        sleepMs(m_uiDelays.giveAdvice);
     }
 
     @Override
@@ -166,6 +180,9 @@ public class RobotUIProxy implements GameListener {
     class NullOutput implements GameListener {
         @Override
         public void showMessage(String msg, GameContext context) {}
+
+        @Override
+        public void giveAdvice(Simulator.Statistics hitOdds, Simulator.Statistics stayOdds) {}
         @Override
         public void shuffle(Deck deck) {}
         @Override

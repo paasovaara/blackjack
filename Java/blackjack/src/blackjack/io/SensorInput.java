@@ -48,13 +48,10 @@ public class SensorInput implements InputManager  {
         String msg = listener.blockUntilMessage(30000);
         System.out.println("Message waited, result: " + msg);
         if (msg == null) {
-            System.out.println("No input so assuming STAY ");
-            return PlayerAction.Stay;
+            System.out.println("Timed out, no input.");
+            return PlayerAction.Undecided;
         }
-        //TODO match playerId
-        //TODO regex groups
-        //TODO block while timeout elapsed. or then again have the playerId in the SensorInput?
-        if (msg.startsWith("stay")) {
+        else if (msg.startsWith("stay")) {
             return PlayerAction.Stay;
         }
         else if (msg.startsWith("hit")) {
@@ -64,14 +61,5 @@ public class SensorInput implements InputManager  {
             return PlayerAction.QuitGame;
         }
     }
-    /*
-    abstract class ReadUDPUntilTimeout<T> extends Thread {
-        T result;
-
-        abstract T readInput();
-    }*/
-
-
-
 
 }
