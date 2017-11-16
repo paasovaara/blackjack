@@ -42,16 +42,12 @@ public class UDPServer extends Thread {
 
 
     public static abstract class PacketListener {
-        /*private Pattern p = null;
+        private Pattern p = null;
         public Pattern regexPattern() {
             if (p == null) {
                 p = Pattern.compile(regex());
             }
             return p;
-        }*/
-
-        public Pattern regexPattern() {
-            return Pattern.compile(regex());
         }
 
         public String regex() {
@@ -75,7 +71,7 @@ public class UDPServer extends Thread {
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
                 m_socket.receive(packet);
                 String msg = new String(buf);
-                //System.out.println(msg);
+                Log.debug(msg);
                 synchronized (m_queue) {
                     m_queue.add(msg);
                     m_queue.notify();
@@ -122,9 +118,9 @@ public class UDPServer extends Thread {
     public void close() {
         m_running = false;
         if(m_socket != null) {
-            System.out.print("Closing socket");
+            Log.info("Closing socket");
             m_socket.close();
-            System.out.print("Socket closed");
+            Log.info("Socket closed");
         }
         //To wake all threads for sure
         synchronized (m_queue) {
