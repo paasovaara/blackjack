@@ -3,6 +3,7 @@ package blackjack.engine;
 import behave.execution.Executor;
 import behave.models.DecoratorNode;
 import behave.models.Node;
+import behave.tools.Log;
 import blackjack.io.*;
 import blackjack.tree.GameNode;
 import blackjack.utils.Config;
@@ -27,25 +28,17 @@ public class BlackJack {
     }
 
     public static GameNode createRobotWithUIGame() {
-        //InputManager input = new ConsoleInput();
-        SensorInput input = new SensorInput();
+        InputManager input = new ConsoleInput();
+        /*SensorInput input = new SensorInput();
         try {
             input.initialize(Config.readFromFile("sensors.properties").port);
         }
         catch (Exception e) {
+            Log.error("Could not read sensors.properties file: " + e.getMessage());
             e.printStackTrace();
-        }
+        }*/
         GameNode game = new GameNode(input, DEFAULT_DECK_COUNT);
-        /*try {
-            UnityOutput output = new UnityOutput();
-            output.init(Config.readFromFile("ui.properties"));
-            game.addListener(output);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        RobotOutput robot = new RobotOutput();
-        game.addListener(robot);*/
+
         RobotUIProxy listener = new RobotUIProxy(true, true, false);
         game.addListener(listener);
         return game;
