@@ -3,6 +3,7 @@ package blackjack.io;
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
 
+import java.io.BufferedInputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Enumeration;
@@ -13,7 +14,7 @@ public class Port {
     private OutputStreamWriter out;
     private InputStreamReader in;
 
-    public void open(String comportUsed) {
+    public void open(String comportUsed) throws Exception {
         try {
             Enumeration portList;
             String defaultPort;
@@ -43,13 +44,15 @@ public class Port {
             this.port = (SerialPort) this.portId.open(comportUsed, 2000);
             port.setSerialPortParams(9600, SerialPort.DATABITS_8,
                     SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
+            //BufferedInputStream in2 = new BufferedInputStream(new InputStreamReader(port.getInputStream()));
             in = new InputStreamReader(port.getInputStream());
             out = new OutputStreamWriter(port.getOutputStream());
-            System.err.println("Port Open:Success");
+            System.out.println("Port opened successfully " + comportUsed);
 
         } catch (Exception e) {
             System.out.println("Failed to open serial port " + comportUsed + ": Ex: " + e.getMessage());
             e.printStackTrace();
+            throw e;
         }
     }
 
@@ -68,7 +71,14 @@ public class Port {
         out.flush();
     }
 
-    /*
+    public String readLine() throws Exception {
+        /*while(in.ready()) {
+            BufferedInputStream bi = new BufferedInputStream(port.getInputStream());
+
+        }*/
+        return "";
+    }
+     /*
     private String read() throws Exception {
         int n, i;
         char c;
