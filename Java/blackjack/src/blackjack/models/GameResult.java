@@ -1,6 +1,8 @@
 package blackjack.models;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class GameResult {
@@ -24,13 +26,26 @@ public class GameResult {
     } //add BlackJack in case we want to give out extra money on BlackJack
 
     private Map<String, Result> m_results = new HashMap<>();
+    private List<Bet> m_bets = new LinkedList<>();
 
+    /**
+     * Key is the player hand id. TODO use playerId?
+     * @return
+     */
     public Map<String, Result> getResults() {
         return m_results;
     }
 
     public void setResult(String playerKey, Result result) {
         m_results.put(playerKey, result);
+    }
+
+    public void setBets(List<Bet> bets) {
+        m_bets = bets;
+    }
+
+    public List<Bet> getBets() {
+        return m_bets;
     }
 
     public String toString() {

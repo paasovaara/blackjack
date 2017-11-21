@@ -3,10 +3,7 @@ package blackjack.io;
 import blackjack.engine.GameContext;
 import blackjack.engine.GameListener;
 import blackjack.engine.Simulator;
-import blackjack.models.Bet;
-import blackjack.models.Card;
-import blackjack.models.Deck;
-import blackjack.models.Hand;
+import blackjack.models.*;
 
 import java.util.List;
 
@@ -83,6 +80,11 @@ public class RobotOutput implements GameListener {
 
     @Override
     public void busted(int playerId, Hand hand, GameContext context) {
+
+    }
+
+    @Override
+    public void gameEnded(GameResult results, GameContext context) {
 
     }
 }

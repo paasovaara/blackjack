@@ -115,6 +115,7 @@ public class GameNode extends CompositeNode.SequenceNode {
             m_context.setVariable(GameContext.KEY_PLAYER_COUNT, playerCount);
 
             GameResult result = new GameResult();
+            result.setBets(bets);
             m_context.setVariable(GameContext.KEY_RESULTS, result);
 
             if (playerCount > 0) {
@@ -232,6 +233,9 @@ public class GameNode extends CompositeNode.SequenceNode {
             // return Success if we want the game round to end immediately after this node
             // This is the case if dealer has BlackJack and/or all players have blackjack
             if (dealerHasBj || blackjackCount == playerCount) {
+                for (GameListener l: m_listeners) {
+                    l.gameEnded(result, m_context);
+                }
                 return Types.Status.Success;
             }
             else {
@@ -446,10 +450,14 @@ public class GameNode extends CompositeNode.SequenceNode {
                 Hand hand = (Hand)m_context.getVariable(key);
 
                 GameResult.Result result = Hand.compareHands(hand, dealerHand);
-
                 notifyListeners("Player " + n + " result is " + result + " with hand " + hand.getBestPipCount());
                 gameResults.setResult(key, result);
             }
+
+            for (GameListener l: m_listeners) {
+                l.gameEnded(gameResults, m_context);
+            }
+
             return Types.Status.Success;
         }
     }
