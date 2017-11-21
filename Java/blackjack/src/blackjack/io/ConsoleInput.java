@@ -35,7 +35,7 @@ public class ConsoleInput implements InputManager {
 
     private int getPlayerCount() {
         int players = -1;
-        while(players <= 0) {
+        while(players < 0) {
             try {
                 printInput("How many players?");
                 String in = readInput();

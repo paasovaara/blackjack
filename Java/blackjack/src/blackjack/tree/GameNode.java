@@ -117,8 +117,13 @@ public class GameNode extends CompositeNode.SequenceNode {
             GameResult result = new GameResult();
             m_context.setVariable(GameContext.KEY_RESULTS, result);
 
-            notifyListeners("Player count determined as " + playerCount);
-            return Types.Status.Success;
+            if (playerCount > 0) {
+                notifyListeners("Player count determined as " + playerCount);
+                return Types.Status.Success;
+            }
+            else {
+                return Types.Status.Failure;
+            }
         }
     }
 
