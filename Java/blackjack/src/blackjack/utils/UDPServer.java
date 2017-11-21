@@ -70,7 +70,18 @@ public class UDPServer extends Thread {
                 // receive request
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
                 m_socket.receive(packet);
-                String msg = new String(buf);
+                //read until first null
+                StringBuffer str = new StringBuffer();
+                for (int n = 0; n < buf.length; n++) {
+                    if (buf[n] != 0) {
+                        str.append((char)buf[n]);
+                    }
+                    else {
+                        break;
+                    }
+                }
+
+                String msg = str.toString();//new String(buf);
                 Log.debug(msg);
                 synchronized (m_queue) {
                     m_queue.add(msg);
@@ -139,7 +150,9 @@ public class UDPServer extends Thread {
             server.addListener(new PacketListener() {
                 @Override
                 public String regex() {
-                    return"^(stay|hit)";
+                    return "^(rfid)";
+                    //return "^(rfid)[0-9]-(.*)";
+                    //return"^(stay|hit)";
                     //return "^(stay\\{0\\})";
                 }
                 @Override
