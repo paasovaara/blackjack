@@ -82,7 +82,7 @@ public class Port {
             if (readByte == 0x0A) {
                 break;
             }
-            else if (readByte != -1) {
+            else if (readByte != -1 && readByte != 0x0D) { // Let's ignore CR, and just use LF as line change
                 buffer.append((char)readByte);
             }
             else {
