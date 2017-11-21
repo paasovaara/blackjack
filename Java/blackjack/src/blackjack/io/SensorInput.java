@@ -2,15 +2,17 @@ package blackjack.io;
 
 import blackjack.engine.GameContext;
 import blackjack.engine.InputManager;
+import blackjack.models.Bet;
 import blackjack.models.PlayerAction;
 import blackjack.utils.UDPServer;
 
-import java.util.Set;
+import java.util.*;
 
 public class SensorInput implements InputManager  {
     UDPServer m_server;
     PlayerInputListener m_player1 = new PlayerInputListener(0); // Or store in a map?!
     PlayerInputListener m_player2 = new PlayerInputListener(1);
+    PlayerBetListener m_betListener = new PlayerBetListener();
 
     class PlayerInputListener extends SensorListener {
         PlayerInputListener(int playerId) {
@@ -23,13 +25,29 @@ public class SensorInput implements InputManager  {
         m_server.initialize(port);
         m_server.addListener(m_player1);
         m_server.addListener(m_player2);
+        m_server.addListener(m_betListener);
+
+        //DEBUG
+        /*
+        m_server.addListener(new UDPServer.PacketListener() {
+            @Override
+            public void packetArrived(String payload) {
+                System.out.println("DEBUG: " + payload);
+            }
+        });*/
+
         m_server.startServer();
     }
 
     @Override
     public int getPlayerCount() {
-        //TODO read from RFID, block until get one.
-        return 2;
+        //Read using RFID
+        List<Bet> bets = m_betListener.readBets(30000);
+        //TODO change interface to return ids of the participants.
+        for(Bet bet: bets) {
+            System.out.println(bet.toString());
+        }
+        return bets.size();
     }
 
     @Override
