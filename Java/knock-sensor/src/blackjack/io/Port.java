@@ -18,7 +18,7 @@ public class Port {
 
     private boolean m_reading = false;
 
-    public void open(String comportUsed, int baudRate, int stopBits) throws Exception {
+    public void open(String comPortToUse, int baudRate, int stopBits) throws Exception {
         try {
             m_baudRate = baudRate;
 
@@ -38,28 +38,33 @@ public class Port {
 
             portList = CommPortIdentifier.getPortIdentifiers();
             while (portList.hasMoreElements()) {
-                portId = (CommPortIdentifier) portList.nextElement();
-                if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
-                    System.out.println("System contains com port " + portId.getName());
-                    if (portId.getName().equals(comportUsed)) {
-                        System.out.println("Found port: " + comportUsed);
+                CommPortIdentifier p = (CommPortIdentifier) portList.nextElement();
+                if (p.getPortType() == CommPortIdentifier.PORT_SERIAL) {
+                    System.out.println("System contains com port " + p.getName());
+                    if (p.getName().equals(comPortToUse)) {
+                        System.out.println("Found port: " + comPortToUse);
+                        portId = p;
                         break;
                     }
                 }
             }
+            if (portId != null) {
+                this.port = (SerialPort) this.portId.open(comPortToUse, 2000);
+                //TODO properly
+                int stopBitConfig = stopBits == 1 ? SerialPort.STOPBITS_1 : SerialPort.STOPBITS_2;
 
-            this.port = (SerialPort) this.portId.open(comportUsed, 2000);
-            //TODO properly
-            int stopBitConfig = stopBits == 1 ? SerialPort.STOPBITS_1 : SerialPort.STOPBITS_2;
-
-            port.setSerialPortParams(m_baudRate, SerialPort.DATABITS_8,
-                    stopBitConfig, SerialPort.PARITY_NONE);
-            in = port.getInputStream();
-            out = new OutputStreamWriter(port.getOutputStream());
-            System.out.println("Port opened successfully " + comportUsed);
+                port.setSerialPortParams(m_baudRate, SerialPort.DATABITS_8,
+                        stopBitConfig, SerialPort.PARITY_NONE);
+                in = port.getInputStream();
+                out = new OutputStreamWriter(port.getOutputStream());
+                System.out.println("Port opened successfully " + comPortToUse);
+            }
+            else {
+                throw new RuntimeException("Failed to find com port " + comPortToUse);
+            }
 
         } catch (Exception e) {
-            System.out.println("Failed to open serial port " + comportUsed + ": Ex: " + e.getMessage());
+            System.out.println("Failed to open serial port " + comPortToUse + ": Ex: " + e.getMessage());
             e.printStackTrace();
             throw e;
         }
