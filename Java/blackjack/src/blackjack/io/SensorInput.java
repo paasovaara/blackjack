@@ -14,6 +14,9 @@ public class SensorInput implements InputManager  {
     PlayerInputListener m_player2 = new PlayerInputListener(1);
     PlayerBetListener m_betListener = new PlayerBetListener();
 
+    public static final long TIMEOUT_READ_BETS_MS = 30000;
+    public static final long TIMEOUT_READ_INPUT_MS = 30000;
+
     class PlayerInputListener extends SensorListener {
         PlayerInputListener(int playerId) {
             super("^((stay|hit)\\{" + playerId + "\\})");
@@ -40,14 +43,9 @@ public class SensorInput implements InputManager  {
     }
 
     @Override
-    public int getPlayerCount() {
+    public List<Bet> getBets() {
         //Read using RFID
-        List<Bet> bets = m_betListener.readBets(30000);
-        //TODO change interface to return ids of the participants.
-        for(Bet bet: bets) {
-            System.out.println(bet.toString());
-        }
-        return bets.size();
+        return m_betListener.readBets(TIMEOUT_READ_BETS_MS);
     }
 
     @Override
@@ -63,7 +61,7 @@ public class SensorInput implements InputManager  {
         if (listener == null)
             throw new RuntimeException("Player id invalid for SensorInput");
 
-        String msg = listener.blockUntilMessage(30000);
+        String msg = listener.blockUntilMessage(TIMEOUT_READ_INPUT_MS);
         System.out.println("Message waited, result: " + msg);
         if (msg == null) {
             System.out.println("Timed out, no input.");

@@ -105,7 +105,13 @@ public class GameNode extends CompositeNode.SequenceNode {
                 notifyDealerAction(GameContext.DEALER_PLAYER_ID, null, null, DealerAction.Shuffle);
             }
 
-            int playerCount = m_input.getPlayerCount();
+            List<Bet> bets = m_input.getBets();
+            for(Bet bet: bets) {
+                String playerBetKey = GameContext.playerBetKey(bet.playerId);
+                m_context.setVariable(playerBetKey, bet.betAmount);
+            }
+
+            int playerCount = bets.size();
             m_context.setVariable(GameContext.KEY_PLAYER_COUNT, playerCount);
 
             GameResult result = new GameResult();

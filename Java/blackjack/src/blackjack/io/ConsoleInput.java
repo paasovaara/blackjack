@@ -2,12 +2,15 @@ package blackjack.io;
 
 import blackjack.engine.GameContext;
 import blackjack.engine.InputManager;
+import blackjack.models.Bet;
 import blackjack.models.Hand;
 import blackjack.models.PlayerAction;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 public class ConsoleInput implements InputManager {
@@ -30,8 +33,7 @@ public class ConsoleInput implements InputManager {
         System.out.print(">");
     }
 
-    @Override
-    public int getPlayerCount() {
+    private int getPlayerCount() {
         int players = -1;
         while(players <= 0) {
             try {
@@ -44,6 +46,33 @@ public class ConsoleInput implements InputManager {
             }
         }
         return players;
+    }
+
+    private int getBet(int playerId) {
+        int bet = -1;
+        while(bet <= 0) {
+            try {
+                printInput("How much is the bet for player " + playerId + "?");
+                String in = readInput();
+                bet = Integer.parseInt(in.trim());
+            }
+            catch (Exception e) {
+                printInfo("Not a valid number, try again");
+            }
+        }
+        return bet;
+    }
+
+    @Override
+    public List<Bet> getBets() {
+        int players = getPlayerCount();
+        LinkedList<Bet> bets = new LinkedList<>();
+        for(int n = 0; n < players; n++) {
+            int betValue = getBet(n);
+            Bet bet = new Bet(n, betValue);
+            bets.add(bet);
+        }
+        return bets;
     }
 
     @Override
