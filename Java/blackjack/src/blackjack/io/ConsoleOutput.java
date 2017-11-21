@@ -3,14 +3,27 @@ package blackjack.io;
 import blackjack.engine.GameContext;
 import blackjack.engine.GameListener;
 import blackjack.engine.Simulator;
+import blackjack.models.Bet;
 import blackjack.models.Card;
 import blackjack.models.Deck;
 import blackjack.models.Hand;
+
+import java.util.List;
 
 public class ConsoleOutput implements GameListener {
     @Override
     public void showMessage(String msg, GameContext context) {
         System.out.println(msg);
+    }
+
+    @Override
+    public void gameStarted(List<Bet> playerBets, GameContext context) {
+        StringBuffer buf = new StringBuffer();
+        buf.append("Game started with following bets:\n");
+        for(Bet bet: playerBets) {
+            buf.append("Player " + bet.playerId + ": " + bet.betAmount + "$\n");
+        }
+        System.out.println(buf.toString());
     }
 
     @Override

@@ -1,12 +1,16 @@
 package blackjack.engine;
 
+import blackjack.models.Bet;
 import blackjack.models.Card;
 import blackjack.models.Deck;
 import blackjack.models.Hand;
 
+import java.util.List;
+
 public interface GameListener {
     void showMessage(String msg, GameContext context); //Debug, not a proper interface
 
+    void gameStarted(List<Bet> playerBets, GameContext context);
     void giveAdvice(Simulator.Statistics hitOdds, Simulator.Statistics stayOdds);
     void shuffle(Deck deck);
     void turnChanged(int playerId, GameContext context);
@@ -15,4 +19,5 @@ public interface GameListener {
     void hitMe(int playerId, Card card, Hand hand, GameContext context);
     void stay(int playerId, Hand hand, GameContext context);
     void busted(int playerId, Hand hand, GameContext context);
+
 }

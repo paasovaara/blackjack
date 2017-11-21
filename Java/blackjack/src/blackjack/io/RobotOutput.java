@@ -3,9 +3,12 @@ package blackjack.io;
 import blackjack.engine.GameContext;
 import blackjack.engine.GameListener;
 import blackjack.engine.Simulator;
+import blackjack.models.Bet;
 import blackjack.models.Card;
 import blackjack.models.Deck;
 import blackjack.models.Hand;
+
+import java.util.List;
 
 public class RobotOutput implements GameListener {
 
@@ -36,6 +39,11 @@ public class RobotOutput implements GameListener {
 
     @Override
     public void showMessage(String msg, GameContext context) {
+    }
+
+    @Override
+    public void gameStarted(List<Bet> playerBets, GameContext context) {
+
     }
 
     @Override

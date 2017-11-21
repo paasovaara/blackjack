@@ -118,7 +118,9 @@ public class GameNode extends CompositeNode.SequenceNode {
             m_context.setVariable(GameContext.KEY_RESULTS, result);
 
             if (playerCount > 0) {
-                notifyListeners("Player count determined as " + playerCount);
+                for (GameListener l: m_listeners) {
+                    l.gameStarted(bets, m_context);
+                }
                 return Types.Status.Success;
             }
             else {

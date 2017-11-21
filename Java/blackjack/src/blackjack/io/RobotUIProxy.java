@@ -3,10 +3,13 @@ package blackjack.io;
 import blackjack.engine.GameContext;
 import blackjack.engine.GameListener;
 import blackjack.engine.Simulator;
+import blackjack.models.Bet;
 import blackjack.models.Card;
 import blackjack.models.Deck;
 import blackjack.models.Hand;
 import blackjack.utils.Config;
+
+import java.util.List;
 
 public class RobotUIProxy implements GameListener {
 
@@ -105,6 +108,13 @@ public class RobotUIProxy implements GameListener {
     }
 
     @Override
+    public void gameStarted(List<Bet> playerBets, GameContext context) {
+        m_console.gameStarted(playerBets, context);
+        m_robot.gameStarted(playerBets, context);
+        m_ui.gameStarted(playerBets, context);
+    }
+
+    @Override
     public void giveAdvice(Simulator.Statistics hitOdds, Simulator.Statistics stayOdds) {
         m_console.giveAdvice(hitOdds, stayOdds);
         m_robot.giveAdvice(hitOdds, stayOdds);
@@ -181,6 +191,8 @@ public class RobotUIProxy implements GameListener {
         @Override
         public void showMessage(String msg, GameContext context) {}
 
+        @Override
+        public void gameStarted(List<Bet> playerBets, GameContext context) {}
         @Override
         public void giveAdvice(Simulator.Statistics hitOdds, Simulator.Statistics stayOdds) {}
         @Override
