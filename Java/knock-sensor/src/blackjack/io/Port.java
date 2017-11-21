@@ -3,8 +3,7 @@ package blackjack.io;
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
 
-import java.io.BufferedInputStream;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.util.Enumeration;
 
@@ -12,7 +11,12 @@ public class Port {
     private CommPortIdentifier portId;
     private SerialPort port;
     private OutputStreamWriter out;
-    private InputStreamReader in;
+    private InputStream in;
+
+    public final int DEFAULT_BAUD_RATE = 2400;
+    private int m_baudRate = DEFAULT_BAUD_RATE;
+
+    private boolean m_reading = false;
 
     public void open(String comportUsed) throws Exception {
         try {
@@ -42,10 +46,9 @@ public class Port {
             }
 
             this.port = (SerialPort) this.portId.open(comportUsed, 2000);
-            port.setSerialPortParams(9600, SerialPort.DATABITS_8,
+            port.setSerialPortParams(m_baudRate, SerialPort.DATABITS_8,
                     SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
-            //BufferedInputStream in2 = new BufferedInputStream(new InputStreamReader(port.getInputStream()));
-            in = new InputStreamReader(port.getInputStream());
+            in = port.getInputStream();
             out = new OutputStreamWriter(port.getOutputStream());
             System.out.println("Port opened successfully " + comportUsed);
 
@@ -56,52 +59,34 @@ public class Port {
         }
     }
 
-    private void write(String s) throws Exception {
-        out.write(s);
-        out.flush();
-    }
-
-    private void write(byte s) throws Exception {
-        out.write(s);
-        out.flush();
-    }
-
-    private void write(int s) throws Exception {
+    public void write(String s) throws Exception {
         out.write(s);
         out.flush();
     }
 
     public String readLine() throws Exception {
-        /*while(in.ready()) {
-            BufferedInputStream bi = new BufferedInputStream(port.getInputStream());
-
-        }*/
-        return "";
-    }
-     /*
-    private String read() throws Exception {
-        int n, i;
-        char c;
-        String answer = new String("");
-
-        for (i = 0; i <>
-        while (in.ready()) {
-            n = in.read();
-            if (n != -1) {
-                c = (char) n;
-                answer = answer + c;
-                Thread.sleep(1);
-            } else
-                break;
+        if (m_reading) {
+            throw new Exception("Port already reading!");
         }
-        delay(1);
+        m_reading = true;
+
+        StringBuffer buffer = new StringBuffer();
+        while(m_reading) {
+            int readByte = in.read();
+            if (readByte == 0x0A) {
+                break;
+            }
+            else if (readByte != -1) {
+                buffer.append((char)readByte);
+            }
+            else {
+                float sleepMs = 1000.0f / (float)m_baudRate;
+                delay(Math.round(sleepMs));
+            }
+        }
+        m_reading = false;
+        return buffer.toString();
     }
-
-
-    return answer;
-}*/
-
-
 
     private void delay(int a) {
         try {
@@ -110,10 +95,9 @@ public class Port {
         }
     }
 
-
-
     public void close() throws Exception {
         try {
+            m_reading = false;
             port.close();
             System.out.println("port closed");
         } catch (Exception e) {

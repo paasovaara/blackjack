@@ -3,7 +3,7 @@ package blackjack.io;
 public class PortReaderThread extends Thread {
 
     Port m_port;
-    private boolean m_running = true;
+    private boolean m_running = false;
 
     public void initialize(String comport) throws Exception {
         Port port = new Port();
@@ -29,15 +29,15 @@ public class PortReaderThread extends Thread {
             }
             catch (Exception e) {
                 e.printStackTrace();
+                //Should we close(); ?
             }
 
         }
     }
 
-    void close() {
+    public void close() {
         m_running = false;
         try {
-            //Hopefully this will abort blocking read. TODO test
             m_port.close();
         }
         catch (Exception e) {
