@@ -18,10 +18,12 @@ public class Port {
 
     private boolean m_reading = false;
 
-    public void open(String comportUsed) throws Exception {
+    public void open(String comportUsed, int baudRate, int stopBits) throws Exception {
         try {
+            m_baudRate = baudRate;
+
             Enumeration portList;
-            String defaultPort;
+            /*String defaultPort;
 
             String osname = System.getProperty("os.name", "").toLowerCase();
             if (osname.startsWith("windows")) {
@@ -32,12 +34,13 @@ public class Port {
                 defaultPort = "????";
             } else {
                 System.out.println("Sorry, your operating system is not supported");
-            }
+            }*/
 
             portList = CommPortIdentifier.getPortIdentifiers();
             while (portList.hasMoreElements()) {
                 portId = (CommPortIdentifier) portList.nextElement();
                 if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
+                    System.out.println("System contains com port " + portId.getName());
                     if (portId.getName().equals(comportUsed)) {
                         System.out.println("Found port: " + comportUsed);
                         break;
@@ -46,8 +49,11 @@ public class Port {
             }
 
             this.port = (SerialPort) this.portId.open(comportUsed, 2000);
+            //TODO properly
+            int stopBitConfig = stopBits == 1 ? SerialPort.STOPBITS_1 : SerialPort.STOPBITS_2;
+
             port.setSerialPortParams(m_baudRate, SerialPort.DATABITS_8,
-                    SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
+                    stopBitConfig, SerialPort.PARITY_NONE);
             in = port.getInputStream();
             out = new OutputStreamWriter(port.getOutputStream());
             System.out.println("Port opened successfully " + comportUsed);

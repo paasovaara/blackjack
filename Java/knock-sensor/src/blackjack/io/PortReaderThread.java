@@ -1,14 +1,23 @@
 package blackjack.io;
 
+import blackjack.utils.Config;
+import blackjack.utils.EventSender;
+
 public class PortReaderThread extends Thread {
 
     Port m_port;
     private boolean m_running = false;
+    EventSender m_sender = new EventSender();
+    Config m_config;
 
-    public void initialize(String comport) throws Exception {
+    public void initialize(Config config) throws Exception {
+        m_config = config;
+
         Port port = new Port();
-        port.open(comport);
+        port.open(config.comPort, config.baudRate, config.stopBits);
         m_port = port;
+        m_sender.initialize(config.host, config.port);
+
     }
 
     @Override
@@ -26,6 +35,10 @@ public class PortReaderThread extends Thread {
             try {
                 String line = m_port.readLine();
                 System.out.println("READ: " + line);
+                if (m_running && !line.isEmpty()) {
+                    String msg = m_config.messagePrefix + line;
+                    m_sender.sendMessage(msg.getBytes());
+                }
             }
             catch (Exception e) {
                 e.printStackTrace();
@@ -38,6 +51,7 @@ public class PortReaderThread extends Thread {
     public void close() {
         m_running = false;
         try {
+            m_sender.close();
             m_port.close();
         }
         catch (Exception e) {
