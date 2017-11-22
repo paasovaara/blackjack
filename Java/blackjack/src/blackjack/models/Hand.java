@@ -16,6 +16,10 @@ public class Hand {
         m_cards.add(c);
     }
 
+    public int cardCount() {
+        return m_cards.size();
+    }
+
     public static GameResult.Result compareHands(Hand playerHand, Hand dealerHand) {
         int dealerTicks = dealerHand.getBestPipCount();
         int playerTicks = playerHand.getBestPipCount();

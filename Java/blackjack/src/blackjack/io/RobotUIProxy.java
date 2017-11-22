@@ -162,8 +162,10 @@ public class RobotUIProxy implements GameListener {
     @Override
     public void dealCard(int playerId, Card card, Hand hand, GameContext context) {
         m_console.dealCard(playerId, card, hand, context);
-        m_robot.dealCard(playerId, card, hand, context);
-        sleepMs(m_robotDelays.dealCard);
+        if (hand.cardCount() == 1) {
+            m_robot.dealCard(playerId, card, hand, context);
+            sleepMs(m_robotDelays.dealCard);
+        }
         m_ui.dealCard(playerId, card, hand, context);
         sleepMs(m_uiDelays.dealCard);
     }
