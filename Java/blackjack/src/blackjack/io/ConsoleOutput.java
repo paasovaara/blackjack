@@ -24,7 +24,7 @@ public class ConsoleOutput implements GameListener {
     }
 
     @Override
-    public void giveAdvice(Simulator.Statistics hitOdds, Simulator.Statistics stayOdds) {
+    public void giveAdvice(int playerId, Simulator.Statistics hitOdds, Simulator.Statistics stayOdds) {
         //We could randomize all kinds of punchlines here..
         System.out.println("Changes of winning if hit: " + hitOdds.expectedROI() + " and by staying: " + stayOdds.expectedROI());
     }

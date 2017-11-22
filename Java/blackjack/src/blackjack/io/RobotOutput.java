@@ -52,17 +52,27 @@ public class RobotOutput implements GameListener {
 
     @Override
     public void gameStarted(List<Bet> playerBets, GameContext context) {
-
+        String msg = "start";
+        m_sender.sendMessage(msg.getBytes());
     }
 
     @Override
-    public void giveAdvice(Simulator.Statistics hitOdds, Simulator.Statistics stayOdds) {
+    public void giveAdvice(int playerId, Simulator.Statistics hitOdds, Simulator.Statistics stayOdds) {
+        String msg = "advice{<p>}{<h>}{<s>}";
+        int hit = Math.round(hitOdds.expectedROI() * 100);
+        int stay = Math.round(stayOdds.expectedROI() * 100);
+        msg = msg.replaceAll("<p>", Integer.toString(playerId))
+                .replaceAll("<h>", Integer.toString(hit))
+                .replaceAll("<s>", Integer.toString(stay));
 
+        m_sender.sendMessage(msg.getBytes());
     }
 
     @Override
     public void shuffle(Deck deck) {
-        new RobotSimulation("shuffle", 2000).start();
+        String msg = "shuffle";
+        m_sender.sendMessage(msg.getBytes());
+        //new RobotSimulation("shuffle", 2000).start();
     }
 
     @Override
@@ -79,7 +89,7 @@ public class RobotOutput implements GameListener {
     public void dealCard(int playerId, Card card, Hand hand, GameContext context) {
         String msg = "deal{<p>}{<s>}{<r>}";
         msg = msg.replaceAll("<p>", Integer.toString(playerId))
-                .replaceAll("<s>", card.getSuite().toString())
+                .replaceAll("<s>", Integer.toString(card.getSuite().asInt()))
                 .replaceAll("<r>", Integer.toString(card.getRank().getId()));
 
         m_sender.sendMessage(msg.getBytes());
@@ -107,11 +117,15 @@ public class RobotOutput implements GameListener {
 
     @Override
     public void busted(int playerId, Hand hand, GameContext context) {
-
+        String msg = "busted{<p>}";
+        msg = msg.replaceAll("<p>", Integer.toString(playerId));
+        m_sender.sendMessage(msg.getBytes());
     }
 
     @Override
     public void gameEnded(GameResult results, GameContext context) {
-
+        //TODO tell who was busted and who won, etc
+        String msg = "results";
+        m_sender.sendMessage(msg.getBytes());
     }
 }

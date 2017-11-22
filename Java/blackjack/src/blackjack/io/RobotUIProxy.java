@@ -19,6 +19,9 @@ public class RobotUIProxy implements GameListener {
         public long stay = 0;
         public long giveAdvice = 0;
         public long busted = 0;
+        public long start = 0;
+        public long results = 0;
+
     }
 
     private static final Delays UI_DELAYS = new Delays();
@@ -31,18 +34,23 @@ public class RobotUIProxy implements GameListener {
         UI_DELAYS.shuffle = 1000;
         UI_DELAYS.turnChanged = 500;
         UI_DELAYS.revealDealerCard = 500;
-        UI_DELAYS.dealCard = 500;
+        UI_DELAYS.dealCard = 1500;
         UI_DELAYS.hitMe = 500;
         UI_DELAYS.stay = 0;
         UI_DELAYS.giveAdvice = 0;
+        UI_DELAYS.start = 500;
+        UI_DELAYS.results = 1000;
 
-        ROBOT_DELAYS.shuffle = 1000;
+        ROBOT_DELAYS.shuffle = 0;
         ROBOT_DELAYS.turnChanged = 500;
         ROBOT_DELAYS.revealDealerCard = 500;
-        ROBOT_DELAYS.dealCard = 2200;
-        ROBOT_DELAYS.hitMe = 500;
-        ROBOT_DELAYS.stay = 0;
+        ROBOT_DELAYS.dealCard = 3500;
+        ROBOT_DELAYS.hitMe = 1500;
+        ROBOT_DELAYS.stay = 1500;
         ROBOT_DELAYS.giveAdvice = 5000;
+        ROBOT_DELAYS.start = 500;
+        ROBOT_DELAYS.results = 3000;
+
 
     }
 
@@ -110,15 +118,17 @@ public class RobotUIProxy implements GameListener {
     public void gameStarted(List<Bet> playerBets, GameContext context) {
         m_console.gameStarted(playerBets, context);
         m_robot.gameStarted(playerBets, context);
+        sleepMs(m_robotDelays.start);
         m_ui.gameStarted(playerBets, context);
+        sleepMs(m_uiDelays.start);
     }
 
     @Override
-    public void giveAdvice(Simulator.Statistics hitOdds, Simulator.Statistics stayOdds) {
-        m_console.giveAdvice(hitOdds, stayOdds);
-        m_robot.giveAdvice(hitOdds, stayOdds);
+    public void giveAdvice(int playerId, Simulator.Statistics hitOdds, Simulator.Statistics stayOdds) {
+        m_console.giveAdvice(playerId, hitOdds, stayOdds);
+        m_robot.giveAdvice(playerId, hitOdds, stayOdds);
         sleepMs(m_robotDelays.giveAdvice);
-        m_ui.giveAdvice(hitOdds, stayOdds);
+        m_ui.giveAdvice(playerId, hitOdds, stayOdds);
         sleepMs(m_uiDelays.giveAdvice);
     }
 
@@ -188,8 +198,10 @@ public class RobotUIProxy implements GameListener {
     @Override
     public void gameEnded(GameResult results, GameContext context) {
         m_console.gameEnded(results, context);
-        m_ui.gameEnded(results, context);
         m_robot.gameEnded(results, context);
+        sleepMs(m_robotDelays.results);
+        m_ui.gameEnded(results, context);
+        sleepMs(m_uiDelays.results);
     }
 
     // To get rid of null checks
@@ -200,7 +212,7 @@ public class RobotUIProxy implements GameListener {
         @Override
         public void gameStarted(List<Bet> playerBets, GameContext context) {}
         @Override
-        public void giveAdvice(Simulator.Statistics hitOdds, Simulator.Statistics stayOdds) {}
+        public void giveAdvice(int playerId, Simulator.Statistics hitOdds, Simulator.Statistics stayOdds) {}
         @Override
         public void shuffle(Deck deck) {}
         @Override
