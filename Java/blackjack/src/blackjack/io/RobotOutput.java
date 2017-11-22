@@ -77,17 +77,32 @@ public class RobotOutput implements GameListener {
 
     @Override
     public void dealCard(int playerId, Card card, Hand hand, GameContext context) {
-        new RobotSimulation("DEAL", 2000).start();
+        String msg = "deal{<p>}{<s>}{<r>}";
+        msg = msg.replaceAll("<p>", Integer.toString(playerId))
+                .replaceAll("<s>", card.getSuite().toString())
+                .replaceAll("<r>", Integer.toString(card.getRank().getId()));
+
+        m_sender.sendMessage(msg.getBytes());
     }
 
     @Override
     public void hitMe(int playerId, Card card, Hand hand, GameContext context) {
+        String msg = "hit{<p>}{<c>}{<h>}";
+        msg = msg.replaceAll("<p>", Integer.toString(playerId))
+                .replaceAll("<c>", Integer.toString(card.getRank().getId()))
+                .replaceAll("<h>", Integer.toString(hand.getBestPipCount()));
 
+        m_sender.sendMessage(msg.getBytes());
     }
 
     @Override
     public void stay(int playerId, Hand hand, GameContext context) {
+        String msg = "stay{<p>}{<c>}{<h>}";
+        msg = msg.replaceAll("<p>", Integer.toString(playerId))
+                .replaceAll("<c>", "0")
+                .replaceAll("<h>", Integer.toString(hand.getBestPipCount()));
 
+        m_sender.sendMessage(msg.getBytes());
     }
 
     @Override

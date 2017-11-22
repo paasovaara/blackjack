@@ -74,6 +74,8 @@ public class RobotUIProxy implements GameListener {
         }
         if (robot) {
             try {
+                //RobotOutput r = new RobotOutput();
+                //We can use the same class for robot output also, why reinvent the wheel..
                 RobotOutput r = new RobotOutput();
                 r.init(Config.readFromFile("robot.properties"));
                 m_robot = r;
