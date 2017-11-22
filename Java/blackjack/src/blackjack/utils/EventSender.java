@@ -18,7 +18,7 @@ public class EventSender {
         m_address = InetAddress.getByName(host);
         m_socket = new DatagramSocket();
         m_port = port;
-        System.out.println("EventSender initializtion success to host " + host + ":" + port);
+        System.out.println("EventSender initialization success to host " + host + ":" + port);
 
     }
 

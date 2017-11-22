@@ -4,14 +4,17 @@ import blackjack.engine.GameContext;
 import blackjack.engine.GameListener;
 import blackjack.engine.Simulator;
 import blackjack.models.*;
+import blackjack.utils.Config;
+import blackjack.utils.EventSender;
 
 import java.util.List;
 
 public class RobotOutput implements GameListener {
+    EventSender m_sender = new EventSender();
 
     /*
     We simulate the robot as a separate thread for each movement because that's what it essentially is for us.
-    We have no control wether the robot has finished it's movements in time or not, we just have to assume it does something in fixed time.
+    We have no control weather the robot has finished it's movements in time or not, we just have to assume it does something in fixed time.
      */
     class RobotSimulation extends Thread {
         private String m_output;
@@ -31,6 +34,15 @@ public class RobotOutput implements GameListener {
                 e.printStackTrace();
             }
             System.out.println("<<ROBOT DONE >>" + m_output);
+        }
+    }
+
+    public void init(Config config) {
+        try {
+            m_sender.initialize(config.host, config.port);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
