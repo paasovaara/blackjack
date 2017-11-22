@@ -2,10 +2,11 @@ package blackjack.io;
 
 import blackjack.engine.GameContext;
 import blackjack.engine.GameListener;
-import blackjack.models.Card;
-import blackjack.models.Deck;
-import blackjack.models.Hand;
+import blackjack.engine.Simulator;
+import blackjack.models.*;
 import blackjack.utils.Config;
+
+import java.util.List;
 
 public class RobotUIProxy implements GameListener {
 
@@ -16,6 +17,7 @@ public class RobotUIProxy implements GameListener {
         public long dealCard = 0;
         public long hitMe = 0;
         public long stay = 0;
+        public long giveAdvice = 0;
         public long busted = 0;
     }
 
@@ -32,6 +34,7 @@ public class RobotUIProxy implements GameListener {
         UI_DELAYS.dealCard = 500;
         UI_DELAYS.hitMe = 500;
         UI_DELAYS.stay = 0;
+        UI_DELAYS.giveAdvice = 0;
 
         ROBOT_DELAYS.shuffle = 1000;
         ROBOT_DELAYS.turnChanged = 500;
@@ -39,6 +42,8 @@ public class RobotUIProxy implements GameListener {
         ROBOT_DELAYS.dealCard = 2200;
         ROBOT_DELAYS.hitMe = 500;
         ROBOT_DELAYS.stay = 0;
+        ROBOT_DELAYS.giveAdvice = 5000;
+
     }
 
     /**
@@ -70,7 +75,7 @@ public class RobotUIProxy implements GameListener {
         if (robot) {
             try {
                 RobotOutput r = new RobotOutput();
-                //r.init(Config.readFromFile("u.properties"));
+                r.init(Config.readFromFile("robot.properties"));
                 m_robot = r;
                 m_robotDelays = ROBOT_DELAYS;
             }
@@ -97,6 +102,22 @@ public class RobotUIProxy implements GameListener {
         m_console.showMessage(msg, context);
         m_robot.showMessage(msg, context);
         m_ui.showMessage(msg, context);
+    }
+
+    @Override
+    public void gameStarted(List<Bet> playerBets, GameContext context) {
+        m_console.gameStarted(playerBets, context);
+        m_robot.gameStarted(playerBets, context);
+        m_ui.gameStarted(playerBets, context);
+    }
+
+    @Override
+    public void giveAdvice(Simulator.Statistics hitOdds, Simulator.Statistics stayOdds) {
+        m_console.giveAdvice(hitOdds, stayOdds);
+        m_robot.giveAdvice(hitOdds, stayOdds);
+        sleepMs(m_robotDelays.giveAdvice);
+        m_ui.giveAdvice(hitOdds, stayOdds);
+        sleepMs(m_uiDelays.giveAdvice);
     }
 
     @Override
@@ -162,10 +183,22 @@ public class RobotUIProxy implements GameListener {
         sleepMs(m_uiDelays.busted);
     }
 
+    @Override
+    public void gameEnded(GameResult results, GameContext context) {
+        m_console.gameEnded(results, context);
+        m_ui.gameEnded(results, context);
+        m_robot.gameEnded(results, context);
+    }
+
     // To get rid of null checks
     class NullOutput implements GameListener {
         @Override
         public void showMessage(String msg, GameContext context) {}
+
+        @Override
+        public void gameStarted(List<Bet> playerBets, GameContext context) {}
+        @Override
+        public void giveAdvice(Simulator.Statistics hitOdds, Simulator.Statistics stayOdds) {}
         @Override
         public void shuffle(Deck deck) {}
         @Override
@@ -180,6 +213,8 @@ public class RobotUIProxy implements GameListener {
         public void stay(int playerId, Hand hand, GameContext context) {}
         @Override
         public void busted(int playerId, Hand hand, GameContext context) {}
+        @Override
+        public void gameEnded(GameResult results, GameContext context) {}
     }
 
 }

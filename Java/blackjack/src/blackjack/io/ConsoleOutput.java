@@ -2,14 +2,31 @@ package blackjack.io;
 
 import blackjack.engine.GameContext;
 import blackjack.engine.GameListener;
-import blackjack.models.Card;
-import blackjack.models.Deck;
-import blackjack.models.Hand;
+import blackjack.engine.Simulator;
+import blackjack.models.*;
+
+import java.util.List;
 
 public class ConsoleOutput implements GameListener {
     @Override
     public void showMessage(String msg, GameContext context) {
         System.out.println(msg);
+    }
+
+    @Override
+    public void gameStarted(List<Bet> playerBets, GameContext context) {
+        StringBuffer buf = new StringBuffer();
+        buf.append("Game started with following bets:\n");
+        for(Bet bet: playerBets) {
+            buf.append("Player " + bet.playerId + ": " + bet.betAmount + "$\n");
+        }
+        System.out.println(buf.toString());
+    }
+
+    @Override
+    public void giveAdvice(Simulator.Statistics hitOdds, Simulator.Statistics stayOdds) {
+        //We could randomize all kinds of punchlines here..
+        System.out.println("Changes of winning if hit: " + hitOdds.expectedROI() + " and by staying: " + stayOdds.expectedROI());
     }
 
     @Override
@@ -63,6 +80,12 @@ public class ConsoleOutput implements GameListener {
     @Override
     public void busted(int playerId, Hand hand, GameContext context) {
         System.out.println("BUSTED, Current hand " + hand);
+    }
+
+    @Override
+    public void gameEnded(GameResult results, GameContext context) {
+        System.out.println("GAME OVER");
+        System.out.println(results);
     }
 
 }

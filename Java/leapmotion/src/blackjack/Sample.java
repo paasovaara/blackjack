@@ -17,7 +17,7 @@ import com.leapmotion.leap.Gesture.State;
 
 class SampleListener extends Listener {
     EventSender m_sender = new EventSender();
-    String m_payload = "HIT-1";
+    String m_payload = "stay{0}";
 
     public void onInit(Controller controller) {
         System.out.println("Initialized");

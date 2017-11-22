@@ -2,11 +2,8 @@ package blackjack.tree;
 
 import behave.execution.ExecutionContext;
 import behave.models.*;
-import blackjack.engine.BlackJack;
-import blackjack.engine.GameListener;
-import blackjack.engine.InputManager;
+import blackjack.engine.*;
 import blackjack.models.*;
-import blackjack.engine.GameContext;
 
 import java.util.*;
 
@@ -108,14 +105,28 @@ public class GameNode extends CompositeNode.SequenceNode {
                 notifyDealerAction(GameContext.DEALER_PLAYER_ID, null, null, DealerAction.Shuffle);
             }
 
-            int playerCount = m_input.getPlayerCount();
+            List<Bet> bets = m_input.getBets();
+            for(Bet bet: bets) {
+                String playerBetKey = GameContext.playerBetKey(bet.playerId);
+                m_context.setVariable(playerBetKey, bet.betAmount);
+            }
+
+            int playerCount = bets.size();
             m_context.setVariable(GameContext.KEY_PLAYER_COUNT, playerCount);
 
             GameResult result = new GameResult();
+            result.setBets(bets);
             m_context.setVariable(GameContext.KEY_RESULTS, result);
 
-            notifyListeners("Player count determined as " + playerCount);
-            return Types.Status.Success;
+            if (playerCount > 0) {
+                for (GameListener l: m_listeners) {
+                    l.gameStarted(bets, m_context);
+                }
+                return Types.Status.Success;
+            }
+            else {
+                return Types.Status.Failure;
+            }
         }
     }
 
@@ -222,6 +233,9 @@ public class GameNode extends CompositeNode.SequenceNode {
             // return Success if we want the game round to end immediately after this node
             // This is the case if dealer has BlackJack and/or all players have blackjack
             if (dealerHasBj || blackjackCount == playerCount) {
+                for (GameListener l: m_listeners) {
+                    l.gameEnded(result, m_context);
+                }
                 return Types.Status.Success;
             }
             else {
@@ -387,6 +401,16 @@ public class GameNode extends CompositeNode.SequenceNode {
             options.add(PlayerAction.QuitGame);
             //we could add the other options like double, split, etc here also but let's keep it simple for now.
             PlayerAction action = m_input.getInput(m_playerId, m_context, options);
+            if (action == PlayerAction.Undecided) {
+                //Try to help the player and give another go
+                //This could be also implemented as a selectorNode with multiple children..
+                giveAdvice(m_playerId, m_context);
+                action = m_input.getInput(m_playerId, m_context, options);
+                //Can't wait any longer..
+                if (action == PlayerAction.Undecided) {
+                    action = PlayerAction.Stay;
+                }
+            }
 
             m_context.setVariable(GameContext.KEY_PLAYER_IN_TURN_ID, m_playerId); //This should prob be set somewhere else but let's make sure
             m_context.setVariable(GameContext.KEY_PLAYER_ACTION, action);
@@ -396,6 +420,17 @@ public class GameNode extends CompositeNode.SequenceNode {
                 return Types.Status.Failure;
             }
             return Types.Status.Success;
+        }
+
+        private void giveAdvice(int playerId, GameContext context) {
+            Hand playerHand = (Hand)context.getVariable(GameContext.playerHandKey(playerId));
+            Hand dealerHand = (Hand)context.getVariable(GameContext.KEY_DEALER_HAND);
+
+            Simulator.Statistics hit = Simulator.simulateHit(playerHand, dealerHand, m_deck);
+            Simulator.Statistics stay = Simulator.simulateStay(playerHand, dealerHand, m_deck);
+            for (GameListener l: m_listeners) {
+                l.giveAdvice(hit, stay);
+            }
         }
     }
 
@@ -415,10 +450,14 @@ public class GameNode extends CompositeNode.SequenceNode {
                 Hand hand = (Hand)m_context.getVariable(key);
 
                 GameResult.Result result = Hand.compareHands(hand, dealerHand);
-
                 notifyListeners("Player " + n + " result is " + result + " with hand " + hand.getBestPipCount());
                 gameResults.setResult(key, result);
             }
+
+            for (GameListener l: m_listeners) {
+                l.gameEnded(gameResults, m_context);
+            }
+
             return Types.Status.Success;
         }
     }

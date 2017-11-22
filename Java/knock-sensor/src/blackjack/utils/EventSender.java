@@ -8,7 +8,7 @@ public class EventSender {
     private int m_port;
 
     public static String BROADCAST_ADDRESS = "255.255.255.255";
-    public static int DEFAULT_PORT = 4445;
+    public static int DEFAULT_PORT = 4444;
 
     public void initialize(String host) throws UnknownHostException, SocketException {
         initialize(host, DEFAULT_PORT);
