@@ -27,27 +27,33 @@ public class BlackJack {
         return game;
     }
 
-    public static GameNode createRobotWithUIGame() {
-        InputManager input = new ConsoleInput();
-        /*SensorInput input = new SensorInput();
-        try {
-            input.initialize(Config.readFromFile("sensors.properties").port);
+    public static GameNode createRobotWithUIGame(boolean sensorInput, boolean robot) {
+        InputManager input;
+        if (sensorInput) {
+            SensorInput sensors = new SensorInput();
+            try {
+                sensors.initialize(Config.readFromFile("sensors.properties").port);
+            }
+            catch (Exception e) {
+                Log.error("Could not read sensors.properties file: " + e.getMessage());
+                e.printStackTrace();
+            }
+            input = sensors;
         }
-        catch (Exception e) {
-            Log.error("Could not read sensors.properties file: " + e.getMessage());
-            e.printStackTrace();
-        }*/
+        else {
+            input = new ConsoleInput();
+        }
         GameNode game = new GameNode(input, DEFAULT_DECK_COUNT);
 
-        RobotUIProxy listener = new RobotUIProxy(true, true, false);
+        RobotUIProxy listener = new RobotUIProxy(true, true, robot);
         game.addListener(listener);
         return game;
     }
 
 
-    public static void playGame(boolean console) {
+    public static void playGame(boolean console, boolean sensors, boolean robot) {
 
-        GameNode game = console ? createConsoleGame() : createRobotWithUIGame();
+        GameNode game = console ? createConsoleGame() : createRobotWithUIGame(sensors, robot);
         Node root = new DecoratorNode.InfiniteRepeaterNode();
         root.addChild(game);
         m_executor.initialize(root, game.getContext());

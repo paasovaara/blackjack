@@ -2,10 +2,18 @@ package blackjack;
 
 import blackjack.engine.BlackJack;
 
+import java.util.HashSet;
+
 public class Main {
 
     public static void main(String[] args) {
-	    boolean prod = (args.length > 0 && args[0].equals("prod"));
-        BlackJack.playGame(!prod);
+        HashSet<String> set = new HashSet<>();
+        for(int n = 0; n < args.length; n++) {
+            set.add(args[n]);
+        }
+	    boolean prod = set.contains("prod");
+        boolean sensors = set.contains("sensors");
+        boolean robot = set.contains("robot");
+        BlackJack.playGame(!prod, sensors, robot);
     }
 }
