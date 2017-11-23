@@ -57,13 +57,16 @@ public class RobotOutput implements GameListener {
     }
 
     @Override
-    public void giveAdvice(int playerId, Simulator.Statistics hitOdds, Simulator.Statistics stayOdds) {
-        String msg = "advice{<p>}{<h>}{<s>}";
+    public void giveAdvice(int playerId, Simulator.Statistics hitOdds, Simulator.Statistics stayOdds, Hand hand, GameContext context) {
+        String msg = "advice{<p>}{<h>}{<s>}{<pip>}{<b>}";
         int hit = Math.round(hitOdds.expectedROI() * 100);
         int stay = Math.round(stayOdds.expectedROI() * 100);
+        int busted = Math.round(hitOdds.bustedRatio() * 100);
         msg = msg.replaceAll("<p>", Integer.toString(playerId))
                 .replaceAll("<h>", Integer.toString(hit))
-                .replaceAll("<s>", Integer.toString(stay));
+                .replaceAll("<s>", Integer.toString(stay))
+                .replaceAll("<pip>", Integer.toString(hand.getBestPipCount()))
+                .replaceAll("<b>", Integer.toString(busted));
 
         m_sender.sendMessage(msg.getBytes());
     }
@@ -93,6 +96,7 @@ public class RobotOutput implements GameListener {
                 .replaceAll("<r>", Integer.toString(card.getRank().getId()));
 
         m_sender.sendMessage(msg.getBytes());
+
     }
 
     @Override

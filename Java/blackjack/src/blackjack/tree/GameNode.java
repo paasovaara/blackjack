@@ -429,7 +429,7 @@ public class GameNode extends CompositeNode.SequenceNode {
             Simulator.Statistics hit = Simulator.simulateHit(playerHand, dealerHand, m_deck);
             Simulator.Statistics stay = Simulator.simulateStay(playerHand, dealerHand, m_deck);
             for (GameListener l: m_listeners) {
-                l.giveAdvice(playerId, hit, stay);
+                l.giveAdvice(playerId, hit, stay, playerHand, context);
             }
         }
     }

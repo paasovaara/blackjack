@@ -124,11 +124,11 @@ public class RobotUIProxy implements GameListener {
     }
 
     @Override
-    public void giveAdvice(int playerId, Simulator.Statistics hitOdds, Simulator.Statistics stayOdds) {
-        m_console.giveAdvice(playerId, hitOdds, stayOdds);
-        m_robot.giveAdvice(playerId, hitOdds, stayOdds);
+    public void giveAdvice(int playerId, Simulator.Statistics hitOdds, Simulator.Statistics stayOdds, Hand hand, GameContext context) {
+        m_console.giveAdvice(playerId, hitOdds, stayOdds, hand, context);
+        m_robot.giveAdvice(playerId, hitOdds, stayOdds, hand, context);
         sleepMs(m_robotDelays.giveAdvice);
-        m_ui.giveAdvice(playerId, hitOdds, stayOdds);
+        m_ui.giveAdvice(playerId, hitOdds, stayOdds, hand, context);
         sleepMs(m_uiDelays.giveAdvice);
     }
 
@@ -214,7 +214,7 @@ public class RobotUIProxy implements GameListener {
         @Override
         public void gameStarted(List<Bet> playerBets, GameContext context) {}
         @Override
-        public void giveAdvice(int playerId, Simulator.Statistics hitOdds, Simulator.Statistics stayOdds) {}
+        public void giveAdvice(int playerId, Simulator.Statistics hitOdds, Simulator.Statistics stayOdds, Hand hand, GameContext context) {}
         @Override
         public void shuffle(Deck deck) {}
         @Override
