@@ -43,11 +43,11 @@ public class RobotUIProxy implements GameListener {
         UI_DELAYS.start = 500;
         UI_DELAYS.results = 1000;
 
-        ROBOT_DELAYS.waitForBets = 2000;
+        ROBOT_DELAYS.waitForBets = 4000;
         ROBOT_DELAYS.shuffle = 0;
         ROBOT_DELAYS.turnChanged = 500;
         ROBOT_DELAYS.revealDealerCard = 500;
-        ROBOT_DELAYS.dealCard = 3500;
+        ROBOT_DELAYS.dealCard = 2500;
         ROBOT_DELAYS.hitMe = 1500;
         ROBOT_DELAYS.stay = 1500;
         ROBOT_DELAYS.giveAdvice = 5000;
