@@ -1,6 +1,6 @@
 package blackjack.models;
 
-import java.util.LinkedList;
+import java.util.*;
 
 public class Hand {
 
@@ -77,29 +77,65 @@ public class Hand {
         return getMinPipCount() > 21;
     }
 
-    public int getMinPipCount() {
+    private int getMinPipCount() {
         return calcSum(true);
     }
 
-    public int getMaxPipCount() {
+    private int getMaxPipCount() {
         return calcSum(false);
     }
 
-    public int getBestPipCount() {
-        //TODO this fails if there's multiple aces! we should calc all permutations.
-        int min = getMinPipCount();
-        int max = getMaxPipCount();
-        if (max > 21) {
-            return min;
+    private LinkedList<Integer> calcAllSumsRecursively(LinkedList<Integer> sums, List<Card> remainingCards) {
+        if (remainingCards.isEmpty()) {
+            return sums;
         }
         else {
-            return max;
+            Card c = remainingCards.remove(0);
+            if (c.isHidden()) {
+                return calcAllSumsRecursively(sums, remainingCards);
+            }
+            else {
+                LinkedList<Integer> newSums = new LinkedList<>();
+                for (int oldSum: sums) {
+                    Rank r = c.m_rank;
+                    if (r == Rank.Ace) {
+                        newSums.add(oldSum + 1);
+                        newSums.add(oldSum + 11);
+                    }
+                    else {
+                        newSums.add(oldSum + r.pips());
+                    }
+                }
+                return calcAllSumsRecursively(newSums, remainingCards);
+            }
         }
     }
 
+    public int getBestPipCount() {
+        LinkedList<Integer> seed = new LinkedList<>();
+        seed.add(0);
+        LinkedList<Card> temp = new LinkedList<>(m_cards);
+        LinkedList<Integer> allSumPermuations = calcAllSumsRecursively(seed, temp);
+
+        //Try to pick the first under 22
+        Collections.sort(allSumPermuations, Collections.reverseOrder());
+        int best = 0;
+        for (Integer perm: allSumPermuations) {
+            best = perm;
+            if (perm <= 21) {
+                break;
+            }
+        }
+        return best;
+    }
+
     private int calcSum(boolean aceIsOne) {
+        return calcSum(m_cards, aceIsOne);
+    }
+
+    private static int calcSum(List<Card> cards, boolean aceIsOne) {
         int sum = 0;
-        for(Card c: m_cards) {
+        for(Card c: cards) {
             //Hidden card basically doesn't exist until it's turned.
             if (c.isHidden())
                 continue;
@@ -133,4 +169,5 @@ public class Hand {
         buf.append("]");
         return buf.toString();
     }
+
 }
