@@ -23,6 +23,12 @@ public class ConsoleOutput implements GameListener {
         System.out.println(buf.toString());
     }
 
+
+    @Override
+    public void waitingForBets() {
+        System.out.println("Please join in for a quick game of blackjack");
+    }
+
     @Override
     public void giveAdvice(int playerId, Simulator.Statistics hitOdds, Simulator.Statistics stayOdds, Hand hand, GameContext context) {
         //We could randomize all kinds of punchlines here..

@@ -125,6 +125,7 @@ public class GameNode extends CompositeNode.SequenceNode {
                 return Types.Status.Success;
             }
             else {
+                m_listeners.forEach(GameListener::waitingForBets);
                 return Types.Status.Failure;
             }
         }

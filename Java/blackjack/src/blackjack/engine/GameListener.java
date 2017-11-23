@@ -7,6 +7,7 @@ import java.util.List;
 public interface GameListener {
     void showMessage(String msg, GameContext context); //Debug, not a proper interface
 
+    void waitingForBets();
     void gameStarted(List<Bet> playerBets, GameContext context);
     void giveAdvice(int playerId, Simulator.Statistics hitOdds, Simulator.Statistics stayOdds, Hand hand, GameContext context);
     void shuffle(Deck deck);

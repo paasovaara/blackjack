@@ -11,6 +11,7 @@ import java.util.List;
 public class RobotUIProxy implements GameListener {
 
     static class Delays {
+        public long waitForBets = 0;
         public long shuffle = 0;
         public long turnChanged = 0;
         public long revealDealerCard = 0;
@@ -31,6 +32,7 @@ public class RobotUIProxy implements GameListener {
         // Total delay will be robot + UI, where UI will start where robot will end
         // We could do this inside the behavior tree also, but this is simpler for debugging/development.
         //TODO map correct values here
+        UI_DELAYS.waitForBets = 0;
         UI_DELAYS.shuffle = 1000;
         UI_DELAYS.turnChanged = 500;
         UI_DELAYS.revealDealerCard = 500;
@@ -41,6 +43,7 @@ public class RobotUIProxy implements GameListener {
         UI_DELAYS.start = 500;
         UI_DELAYS.results = 1000;
 
+        ROBOT_DELAYS.waitForBets = 2000;
         ROBOT_DELAYS.shuffle = 0;
         ROBOT_DELAYS.turnChanged = 500;
         ROBOT_DELAYS.revealDealerCard = 500;
@@ -112,6 +115,15 @@ public class RobotUIProxy implements GameListener {
         m_console.showMessage(msg, context);
         m_robot.showMessage(msg, context);
         m_ui.showMessage(msg, context);
+    }
+
+    @Override
+    public void waitingForBets() {
+        m_console.waitingForBets();
+        m_robot.waitingForBets();
+        sleepMs(ROBOT_DELAYS.waitForBets);
+        m_ui.waitingForBets();
+        sleepMs(UI_DELAYS.waitForBets);
     }
 
     @Override
@@ -211,6 +223,8 @@ public class RobotUIProxy implements GameListener {
         @Override
         public void showMessage(String msg, GameContext context) {}
 
+        @Override
+        public void waitingForBets() {}
         @Override
         public void gameStarted(List<Bet> playerBets, GameContext context) {}
         @Override

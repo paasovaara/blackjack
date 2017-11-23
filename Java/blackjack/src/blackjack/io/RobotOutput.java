@@ -51,6 +51,12 @@ public class RobotOutput implements GameListener {
     }
 
     @Override
+    public void waitingForBets() {
+        String msg = "waiting";
+        m_sender.sendMessage(msg.getBytes());
+    }
+
+    @Override
     public void gameStarted(List<Bet> playerBets, GameContext context) {
         String msg = "start";
         m_sender.sendMessage(msg.getBytes());
