@@ -149,7 +149,7 @@ public class GameNode extends CompositeNode.SequenceNode {
             removeChildren();
 
             Hand dealerHand = new Hand();
-            addChild(new NotifyTurnChangeNode(GameContext.DEALER_PLAYER_ID));
+            //addChild(new NotifyTurnChangeNode(GameContext.DEALER_PLAYER_ID));
             addChild(new DealInitHandNode(GameContext.DEALER_PLAYER_ID, dealerHand, true));
             context.setVariable(GameContext.KEY_DEALER_HAND, dealerHand);
             //TODO we cannot actually just count id's from zero, we'd need to check each player -> in or out
@@ -158,7 +158,7 @@ public class GameNode extends CompositeNode.SequenceNode {
                 Hand h = new Hand();
                 String key = GameContext.playerHandKey(n);
                 m_context.setVariable(key, h); //Not nice, TODO better
-                addChild(new NotifyTurnChangeNode(n));
+                //addChild(new NotifyTurnChangeNode(n));
                 addChild(new DealInitHandNode(n, h, false));
             }
 
