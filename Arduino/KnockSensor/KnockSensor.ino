@@ -35,8 +35,10 @@ void loop()
     digitalWrite(digitalOutPin, highNow ? HIGH : LOW);
     
     if (highNow != highPrev) {
-      Serial.println(highNow ? "KNOCK" : "NO");
-      highPrev = highNow;      
+      highPrev = highNow;
+      if (highNow) {
+        Serial.println("KNOCK");
+      }
     }
     else {
       //NOP
