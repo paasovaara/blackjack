@@ -106,10 +106,7 @@ public class GameNode extends CompositeNode.SequenceNode {
             }
 
             List<Bet> bets = m_input.getBets();
-            for(Bet bet: bets) {
-                String playerBetKey = GameContext.playerBetKey(bet.playerId);
-                m_context.setVariable(playerBetKey, bet.betAmount);
-            }
+            m_context.setPlayers(bets);
 
             int playerCount = bets.size();
             m_context.setVariable(GameContext.KEY_PLAYER_COUNT, playerCount);
@@ -152,14 +149,14 @@ public class GameNode extends CompositeNode.SequenceNode {
             //addChild(new NotifyTurnChangeNode(GameContext.DEALER_PLAYER_ID));
             addChild(new DealInitHandNode(GameContext.DEALER_PLAYER_ID, dealerHand, true));
             context.setVariable(GameContext.KEY_DEALER_HAND, dealerHand);
-            //TODO we cannot actually just count id's from zero, we'd need to check each player -> in or out
-            int playerCount = (int)m_context.getVariable(GameContext.KEY_PLAYER_COUNT); // Some type safety would be nice..
-            for (int n = 0; n < playerCount; n++) {
+
+            List<Integer> players = m_context.getPlayers();
+            for (Integer id: players) {
                 Hand h = new Hand();
-                String key = GameContext.playerHandKey(n);
-                m_context.setVariable(key, h); //Not nice, TODO better
+                String key = GameContext.playerHandKey(id);
+                m_context.setVariable(key, h);
                 //addChild(new NotifyTurnChangeNode(n));
-                addChild(new DealInitHandNode(n, h, false));
+                addChild(new DealInitHandNode(id, h, false));
             }
 
             super.initialize(context);
@@ -215,10 +212,11 @@ public class GameNode extends CompositeNode.SequenceNode {
                 dealerHasBj = true;
             }
 
-            int playerCount = (int)m_context.getVariable(GameContext.KEY_PLAYER_COUNT);
+            List<Integer> players = m_context.getPlayers();
             int blackjackCount = 0;
-            for (int n = 0; n < playerCount; n++) {
-                String key = GameContext.playerHandKey(n);
+
+            for (Integer id: players) {
+                String key = GameContext.playerHandKey(id);
                 Hand playerHand = (Hand)m_context.getVariable(key);
                 if (playerHand.isBlackJack()) {
                     notifyListeners("Player " + key + " has BlackJack!");
@@ -233,6 +231,7 @@ public class GameNode extends CompositeNode.SequenceNode {
 
             // return Success if we want the game round to end immediately after this node
             // This is the case if dealer has BlackJack and/or all players have blackjack
+            int playerCount = players.size();
             if (dealerHasBj || blackjackCount == playerCount) {
                 for (GameListener l: m_listeners) {
                     l.gameEnded(result, m_context);
@@ -249,11 +248,10 @@ public class GameNode extends CompositeNode.SequenceNode {
         @Override public void initialize(ExecutionContext context) {
             removeChildren();
 
-            int playerCount = (int)m_context.getVariable(GameContext.KEY_PLAYER_COUNT); // Some type safety would be nice..
-            for (int n = 0; n < playerCount; n++) {
-                String key = GameContext.playerHandKey(n);
-                addChild(new NotifyTurnChangeNode(n));
-                addChild(new PlayPlayerHandNode(n));
+            List<Integer> players = m_context.getPlayers();
+            for (Integer id: players) {
+                addChild(new NotifyTurnChangeNode(id));
+                addChild(new PlayPlayerHandNode(id));
             }
             addChild(new NotifyTurnChangeNode(GameContext.DEALER_PLAYER_ID));
             addChild(new RevealDealerHandNode());
@@ -294,15 +292,17 @@ public class GameNode extends CompositeNode.SequenceNode {
     private class CheckIfAllBustedNode extends LeafNode {
         @Override
         public Types.Status tick(ExecutionContext context) {
-            int playerCount = (int)m_context.getVariable(GameContext.KEY_PLAYER_COUNT);
+            List<Integer> players = m_context.getPlayers();
+
             int busted = 0;
-            for (int n = 0; n < playerCount; n++) {
-                String key = GameContext.playerHandKey(n);
+            for (Integer id: players) {
+                String key = GameContext.playerHandKey(id);
                 Hand hand = (Hand) m_context.getVariable(key);
                 if (hand.isBusted())
                     busted++;
             }
             //if all busted we stop execution, otherwise we continue
+            int playerCount = players.size();
             return (busted == playerCount) ? Types.Status.Success : Types.Status.Failure;
         }
     }
@@ -445,13 +445,13 @@ public class GameNode extends CompositeNode.SequenceNode {
             int dealerTicks = dealerHand.getBestPipCount();
 
             notifyListeners("Calculating results, dealer hand is " + dealerTicks);
-            int playerCount = (int)m_context.getVariable(GameContext.KEY_PLAYER_COUNT);
-            for (int n = 0; n < playerCount; n++) {
-                String key= GameContext.playerHandKey(n);
+            List<Integer> players = m_context.getPlayers();
+            for (Integer id: players) {
+                String key= GameContext.playerHandKey(id);
                 Hand hand = (Hand)m_context.getVariable(key);
 
                 GameResult.Result result = Hand.compareHands(hand, dealerHand);
-                notifyListeners("Player " + n + " result is " + result + " with hand " + hand.getBestPipCount());
+                notifyListeners("Player " + id + " result is " + result + " with hand " + hand.getBestPipCount());
                 gameResults.setResult(key, result);
             }
 

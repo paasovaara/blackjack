@@ -50,7 +50,7 @@ public class ConsoleInput implements InputManager {
 
     private int getBet(int playerId) {
         int bet = -1;
-        while(bet <= 0) {
+        while(bet < 0) {
             try {
                 printInput("How much is the bet for player " + playerId + "?");
                 String in = readInput();
@@ -69,8 +69,10 @@ public class ConsoleInput implements InputManager {
         LinkedList<Bet> bets = new LinkedList<>();
         for(int n = 0; n < players; n++) {
             int betValue = getBet(n);
-            Bet bet = new Bet(n, betValue);
-            bets.add(bet);
+            if (betValue > 0) {
+                Bet bet = new Bet(n, betValue);
+                bets.add(bet);
+            }
         }
         return bets;
     }

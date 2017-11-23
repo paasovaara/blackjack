@@ -1,9 +1,14 @@
 package blackjack.engine;
 
 import behave.execution.ExecutionContext;
+import blackjack.models.Bet;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class GameContext extends ExecutionContext {
     public static final String KEY_DECK = "deck";
+    public static final String KEY_PLAYER_IDS_IN_GAME = "playerids";
     public static final String KEY_PLAYER_COUNT = "playercount";
     public static final String KEY_PLAYER_BET_PREFIX = "playerbet";
     public static final String KEY_DEALER_HAND = "dealerhand";
@@ -23,6 +28,20 @@ public class GameContext extends ExecutionContext {
 
     public static String playerBetKey(int id) {
         return KEY_PLAYER_BET_PREFIX + id;
+    }
+
+    public List<Integer> getPlayers() {
+        return (List<Integer>)getVariable(KEY_PLAYER_IDS_IN_GAME);
+    }
+
+    public void setPlayers(List<Bet> bets) {
+        LinkedList<Integer> players = new LinkedList<>();
+        for(Bet bet: bets) {
+            String playerBetKey = GameContext.playerBetKey(bet.playerId);
+            setVariable(playerBetKey, bet.betAmount);
+            players.add(bet.playerId);
+        }
+        setVariable(KEY_PLAYER_IDS_IN_GAME, players);
     }
 
     public String toString() {
