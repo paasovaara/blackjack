@@ -86,12 +86,22 @@ public class RobotOutput implements GameListener {
 
     @Override
     public void turnChanged(int playerId, GameContext context) {
+        Hand hand = (Hand)context.getVariable(GameContext.playerHandKey(playerId));
+        String msg = "turn{<p>}{<h>}";
+        msg = msg.replaceAll("<p>", Integer.toString(playerId))
+                .replaceAll("<h>", Integer.toString(hand.getBestPipCount()));
 
+        m_sender.sendMessage(msg.getBytes());
     }
 
     @Override
     public void revealDealerCard(Card card, Hand hand, GameContext context) {
+        String msg = "reveal{<s>}{<r>}{<h>}";
+        msg = msg.replaceAll("<s>", Integer.toString(card.getSuite().asInt()))
+                .replaceAll("<r>", Integer.toString(card.getRank().getId()))
+                .replaceAll("<h>", Integer.toString(hand.getBestPipCount()));
 
+        m_sender.sendMessage(msg.getBytes());
     }
 
     @Override
