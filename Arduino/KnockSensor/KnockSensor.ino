@@ -6,7 +6,7 @@ int val = 0;           // variable to store the value read
 const int SAMPLE_RATE = 100; // Hz
 const float DELAY_MS = 1000.0f / (float)SAMPLE_RATE;
 
-const int THRESHOLD = 128; //TODO validate using debug plots
+const int THRESHOLD = 64; //TODO validate using debug plots
 const bool debug = false; //set true to plot all values, false for production
 
 bool highPrev = false;
@@ -47,3 +47,4 @@ void loop()
   
   delay(DELAY_MS);
 }
+
