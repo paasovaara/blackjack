@@ -370,7 +370,9 @@ public class GameNode extends CompositeNode.SequenceNode {
                 hand.addCard(card);
 
                 if (hand.isBusted()) {
-                    notifyListeners("BUSTED");
+                    for (GameListener l: m_listeners) {
+                        l.busted(playerId, hand, m_context);
+                    }
                     status = Types.Status.Success;
                 }
                 else {
