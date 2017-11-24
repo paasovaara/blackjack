@@ -220,7 +220,7 @@ public class GameNode extends CompositeNode.SequenceNode {
                 Hand playerHand = (Hand)m_context.getVariable(key);
                 if (playerHand.isBlackJack()) {
                     notifyListeners("Player " + key + " has BlackJack!");
-                    GameResult.Result playerRes = dealerHasBj ? GameResult.Result.Tied : GameResult.Result.Won;
+                    GameResult.Result playerRes = dealerHasBj ? GameResult.Result.Push : GameResult.Result.Won;
                     result.setResult(key, playerRes);
                     blackjackCount++;
                 }

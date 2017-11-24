@@ -2,10 +2,7 @@ package blackjack.io;
 
 import blackjack.engine.GameContext;
 import blackjack.engine.GameListener;
-import blackjack.models.Card;
-import blackjack.models.Deck;
-import blackjack.models.GameResult;
-import blackjack.models.Hand;
+import blackjack.models.*;
 import blackjack.utils.Config;
 import blackjack.utils.EventSender;
 
@@ -93,16 +90,18 @@ public class UnityOutput extends ConsoleOutput {
     public void gameEnded(GameResult results, GameContext context) {
         super.gameEnded(results, context);
 
-        String msgTemplate = "result{<p>}{<r>}";
+        final String msgTemplate = "result{<p>}{<r>}{<b>}";
         Map<String, GameResult.Result> resultMap = results.getResults();
         List<Integer> players = context.getPlayers();
 
         for (Integer id: players) {
             String key = GameContext.playerHandKey(id);
             GameResult.Result res = resultMap.get(key);
-            if (res != null) {
+            Integer bet = (Integer)context.getVariable(GameContext.playerBetKey(id));
+            if (res != null && bet != null) {
                 String msg = msgTemplate.replaceAll("<p>", Integer.toString(id))
-                        .replaceAll("<r>", res.toString());
+                        .replaceAll("<r>", res.toString())
+                        .replaceAll("<b>", Integer.toString(bet));
                 m_sender.sendMessage(msg.getBytes());
             }
             else {

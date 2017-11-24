@@ -108,7 +108,7 @@ public class Simulator {
                 if (result == GameResult.Result.Won) {
                     s.won += 1;
                 }
-                else if (result == GameResult.Result.Tied) {
+                else if (result == GameResult.Result.Push) {
                     s.push += 1;
                 }
             }

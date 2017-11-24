@@ -31,13 +31,13 @@ public class Hand {
             result = GameResult.Result.Won;
         }
         else if (playerHand.isBlackJack()) {
-            result = dealerHand.isBlackJack() ? GameResult.Result.Tied : GameResult.Result.Won;
+            result = dealerHand.isBlackJack() ? GameResult.Result.Push : GameResult.Result.Won;
         }
         else if (playerTicks > dealerTicks) {
             result = GameResult.Result.Won;
         }
         else if (playerTicks == dealerTicks) {
-            result = GameResult.Result.Tied;
+            result = GameResult.Result.Push;
         }
         else {
             result = GameResult.Result.Lost;

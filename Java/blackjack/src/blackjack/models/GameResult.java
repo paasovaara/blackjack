@@ -10,16 +10,18 @@ public class GameResult {
     public enum Result {
         Busted,
         Lost,
-        Tied,
-        Won;
+        Push,
+        Won,
+        Blackjack;
 
         @Override
         public String toString() {
             switch (this) {
                 case Busted: return "Busted";
                 case Lost: return "Lost";
-                case Tied: return "Tied";
+                case Push: return "Push";
                 case Won: return "Won";
+                case Blackjack: return "Blackjack";
                 default: return "";
             }
         }
