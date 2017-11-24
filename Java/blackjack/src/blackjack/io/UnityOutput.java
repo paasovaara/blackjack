@@ -4,9 +4,13 @@ import blackjack.engine.GameContext;
 import blackjack.engine.GameListener;
 import blackjack.models.Card;
 import blackjack.models.Deck;
+import blackjack.models.GameResult;
 import blackjack.models.Hand;
 import blackjack.utils.Config;
 import blackjack.utils.EventSender;
+
+import java.util.List;
+import java.util.Map;
 
 //public class UnityOutput implements GameListener {
 public class UnityOutput extends ConsoleOutput {
@@ -83,5 +87,28 @@ public class UnityOutput extends ConsoleOutput {
         msg = msg.replaceAll("<p>", Integer.toString(playerId));
 
         m_sender.sendMessage(msg.getBytes());
+    }
+
+    @Override
+    public void gameEnded(GameResult results, GameContext context) {
+        super.gameEnded(results, context);
+
+        String msgTemplate = "result{<p>}{<r>}";
+        Map<String, GameResult.Result> resultMap = results.getResults();
+        List<Integer> players = context.getPlayers();
+
+        for (Integer id: players) {
+            String key = GameContext.playerHandKey(id);
+            GameResult.Result res = resultMap.get(key);
+            if (res != null) {
+                String msg = msgTemplate.replaceAll("<p>", Integer.toString(id))
+                        .replaceAll("<r>", res.toString());
+                m_sender.sendMessage(msg.getBytes());
+            }
+            else {
+                System.out.println("Error, cannot find result for player " + id);
+            }
+        }
+
     }
 }
