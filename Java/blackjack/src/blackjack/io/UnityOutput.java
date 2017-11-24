@@ -72,12 +72,6 @@ public class UnityOutput extends ConsoleOutput {
     }
 
     @Override
-    public void stay(int playerId, Hand hand, GameContext context) {
-        super.stay(playerId, hand, context);
-        // nothing to do
-    }
-
-    @Override
     public void busted(int playerId, Hand hand, GameContext context) {
         super.busted(playerId, hand, context);
         String msg = "busted{<p>}";
@@ -108,6 +102,8 @@ public class UnityOutput extends ConsoleOutput {
                 System.out.println("Error, cannot find result for player " + id);
             }
         }
-
+        String msg = msgTemplate.replaceAll("<p>", "-1")
+                .replaceAll("<r>","None").replaceAll("<b>", "0");
+        m_sender.sendMessage(msg.getBytes());
     }
 }
