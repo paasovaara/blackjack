@@ -33,11 +33,11 @@ public class RobotUIProxy implements GameListener {
         // We could do this inside the behavior tree also, but this is simpler for debugging/development.
         //TODO map correct values here
         UI_DELAYS.waitForBets = 0;
-        UI_DELAYS.shuffle = 1000;
-        UI_DELAYS.turnChanged = 500;
-        UI_DELAYS.revealDealerCard = 1500;
+        UI_DELAYS.shuffle = 2000;
+        UI_DELAYS.turnChanged = 0;
+        UI_DELAYS.revealDealerCard = 3500;
         UI_DELAYS.dealCard = 1500;
-        UI_DELAYS.hitMe = 500;
+        UI_DELAYS.hitMe = 1000;
         UI_DELAYS.stay = 0;
         UI_DELAYS.giveAdvice = 0;
         UI_DELAYS.start = 500;
@@ -45,13 +45,13 @@ public class RobotUIProxy implements GameListener {
 
         ROBOT_DELAYS.waitForBets = 4000;
         ROBOT_DELAYS.shuffle = 0;
-        ROBOT_DELAYS.turnChanged = 2000;
+        ROBOT_DELAYS.turnChanged = 3000;
         ROBOT_DELAYS.revealDealerCard = 2000;
         ROBOT_DELAYS.dealCard = 3200;
         ROBOT_DELAYS.hitMe = 2000;
         ROBOT_DELAYS.stay = 2000;
         ROBOT_DELAYS.giveAdvice = 5000;
-        ROBOT_DELAYS.start = 500;
+        ROBOT_DELAYS.start = 1500;
         ROBOT_DELAYS.results = 3000;
 
 
@@ -163,10 +163,11 @@ public class RobotUIProxy implements GameListener {
     @Override
     public void revealDealerCard(Card card, Hand hand, GameContext context) {
         m_console.revealDealerCard(card, hand, context);
-        m_robot.revealDealerCard(card, hand, context);
-        sleepMs(m_robotDelays.revealDealerCard);
         m_ui.revealDealerCard(card, hand, context);
         sleepMs(m_uiDelays.revealDealerCard);
+        m_robot.revealDealerCard(card, hand, context);
+        sleepMs(m_robotDelays.revealDealerCard);
+
     }
 
     @Override
@@ -183,10 +184,11 @@ public class RobotUIProxy implements GameListener {
     @Override
     public void hitMe(int playerId, Card card, Hand hand, GameContext context) {
         m_console.hitMe(playerId, card, hand, context);
-        m_robot.hitMe(playerId, card, hand, context);
-        sleepMs(m_robotDelays.hitMe);
         m_ui.hitMe(playerId, card, hand, context);
         sleepMs(m_uiDelays.hitMe);
+        m_robot.hitMe(playerId, card, hand, context);
+        sleepMs(m_robotDelays.hitMe);
+
     }
 
     @Override
@@ -201,19 +203,21 @@ public class RobotUIProxy implements GameListener {
     @Override
     public void busted(int playerId, Hand hand, GameContext context) {
         m_console.busted(playerId, hand, context);
-        m_robot.busted(playerId, hand, context);
-        sleepMs(m_robotDelays.busted);
         m_ui.busted(playerId, hand, context);
         sleepMs(m_uiDelays.busted);
+        m_robot.busted(playerId, hand, context);
+        sleepMs(m_robotDelays.busted);
+
     }
 
     @Override
     public void gameEnded(GameResult results, GameContext context) {
         m_console.gameEnded(results, context);
-        m_robot.gameEnded(results, context);
-        sleepMs(m_robotDelays.results);
         m_ui.gameEnded(results, context);
         sleepMs(m_uiDelays.results);
+        m_robot.gameEnded(results, context);
+        sleepMs(m_robotDelays.results);
+
     }
 
     // To get rid of null checks
