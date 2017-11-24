@@ -217,7 +217,7 @@ public class GameNode extends CompositeNode.SequenceNode {
 
             List<Integer> players = m_context.getPlayers();
             int blackjackCount = 0;
-
+            //TODO if all the players have blackJack and dealer doesn't, we still should reveal dealers card.
             for (Integer id: players) {
                 String key = GameContext.playerHandKey(id);
                 Hand playerHand = (Hand)m_context.getVariable(key);
@@ -260,7 +260,11 @@ public class GameNode extends CompositeNode.SequenceNode {
             addChild(new RevealDealerHandNode());
             addChild(new PlayDealerHandIfNecessary());
 
-            addChild(new DetermineWinnerNode());
+            //Have a short pause after revealing winners
+            Node delay = new DecoratorNode.DelayAfterRunningNode(3000);
+            delay.addChild(new DetermineWinnerNode());
+
+            addChild(delay);
             super.initialize(context);
         }
     }
@@ -315,8 +319,9 @@ public class GameNode extends CompositeNode.SequenceNode {
         public PlayDealerHandNode() {
             Node repeater = new DecoratorNode.RepeatUntilSuccessNode();
             addChild(repeater);
-
-            repeater.addChild(new DealerHitUnder17Node());
+            Node delay = new DecoratorNode.DelayAfterRunningNode(2000);
+            delay.addChild(new DealerHitUnder17Node());
+            repeater.addChild(delay);
         }
 
         @Override public void initialize(ExecutionContext context) {
