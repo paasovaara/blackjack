@@ -13,6 +13,7 @@ public interface GameListener {
     void shuffle(Deck deck);
     void turnChanged(int playerId, GameContext context);
     void revealDealerCard(Card card, Hand hand, GameContext context);
+    void blackjack(int playerId, GameContext context);
     void dealCard(int playerId, Card card, Hand hand, GameContext context);
     void hitMe(int playerId, Card card, Hand hand, GameContext context);
     void stay(int playerId, Hand hand, GameContext context);

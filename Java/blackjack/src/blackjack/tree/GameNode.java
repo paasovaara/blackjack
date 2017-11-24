@@ -54,6 +54,9 @@ public class GameNode extends CompositeNode.SequenceNode {
             if (action == DealerAction.DealCard) {
                 l.dealCard(playerId, latestCard, hand, m_context);
             }
+            else if (action == DealerAction.Blackjack) {
+                l.blackjack(playerId, m_context);
+            }
             else if (action == DealerAction.ChangeTurn) {
                 l.turnChanged(playerId, m_context);
             }
@@ -207,8 +210,8 @@ public class GameNode extends CompositeNode.SequenceNode {
             boolean dealerHasBj = false;
             if (hand.isBlackJack()) {
                 hand.revealHiddenCard();
-                notifyListeners("Dealer has BlackJack!");
-                result.setResult(GameContext.KEY_DEALER_HAND, GameResult.Result.Won);
+                notifyDealerAction(GameContext.DEALER_PLAYER_ID, null, null, DealerAction.Blackjack);
+                result.setResult(GameContext.KEY_DEALER_HAND, GameResult.Result.Blackjack);
                 dealerHasBj = true;
             }
 
@@ -219,8 +222,8 @@ public class GameNode extends CompositeNode.SequenceNode {
                 String key = GameContext.playerHandKey(id);
                 Hand playerHand = (Hand)m_context.getVariable(key);
                 if (playerHand.isBlackJack()) {
-                    notifyListeners("Player " + key + " has BlackJack!");
-                    GameResult.Result playerRes = dealerHasBj ? GameResult.Result.Push : GameResult.Result.Won;
+                    notifyDealerAction(id, null, null, DealerAction.Blackjack);
+                    GameResult.Result playerRes = dealerHasBj ? GameResult.Result.Push : GameResult.Result.Blackjack;
                     result.setResult(key, playerRes);
                     blackjackCount++;
                 }
@@ -327,6 +330,9 @@ public class GameNode extends CompositeNode.SequenceNode {
         public Types.Status tick(ExecutionContext context) {
             Hand hand = (Hand)m_context.getVariable(GameContext.KEY_DEALER_HAND);
             if (hand.isBusted()) {
+                for(GameListener l: m_listeners) {
+                    l.busted(GameContext.DEALER_PLAYER_ID, hand, m_context);
+                }
                 return Types.Status.Success;
             }
             else if (hand.getBestPipCount() >= 17) {

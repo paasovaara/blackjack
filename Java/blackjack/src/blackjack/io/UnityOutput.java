@@ -81,6 +81,13 @@ public class UnityOutput extends ConsoleOutput {
     }
 
     @Override
+    public void blackjack(int playerId, GameContext context) {
+        String msg = "blackjack{<p>}";
+        msg = msg.replaceAll("<p>", Integer.toString(playerId));
+        m_sender.sendMessage(msg.getBytes());
+    }
+
+    @Override
     public void gameEnded(GameResult results, GameContext context) {
         super.gameEnded(results, context);
 

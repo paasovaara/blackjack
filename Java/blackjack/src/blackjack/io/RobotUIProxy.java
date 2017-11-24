@@ -20,6 +20,7 @@ public class RobotUIProxy implements GameListener {
         public long stay = 0;
         public long giveAdvice = 0;
         public long busted = 0;
+        public long blackjack = 0;
         public long start = 0;
         public long results = 0;
 
@@ -42,6 +43,7 @@ public class RobotUIProxy implements GameListener {
         UI_DELAYS.giveAdvice = 0;
         UI_DELAYS.start = 500;
         UI_DELAYS.results = 1000;
+        UI_DELAYS.blackjack = 0;
 
         ROBOT_DELAYS.waitForBets = 4000;
         ROBOT_DELAYS.shuffle = 0;
@@ -53,7 +55,7 @@ public class RobotUIProxy implements GameListener {
         ROBOT_DELAYS.giveAdvice = 5000;
         ROBOT_DELAYS.start = 1500;
         ROBOT_DELAYS.results = 3000;
-
+        UI_DELAYS.blackjack = 1000;
 
     }
 
@@ -171,6 +173,15 @@ public class RobotUIProxy implements GameListener {
     }
 
     @Override
+    public void blackjack(int playerId, GameContext context) {
+        m_console.blackjack(playerId, context);
+        m_ui.blackjack(playerId, context);
+        sleepMs(m_uiDelays.blackjack);
+        m_robot.blackjack(playerId, context);
+        sleepMs(m_robotDelays.blackjack);
+    }
+
+    @Override
     public void dealCard(int playerId, Card card, Hand hand, GameContext context) {
         m_console.dealCard(playerId, card, hand, context);
         if (hand.cardCount() == 1) {
@@ -237,6 +248,8 @@ public class RobotUIProxy implements GameListener {
         public void turnChanged(int playerId, GameContext context) {}
         @Override
         public void revealDealerCard(Card card, Hand hand, GameContext context) {}
+        @Override
+        public void blackjack(int playerId, GameContext context) {}
         @Override
         public void dealCard(int playerId, Card card, Hand hand, GameContext context) {}
         @Override

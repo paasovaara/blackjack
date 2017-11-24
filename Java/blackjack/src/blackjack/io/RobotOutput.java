@@ -106,6 +106,13 @@ public class RobotOutput implements GameListener {
     }
 
     @Override
+    public void blackjack(int playerId, GameContext context) {
+        String msg = "blackjack{<p>}";
+        msg = msg.replaceAll("<p>", Integer.toString(playerId));
+        m_sender.sendMessage(msg.getBytes());
+    }
+
+    @Override
     public void dealCard(int playerId, Card card, Hand hand, GameContext context) {
         String msg = "deal{<p>}{<s>}{<r>}";
         msg = msg.replaceAll("<p>", Integer.toString(playerId))
