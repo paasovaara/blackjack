@@ -37,7 +37,7 @@ public class RobotUIProxy implements GameListener {
         UI_DELAYS.turnChanged = 0;
         UI_DELAYS.revealDealerCard = 3500;
         UI_DELAYS.dealCard = 1500;
-        UI_DELAYS.hitMe = 1000;
+        UI_DELAYS.hitMe = 600;
         UI_DELAYS.stay = 0;
         UI_DELAYS.giveAdvice = 0;
         UI_DELAYS.start = 500;
