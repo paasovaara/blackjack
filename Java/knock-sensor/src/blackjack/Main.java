@@ -14,7 +14,11 @@ public class Main {
             System.out.println("Reading config from " + filename);
 
             Config config = Config.readFromFile(filename);
-
+            if (args.length > 1 && config != null) {
+                String com = args[1];
+                System.out.println("Overriding config with com port: " + com);
+                config.comPort = com;
+            }
             PortReaderThread t = new PortReaderThread();
             t.initialize(config);
             t.start();
