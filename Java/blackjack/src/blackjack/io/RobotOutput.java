@@ -86,7 +86,8 @@ public class RobotOutput implements GameListener {
 
     @Override
     public void turnChanged(int playerId, GameContext context) {
-        Hand hand = (Hand)context.getVariable(GameContext.playerHandKey(playerId));
+        String key = playerId == GameContext.DEALER_PLAYER_ID ? GameContext.KEY_DEALER_HAND : GameContext.playerHandKey(playerId);
+        Hand hand = (Hand)context.getVariable(key);
         String msg = "turn{<p>}{<h>}";
         msg = msg.replaceAll("<p>", Integer.toString(playerId))
                 .replaceAll("<h>", Integer.toString(hand.getBestPipCount()));
