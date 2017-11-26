@@ -95,6 +95,7 @@ public class GameNode extends CompositeNode.SequenceNode {
     private void createTree() {
         addChild(new InitGameVariablesNode());
         addChild(new MaybeTellInstructionsNode());
+        addChild(new StartTheGameNode());
         addChild(new DealInitCardsNode());
         addChild(new PlayTheGameNode());
     }
@@ -129,9 +130,6 @@ public class GameNode extends CompositeNode.SequenceNode {
             m_context.setVariable(GameContext.KEY_RESULTS, result);
 
             if (playerCount > 0) {
-                for (GameListener l: m_listeners) {
-                    l.gameStarted(bets, m_context);
-                }
                 return Types.Status.Success;
             }
             else {
@@ -150,6 +148,17 @@ public class GameNode extends CompositeNode.SequenceNode {
             if (timesWaited != null && timesWaited >= 3) {
                 notifyDealerAction(GameContext.DEALER_PLAYER_ID, null, null, DealerAction.TellInstructions);
                 m_context.setVariable(GameContext.KEY_TIMES_WAITED, 0);//reset counter for next round
+            }
+            return Types.Status.Success;
+        }
+    }
+
+    private class StartTheGameNode extends LeafNode {
+        @Override
+        public Types.Status tick(ExecutionContext context) {
+            GameResult results = (GameResult)context.getVariable(GameContext.KEY_RESULTS);
+            for (GameListener l: m_listeners) {
+                l.gameStarted(results.getBets(), m_context);
             }
             return Types.Status.Success;
         }
