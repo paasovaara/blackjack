@@ -76,7 +76,7 @@ public class PlayerBetListener extends SensorListener {
     Bet parseBet(int playerId, Set<String> tags) {
         int sum = 0;
         for (String tag: tags) {
-            String value = s_betPerTagLUT.getProperty(tag, "0");
+            String value = s_betPerTagLUT.getProperty(tag, "1");
             int bet = Integer.parseInt(value.trim());
             sum += bet;
         }
