@@ -25,6 +25,28 @@ public class UnityOutput extends ConsoleOutput {
     }
 
     @Override
+    public void gameStarted(List<Bet> playerBets, GameContext context) {
+        super.gameStarted(playerBets, context);
+        //A bit ugly but works
+        int player1Bet = 0;
+        int player2Bet = 0;
+        for (Bet bet: playerBets) {
+            if (bet.playerId == 0) {
+                player1Bet = bet.betAmount;
+            }
+            else if (bet.playerId == 1) {
+                player2Bet = bet.betAmount;
+            }
+        }
+
+        String msg = "start{<bet1>}{<bet2>}";
+        msg = msg.replaceAll("<bet1>", Integer.toString(player1Bet))
+                .replaceAll("<bet2>", Integer.toString(player2Bet));
+
+        m_sender.sendMessage(msg.getBytes());
+    }
+
+    @Override
     public void tellInstructions() {
         super.tellInstructions();
         String msg = "instructions";
