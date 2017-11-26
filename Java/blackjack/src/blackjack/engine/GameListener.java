@@ -10,6 +10,7 @@ public interface GameListener {
     void waitingForBets();
     void gameStarted(List<Bet> playerBets, GameContext context);
     void giveAdvice(int playerId, Simulator.Statistics hitOdds, Simulator.Statistics stayOdds, Hand hand, GameContext context);
+    void tellInstructions();
     void shuffle(Deck deck);
     void turnChanged(int playerId, GameContext context);
     void revealDealerCard(Card card, Hand hand, GameContext context);

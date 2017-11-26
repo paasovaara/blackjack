@@ -25,6 +25,13 @@ public class UnityOutput extends ConsoleOutput {
     }
 
     @Override
+    public void tellInstructions() {
+        super.tellInstructions();
+        String msg = "instructions";
+        m_sender.sendMessage(msg.getBytes());
+    }
+
+    @Override
     public void dealCard(int playerId, Card card, Hand hand, GameContext context) {
         super.dealCard(playerId, card, hand, context);
         String msg = "deal{<p>}{<s>}{<r>}";

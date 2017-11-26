@@ -8,6 +8,7 @@ import java.util.List;
 
 public class GameContext extends ExecutionContext {
     public static final String KEY_DECK = "deck";
+    public static final String KEY_TIMES_WAITED = "waited";
     public static final String KEY_PLAYER_IDS_IN_GAME = "playerids";
     public static final String KEY_PLAYER_COUNT = "playercount";
     public static final String KEY_PLAYER_BET_PREFIX = "playerbet";
@@ -15,9 +16,6 @@ public class GameContext extends ExecutionContext {
     public static final String KEY_PLAYER_HAND_PREFIX = "playerhand_";
     public static final String KEY_PLAYER_IN_TURN_ID = "playerturn";
     public static final String KEY_PLAYER_ACTION = "playeraction";
-
-    //public static final String KEY_PLAYER1_HAND = "playerhand_0";
-    //public static final String KEY_PLAYER2_HAND = "playerhand_1";
     public static final String KEY_RESULTS = "results";
 
     public static final int DEALER_PLAYER_ID = -1;

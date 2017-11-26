@@ -66,6 +66,9 @@ public class GameNode extends CompositeNode.SequenceNode {
             else if (action == DealerAction.Shuffle) {
                 l.shuffle(m_deck);
             }
+            else if (action == DealerAction.TellInstructions) {
+                l.tellInstructions();
+            }
         }
     }
 
@@ -91,6 +94,7 @@ public class GameNode extends CompositeNode.SequenceNode {
 
     private void createTree() {
         addChild(new InitGameVariablesNode());
+        addChild(new MaybeTellInstructionsNode());
         addChild(new DealInitCardsNode());
         addChild(new PlayTheGameNode());
     }
@@ -102,7 +106,13 @@ public class GameNode extends CompositeNode.SequenceNode {
     private class InitGameVariablesNode extends LeafNode {
         @Override
         public Types.Status tick(ExecutionContext context) {
+            Integer timesWaited = (Integer)m_context.getVariable(GameContext.KEY_TIMES_WAITED);
+            if (timesWaited == null)
+                timesWaited = 0;
+
             m_context.clear();
+            m_context.setVariable(GameContext.KEY_TIMES_WAITED, timesWaited);
+
             if (m_deck.deckRemaining() < SHUFFLE_DECK_RATIO) {
                 m_deck.shuffle();
                 notifyDealerAction(GameContext.DEALER_PLAYER_ID, null, null, DealerAction.Shuffle);
@@ -125,9 +135,23 @@ public class GameNode extends CompositeNode.SequenceNode {
                 return Types.Status.Success;
             }
             else {
+                m_context.setVariable(GameContext.KEY_TIMES_WAITED, timesWaited + 1);
+
                 m_listeners.forEach(GameListener::waitingForBets);
                 return Types.Status.Failure;
             }
+        }
+    }
+
+    private class MaybeTellInstructionsNode extends LeafNode {
+        @Override
+        public Types.Status tick(ExecutionContext context) {
+            Integer timesWaited = (Integer)context.getVariable(GameContext.KEY_TIMES_WAITED);
+            if (timesWaited != null && timesWaited >= 3) {
+                notifyDealerAction(GameContext.DEALER_PLAYER_ID, null, null, DealerAction.TellInstructions);
+                m_context.setVariable(GameContext.KEY_TIMES_WAITED, 0);//reset counter for next round
+            }
+            return Types.Status.Success;
         }
     }
 

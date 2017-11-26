@@ -36,6 +36,11 @@ public class ConsoleOutput implements GameListener {
     }
 
     @Override
+    public void tellInstructions() {
+        System.out.println("You will win if your hand is closer to 21 than the dealers or the dealer get's busted and you don't. Good luck.");
+    }
+
+    @Override
     public void shuffle(Deck deck) {
         System.out.println("~ Shuffling deck ~");
     }

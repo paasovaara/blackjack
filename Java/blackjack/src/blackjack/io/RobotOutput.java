@@ -51,6 +51,12 @@ public class RobotOutput implements GameListener {
     }
 
     @Override
+    public void tellInstructions() {
+        String msg = "instructions";
+        m_sender.sendMessage(msg.getBytes());
+    }
+
+    @Override
     public void waitingForBets() {
         String msg = "waiting";
         m_sender.sendMessage(msg.getBytes());

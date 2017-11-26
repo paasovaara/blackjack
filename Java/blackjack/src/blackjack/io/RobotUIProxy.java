@@ -23,6 +23,7 @@ public class RobotUIProxy implements GameListener {
         public long blackjack = 0;
         public long start = 0;
         public long results = 0;
+        public long instructions = 0;
 
     }
 
@@ -44,6 +45,7 @@ public class RobotUIProxy implements GameListener {
         UI_DELAYS.start = 500;
         UI_DELAYS.results = 1000;
         UI_DELAYS.blackjack = 0;
+        UI_DELAYS.instructions = 0;
 
         ROBOT_DELAYS.waitForBets = 4000;
         ROBOT_DELAYS.shuffle = 0;
@@ -55,8 +57,8 @@ public class RobotUIProxy implements GameListener {
         ROBOT_DELAYS.giveAdvice = 5000;
         ROBOT_DELAYS.start = 1500;
         ROBOT_DELAYS.results = 3000;
-        UI_DELAYS.blackjack = 1000;
-
+        ROBOT_DELAYS.blackjack = 1000;
+        ROBOT_DELAYS.instructions = 5000;
     }
 
     /**
@@ -142,6 +144,15 @@ public class RobotUIProxy implements GameListener {
         sleepMs(m_robotDelays.giveAdvice);
         m_ui.giveAdvice(playerId, hitOdds, stayOdds, hand, context);
         sleepMs(m_uiDelays.giveAdvice);
+    }
+
+    @Override
+    public void tellInstructions() {
+        m_console.tellInstructions();
+        m_ui.tellInstructions();
+        sleepMs(m_uiDelays.instructions);
+        m_robot.tellInstructions();
+        sleepMs(m_robotDelays.instructions);
     }
 
     @Override
@@ -242,6 +253,8 @@ public class RobotUIProxy implements GameListener {
         public void gameStarted(List<Bet> playerBets, GameContext context) {}
         @Override
         public void giveAdvice(int playerId, Simulator.Statistics hitOdds, Simulator.Statistics stayOdds, Hand hand, GameContext context) {}
+        @Override
+        public void tellInstructions() {}
         @Override
         public void shuffle(Deck deck) {}
         @Override

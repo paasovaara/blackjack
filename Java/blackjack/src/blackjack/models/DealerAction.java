@@ -1,7 +1,7 @@
 package blackjack.models;
 
 public enum DealerAction {
-    RevealDealerCard, Blackjack, ChangeTurn, DealCard, Shuffle, StartGame, ReturnWinnings;
+    RevealDealerCard, Blackjack, ChangeTurn, DealCard, Shuffle, StartGame, ReturnWinnings, TellInstructions;
 
     public String toString() {
         switch (this) {
