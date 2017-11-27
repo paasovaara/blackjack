@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ruby run.rb
+ruby fix_device_ports.rb
 
 echo "=== Initiating services..."
 concurrently "sudo leapd" \
