@@ -1,0 +1,8 @@
+#!/bin/bash
+
+ruby run.rb
+
+echo "=== Initiating services..."
+concurrently "cd ./Java/leapmotion/ && ./run_linux" \
+             "cd ./Java/knock-sensor/ && ./run-knock-player1" \
+             "cd ./Java/knock-sensor/ && ./run-knock-player2"

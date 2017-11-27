@@ -214,6 +214,7 @@ class Sample {
         Controller controller = new Controller();
 
         // Have the sample listener receive events from the controller
+        controller.setPolicy(Controller.PolicyFlag.POLICY_BACKGROUND_FRAMES);
         controller.addListener(listener);
 
         // Keep this process running until Enter is pressed
