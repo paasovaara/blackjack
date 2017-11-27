@@ -60,7 +60,7 @@ public class RobotUIProxy implements GameListener {
         ROBOT_DELAYS.results = 3000;
         ROBOT_DELAYS.blackjack = 1000;
         ROBOT_DELAYS.instructions = 25000;
-        ROBOT_DELAYS.busted = 500;
+        ROBOT_DELAYS.busted = 1000;
 
     }
 
