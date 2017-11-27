@@ -14,6 +14,11 @@ public class UnityOutput extends ConsoleOutput implements BetManager.BetChangeLi
     Config m_config;
     EventSender m_sender = new EventSender();
 
+    private boolean m_updateBets = true;
+    public void setUpdateBets(boolean update) {
+        m_updateBets = update;
+    }
+
     public void init(Config config) {
         m_config = config;
         try {
@@ -145,10 +150,13 @@ public class UnityOutput extends ConsoleOutput implements BetManager.BetChangeLi
 
     @Override
     public void betChanged(int playerId, int newBet) {
-        String msg = "bet{<p>}{<b>}";
-        msg = msg.replaceAll("<p>", Integer.toString(playerId))
-                .replaceAll("<b>", Integer.toString(newBet));
+        if (m_updateBets) {
+            String msg = "bet{<p>}{<b>}";
+            msg = msg.replaceAll("<p>", Integer.toString(playerId))
+                    .replaceAll("<b>", Integer.toString(newBet));
 
-        m_sender.sendMessage(msg.getBytes());
+            m_sender.sendMessage(msg.getBytes());
+
+        }
     }
 }

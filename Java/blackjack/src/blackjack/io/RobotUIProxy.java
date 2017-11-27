@@ -46,19 +46,22 @@ public class RobotUIProxy implements GameListener {
         UI_DELAYS.results = 1000;
         UI_DELAYS.blackjack = 0;
         UI_DELAYS.instructions = 0;
+        UI_DELAYS.busted = 0;
 
         ROBOT_DELAYS.waitForBets = 5500;
         ROBOT_DELAYS.shuffle = 0;
         ROBOT_DELAYS.turnChanged = 3000;
         ROBOT_DELAYS.revealDealerCard = 4000;
         ROBOT_DELAYS.dealCard = 3500;
-        ROBOT_DELAYS.hitMe = 3000;
+        ROBOT_DELAYS.hitMe = 500;
         ROBOT_DELAYS.stay = 2000;
         ROBOT_DELAYS.giveAdvice = 3000;
         ROBOT_DELAYS.start = 4500;
         ROBOT_DELAYS.results = 3000;
         ROBOT_DELAYS.blackjack = 1000;
         ROBOT_DELAYS.instructions = 25000;
+        ROBOT_DELAYS.busted = 500;
+
     }
 
     /**
@@ -68,6 +71,8 @@ public class RobotUIProxy implements GameListener {
     private GameListener m_console = new NullOutput();
     private GameListener m_ui = new NullOutput();
     private GameListener m_robot = new NullOutput();
+
+    private UnityOutput m_unity = null; // NOt nice but no time to do this correctly. TODO refactor
 
     private Delays m_uiDelays = NO_DELAYS;
     private Delays m_robotDelays = NO_DELAYS;
@@ -81,9 +86,11 @@ public class RobotUIProxy implements GameListener {
                 UnityOutput unity = new UnityOutput();
                 unity.init(Config.readFromFile("ui.properties"));
                 m_ui = unity;
+                m_unity = unity;
                 m_uiDelays = UI_DELAYS;
                 if (sensors != null) {
                     sensors.getBetManager().addListener(unity);
+                    m_unity.setUpdateBets(false);
                 }
             }
             catch (Exception e) {
@@ -122,8 +129,15 @@ public class RobotUIProxy implements GameListener {
         m_ui.showMessage(msg, context);
     }
 
+    private void setBetUpdateActive(boolean update) {
+        if (m_unity != null) {
+            m_unity.setUpdateBets(update);
+        }
+    }
     @Override
     public void waitingForBets() {
+        setBetUpdateActive(true);
+
         m_console.waitingForBets();
         m_robot.waitingForBets();
         sleepMs(ROBOT_DELAYS.waitForBets);
@@ -133,6 +147,8 @@ public class RobotUIProxy implements GameListener {
 
     @Override
     public void gameStarted(List<Bet> playerBets, GameContext context) {
+        setBetUpdateActive(false);
+
         m_console.gameStarted(playerBets, context);
         m_robot.gameStarted(playerBets, context);
         sleepMs(m_robotDelays.start);

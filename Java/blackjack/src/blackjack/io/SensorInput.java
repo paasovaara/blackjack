@@ -16,7 +16,7 @@ public class SensorInput implements InputManager  {
     BetManager m_betManager = new BetManager();
 
     public static final long TIMEOUT_READ_BETS_MS = 30000;
-    public static final long TIMEOUT_READ_INPUT_MS = 30000;
+    public static final long TIMEOUT_READ_INPUT_MS = 10000;
 
     class PlayerInputListener extends SensorListener {
         PlayerInputListener(int playerId) {
