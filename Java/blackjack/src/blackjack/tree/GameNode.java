@@ -413,7 +413,7 @@ public class GameNode extends CompositeNode.SequenceNode {
                 card = m_deck.getNextCard();
                 hand.addCard(card);
 
-                if (hand.isBusted()) {
+                if (hand.isBusted() || hand.getBestPipCount() == 21) {
                     status = Types.Status.Success;
                 }
                 else {
