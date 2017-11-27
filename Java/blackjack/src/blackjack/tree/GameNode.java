@@ -414,9 +414,6 @@ public class GameNode extends CompositeNode.SequenceNode {
                 hand.addCard(card);
 
                 if (hand.isBusted()) {
-                    for (GameListener l: m_listeners) {
-                        l.busted(playerId, hand, m_context);
-                    }
                     status = Types.Status.Success;
                 }
                 else {
@@ -429,6 +426,12 @@ public class GameNode extends CompositeNode.SequenceNode {
             }
             //TODO should this block?! and/or read return code to determine status?
             notifyPlayerAction(playerId, card, hand, action);
+            if (action == PlayerAction.Hit && hand.isBusted()) {
+                for (GameListener l: m_listeners) {
+                    l.busted(playerId, hand, m_context);
+                }
+            }
+
             return status;
         }
     }
