@@ -202,6 +202,9 @@ class SampleListener extends Listener {
         System.out.println(message);
     }
 
+    public void close() {
+        m_sender.close();
+    }
 }
 
 class Sample {
@@ -223,5 +226,6 @@ class Sample {
 
         // Remove the sample listener when done
         controller.removeListener(listener);
+        listener.close();
     }
 }

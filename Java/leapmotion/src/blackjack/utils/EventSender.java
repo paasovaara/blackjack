@@ -31,7 +31,7 @@ public class EventSender {
 
     public void sendMessage(byte[] msg) {
         try {
-            System.out.println("Sending event of size " + msg.length);
+            System.out.println("Sending event " + new String(msg));
             DatagramPacket packet = new DatagramPacket(msg, msg.length, m_address, m_port);
             m_socket.send(packet);
         }
