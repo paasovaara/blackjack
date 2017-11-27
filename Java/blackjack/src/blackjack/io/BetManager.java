@@ -29,6 +29,9 @@ public class BetManager {
         private boolean m_running = false;
         final int READ_TIMEOUT_MS = 2000;
         private int m_playerId;
+
+        private Set<String> m_blackList = new HashSet<>();
+
         BetListener(int playerId) {
             super("^(rfid" + (playerId+1) +")");
             //super("^(rfid)[0-9]-(.*)");
@@ -53,14 +56,27 @@ public class BetManager {
                     }
                     else {
                         if (!m_tags.contains(tag)) {
-                            m_tags.add(tag);
-                            Bet bet = parseBet(m_playerId, m_tags);
-                            notifyChange(bet.betAmount);
+                            if (!m_blackList.contains(tag)) {
+                                System.out.println("added tag " + tag);
+                                m_tags.add(tag);
+                                Bet bet = parseBet(m_playerId, m_tags);
+                                notifyChange(bet.betAmount);
+                            }
+                            else {
+                                //System.out.println("Tag " + tag + " is blacklisted, please place another one");
+                            }
                         }
                     }
                 }
             }
             m_running = false;
+        }
+
+        public void setBlacklist(Set<String> blacklist) {
+            m_blackList = blacklist;
+            synchronized (m_tags) {
+                m_tags.removeAll(m_blackList);
+            }
         }
 
         private void notifyChange(int newBet) {
@@ -113,29 +129,33 @@ public class BetManager {
 
         //Block until timeout or both players have placed their bets.
         //Not beautiful but works I hope: TODO refactor
-        final long start = System.currentTimeMillis();
-
         List<Bet> bets = new LinkedList<>();
+        Set<String> tags1 = new HashSet<>();
+        Set<String> tags2 = new HashSet<>();
+
         final long endTime = System.currentTimeMillis() + timeout;
         while(System.currentTimeMillis() <= endTime) {
-            //long timeLeft = endTime - System.currentTimeMillis();
-            bets = parseBets(m_bets1.getTags(), m_bets2.getTags());
+            tags1 = m_bets1.getTags();
+            tags2 = m_bets2.getTags();
 
+            bets = parseBets(tags1, tags2);
             if (bets.size() >= 2) {
                 System.out.println("Both players have placed their bet");
-
                 break;
+            }
+            else if (bets.size() == 1) {
+                System.out.println("Single bet placed");
             }
             try {
                 Thread.currentThread().sleep(1000);
             }
             catch (InterruptedException e) {}
-            /*
-            if (System.currentTimeMillis() >= (start + timeout)) {
-                System.out.println("Bet reading timed out, betcount: " + bets.size());
-                break;
-            }*/
+
         }
+        //Blacklist current tags for next round so player must change them between rounds
+        m_bets1.setBlacklist(tags1);
+        m_bets2.setBlacklist(tags2);
+
         return bets;
     }
 
