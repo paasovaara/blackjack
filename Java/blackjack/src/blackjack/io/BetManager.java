@@ -25,9 +25,9 @@ public class BetManager {
     }
 
     class BetListener extends SensorListener implements Runnable {
-        final Set<String> m_tags = new HashSet<>();
+        private final Set<String> m_tags = new HashSet<>();
         private boolean m_running = false;
-        final int READ_TIMEOUT_MS = 500;
+        final int READ_TIMEOUT_MS = 2000;
         private int m_playerId;
         BetListener(int playerId) {
             super("^(rfid" + (playerId+1) +")");
@@ -44,17 +44,19 @@ public class BetManager {
                 String tag = blockUntilMessage(READ_TIMEOUT_MS);
 
                 //If not a single message within timeout we consider tag to be removed
-                if (tag == null) {
-                    if (m_tags.size() > 0) {
-                        m_tags.clear();
-                        notifyChange(0);
+                synchronized (m_tags) {
+                    if (tag == null) {
+                        if (m_tags.size() > 0) {
+                            m_tags.clear();
+                            notifyChange(0);
+                        }
                     }
-                }
-                else {
-                    if (!m_tags.contains(tag)) {
-                        m_tags.add(tag);
-                        Bet bet = parseBet(m_playerId, m_tags);
-                        notifyChange(bet.betAmount);
+                    else {
+                        if (!m_tags.contains(tag)) {
+                            m_tags.add(tag);
+                            Bet bet = parseBet(m_playerId, m_tags);
+                            notifyChange(bet.betAmount);
+                        }
                     }
                 }
             }
@@ -75,7 +77,9 @@ public class BetManager {
         }
 
         public Set<String> getTags() {
-            return new HashSet<>(m_tags); //New just in case to prevent concurrent modification. we could (and should?) use a mutex also.
+            synchronized (m_tags) {
+                return new HashSet<>(m_tags); //New just in case to prevent concurrent modification. we could (and should?) use a mutex also.
+            }
         }
     }
 
@@ -103,7 +107,7 @@ public class BetManager {
         m_bets2.stop();
     }
 
-    public List<Bet> readBets(long timeout) {
+    public List<Bet> readBets(final long timeout) {
         System.out.println("Starting to read bets with timeout " + timeout);
 
         //Block until timeout or both players have placed their bets.
@@ -111,7 +115,9 @@ public class BetManager {
         final long start = System.currentTimeMillis();
 
         List<Bet> bets = new LinkedList<>();
-        while(true) {
+        final long endTime = System.currentTimeMillis() + timeout;
+        while(System.currentTimeMillis() <= endTime) {
+            //long timeLeft = endTime - System.currentTimeMillis();
             bets = parseBets(m_bets1.getTags(), m_bets2.getTags());
 
             if (bets.size() >= 2) {
@@ -119,10 +125,15 @@ public class BetManager {
 
                 break;
             }
+            try {
+                Thread.currentThread().sleep(1000);
+            }
+            catch (InterruptedException e) {}
+            /*
             if (System.currentTimeMillis() >= (start + timeout)) {
                 System.out.println("Bet reading timed out, betcount: " + bets.size());
                 break;
-            }
+            }*/
         }
         return bets;
     }
