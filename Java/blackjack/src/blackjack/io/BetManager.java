@@ -64,6 +64,7 @@ public class BetManager {
         }
 
         private void notifyChange(int newBet) {
+            System.out.println("bet changed for player " + m_playerId + " = " + newBet);
             synchronized (m_listeners) {
                 for (BetChangeListener l: m_listeners) {
                     l.betChanged(m_playerId, newBet);
