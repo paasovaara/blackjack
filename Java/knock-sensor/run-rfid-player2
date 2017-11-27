@@ -1,0 +1,2 @@
+#!/bin/bash
+java -jar dist/serialreader.jar rfid2.properties /dev/ttyS36

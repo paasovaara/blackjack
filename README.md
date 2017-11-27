@@ -12,17 +12,18 @@ Front end will be coded with Unity and the star of the show is the InMoov robot.
 
 Currently only tested on Ubuntu.
 
-Recommend using ```rbenv``` to manage ruby versions.
+Recommend using ```rbenv``` to install & manage ruby versions.
 
 Make sure dependencies are installed:
 
 ```
-sudo apt install libusb-1.0-0-dev
+sudo apt install libusb-1.0-0-dev udev
 gem isntall libusb
+npm i -g concurrently
 ```
 
 This command will automatically recognize our production devices and map them to the correct /dev/tty ports:
 
 ```
-ruby run.rb
+./run_linux
 ```

@@ -3,6 +3,9 @@
 ruby run.rb
 
 echo "=== Initiating services..."
-concurrently "cd ./Java/leapmotion/ && ./run_linux" \
+concurrently "sudo leapd" \
+	     "cd ./Java/leapmotion/ && ./run_linux" \
              "cd ./Java/knock-sensor/ && ./run-knock-player1" \
-             "cd ./Java/knock-sensor/ && ./run-knock-player2"
+             "cd ./Java/knock-sensor/ && ./run-knock-player2" \
+             "cd ./Java/knock-sensor/ && ./run-rfid-player1" \
+             "cd ./Java/knock-sensor/ && ./run-rfid-player2"
