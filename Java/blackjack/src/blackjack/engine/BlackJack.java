@@ -29,8 +29,9 @@ public class BlackJack {
 
     public static GameNode createRobotWithUIGame(boolean sensorInput, boolean robot) {
         InputManager input;
+        SensorInput sensors = null;
         if (sensorInput) {
-            SensorInput sensors = new SensorInput();
+            sensors = new SensorInput();
             try {
                 sensors.initialize(Config.readFromFile("sensors.properties").port);
             }
@@ -45,7 +46,7 @@ public class BlackJack {
         }
         GameNode game = new GameNode(input, DEFAULT_DECK_COUNT);
 
-        RobotUIProxy listener = new RobotUIProxy(true, true, robot);
+        RobotUIProxy listener = new RobotUIProxy(true, true, robot, sensors);
         game.addListener(listener);
         return game;
     }

@@ -72,7 +72,7 @@ public class RobotUIProxy implements GameListener {
     private Delays m_uiDelays = NO_DELAYS;
     private Delays m_robotDelays = NO_DELAYS;
 
-    public RobotUIProxy(boolean console, boolean ui, boolean robot) {
+    public RobotUIProxy(boolean console, boolean ui, boolean robot, SensorInput sensors) {
         if (console) {
             m_console = new ConsoleOutput();
         }
@@ -82,6 +82,9 @@ public class RobotUIProxy implements GameListener {
                 unity.init(Config.readFromFile("ui.properties"));
                 m_ui = unity;
                 m_uiDelays = UI_DELAYS;
+                if (sensors != null) {
+                    sensors.getBetManager().addListener(unity);
+                }
             }
             catch (Exception e) {
                 e.printStackTrace();

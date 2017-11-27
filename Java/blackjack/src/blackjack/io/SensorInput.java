@@ -12,7 +12,8 @@ public class SensorInput implements InputManager  {
     UDPServer m_server;
     PlayerInputListener m_player1 = new PlayerInputListener(0); // Or store in a map?!
     PlayerInputListener m_player2 = new PlayerInputListener(1);
-    PlayerBetListener m_betListener = new PlayerBetListener();
+    //PlayerBetListener m_betListener = new PlayerBetListener();
+    BetManager m_betManager = new BetManager();
 
     public static final long TIMEOUT_READ_BETS_MS = 30000;
     public static final long TIMEOUT_READ_INPUT_MS = 30000;
@@ -28,7 +29,8 @@ public class SensorInput implements InputManager  {
         m_server.initialize(port);
         m_server.addListener(m_player1);
         m_server.addListener(m_player2);
-        m_server.addListener(m_betListener);
+        //m_server.addListener(m_betListener);
+        m_betManager.initialize(m_server);
 
         //DEBUG
         /*
@@ -42,10 +44,14 @@ public class SensorInput implements InputManager  {
         m_server.startServer();
     }
 
+    public BetManager getBetManager() {
+        return m_betManager;
+    }
+
     @Override
     public List<Bet> getBets() {
         //Read using RFID
-        return m_betListener.readBets(TIMEOUT_READ_BETS_MS);
+        return m_betManager.readBets(TIMEOUT_READ_BETS_MS);
     }
 
     @Override

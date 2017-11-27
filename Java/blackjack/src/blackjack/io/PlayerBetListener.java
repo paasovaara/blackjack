@@ -20,8 +20,8 @@ public class PlayerBetListener extends SensorListener {
         }
     }
 
-    PlayerBetListener() {
-        super("^(rfid)");
+    public PlayerBetListener(int playerId) {
+        super("^(rfid" + (playerId+1) +")");
         //super("^(rfid)[0-9]-(.*)");
     }
 

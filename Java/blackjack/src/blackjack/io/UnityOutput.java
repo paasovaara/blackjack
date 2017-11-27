@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 //public class UnityOutput implements GameListener {
-public class UnityOutput extends ConsoleOutput {
+public class UnityOutput extends ConsoleOutput implements BetManager.BetChangeListener {
     Config m_config;
     EventSender m_sender = new EventSender();
 
@@ -140,6 +140,15 @@ public class UnityOutput extends ConsoleOutput {
         }
         String msg = msgTemplate.replaceAll("<p>", "-1")
                 .replaceAll("<r>","None").replaceAll("<b>", "0");
+        m_sender.sendMessage(msg.getBytes());
+    }
+
+    @Override
+    public void betChanged(int playerId, int newBet) {
+        String msg = "bet{<p>}{<b>}";
+        msg = msg.replaceAll("<p>", Integer.toString(playerId))
+                .replaceAll("<b>", Integer.toString(newBet));
+
         m_sender.sendMessage(msg.getBytes());
     }
 }
