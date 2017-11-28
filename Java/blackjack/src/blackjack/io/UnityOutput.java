@@ -146,6 +146,10 @@ public class UnityOutput extends ConsoleOutput implements BetManager.BetChangeLi
         String msg = msgTemplate.replaceAll("<p>", "-1")
                 .replaceAll("<r>","None").replaceAll("<b>", "0");
         m_sender.sendMessage(msg.getBytes());
+
+        String winnings = "winnings{<w>}";
+        winnings = winnings.replaceAll("<w>", Integer.toString(results.getTotalWinnings()));
+        m_sender.sendMessage(winnings.getBytes());
     }
 
     @Override

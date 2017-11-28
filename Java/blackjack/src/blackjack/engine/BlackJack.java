@@ -66,4 +66,18 @@ public class BlackJack {
         m_executor.stop();
     }
 
+    private static int s_winnings = -1;
+    public static int readTotalWinnings() {
+        if (s_winnings < 0) {
+            //READ from file
+            s_winnings = 0;
+        }
+        return s_winnings;
+    }
+
+    public static void saveTotalWinnings(int winnings) {
+        s_winnings = winnings;
+        //TODO write to file
+    }
+
 }

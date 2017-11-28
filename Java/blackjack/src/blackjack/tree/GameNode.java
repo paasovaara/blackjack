@@ -125,7 +125,7 @@ public class GameNode extends CompositeNode.SequenceNode {
             int playerCount = bets.size();
             m_context.setVariable(GameContext.KEY_PLAYER_COUNT, playerCount);
 
-            GameResult result = new GameResult();
+            GameResult result = new GameResult(BlackJack.readTotalWinnings());
             result.setBets(bets);
             m_context.setVariable(GameContext.KEY_RESULTS, result);
 
