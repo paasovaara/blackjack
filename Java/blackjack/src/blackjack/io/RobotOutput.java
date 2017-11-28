@@ -8,6 +8,7 @@ import blackjack.utils.Config;
 import blackjack.utils.EventSender;
 
 import java.util.List;
+import java.util.Map;
 
 public class RobotOutput implements GameListener {
     EventSender m_sender = new EventSender();
@@ -159,7 +160,18 @@ public class RobotOutput implements GameListener {
     @Override
     public void gameEnded(GameResult results, GameContext context) {
         //TODO tell who was busted and who won, etc
-        String msg = "results";
+        //The data type is just BAD.
+        Map<String, GameResult.Result> map = results.getResults();
+        GameResult.Result p1 = map.get(GameContext.playerHandKey(0));
+        GameResult.Result p2 = map.get(GameContext.playerHandKey(1));
+
+        String strP1 = p1 != null ? p1.toString() : "Null";
+        String strP2 = p2 != null ? p2.toString() : "Null";
+
+        String msg = "results{<p1>}{<p2>}";
+        msg = msg.replaceAll("<p1>", strP1)
+                .replaceAll("<p2>", strP2);
+
         m_sender.sendMessage(msg.getBytes());
     }
 }
