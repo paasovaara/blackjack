@@ -85,6 +85,7 @@ public class GameResult {
             Result result = m_results.get(key);
             buf.append(key + " => " + result.toString() + "\n");
         }
+        buf.append("total winnings: " + getTotalWinnings() + "\n");
         buf.append("............................\n");
 
         return buf.toString();

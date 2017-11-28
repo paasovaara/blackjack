@@ -1,8 +1,6 @@
 package blackjack.utils;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Properties;
 
 public class ConfigUtils {
@@ -23,5 +21,23 @@ public class ConfigUtils {
             }
         }
         return prop;
+    }
+
+    public static void writePropertiesFile(String filename, Properties props) throws IOException {
+        Properties prop = new Properties();
+        OutputStream output = null;
+        try {
+            output = new FileOutputStream(filename);
+            // load a properties file
+            props.store(output, null);
+        } finally {
+            if (output != null) {
+                try {
+                    output.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

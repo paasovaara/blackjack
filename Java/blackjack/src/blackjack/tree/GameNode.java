@@ -244,7 +244,7 @@ public class GameNode extends CompositeNode.SequenceNode {
             if (hand.isBlackJack()) {
                 hand.revealHiddenCard();
                 notifyDealerAction(GameContext.DEALER_PLAYER_ID, null, null, DealerAction.Blackjack);
-                result.setResult(GameContext.KEY_DEALER_HAND, GameResult.Result.Blackjack);
+                result.setResult(GameContext.DEALER_PLAYER_ID, GameResult.Result.Blackjack);
                 dealerHasBj = true;
             }
 
@@ -257,11 +257,11 @@ public class GameNode extends CompositeNode.SequenceNode {
                 if (playerHand.isBlackJack()) {
                     notifyDealerAction(id, null, null, DealerAction.Blackjack);
                     GameResult.Result playerRes = dealerHasBj ? GameResult.Result.Push : GameResult.Result.Blackjack;
-                    result.setResult(key, playerRes);
+                    result.setResult(id, playerRes);
                     blackjackCount++;
                 }
                 else if (dealerHasBj) {
-                    result.setResult(key, GameResult.Result.Lost);
+                    result.setResult(id, GameResult.Result.Lost);
                 }
             }
 
@@ -501,7 +501,7 @@ public class GameNode extends CompositeNode.SequenceNode {
 
                 GameResult.Result result = Hand.compareHands(hand, dealerHand);
                 notifyListeners("Player " + id + " result is " + result + " with hand " + hand.getBestPipCount());
-                gameResults.setResult(key, result);
+                gameResults.setResult(id, result);
             }
 
             for (GameListener l: m_listeners) {

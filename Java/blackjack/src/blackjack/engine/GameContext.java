@@ -21,6 +21,9 @@ public class GameContext extends ExecutionContext {
     public static final int DEALER_PLAYER_ID = -1;
 
     public static String playerHandKey(int id) {
+        if (id == DEALER_PLAYER_ID) {
+            return KEY_DEALER_HAND;
+        }
         return KEY_PLAYER_HAND_PREFIX + id;
     }
 
