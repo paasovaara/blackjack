@@ -59,11 +59,11 @@ if connectedDevPaths[:knock_sensor_2]
 end
 
 if connectedDevPaths[:rfid_reader_1]
-  `sudo ln -s #{connectedDevPaths[:knock_sensor_2]} /dev/ttyS35`
+  `sudo ln -s #{connectedDevPaths[:rfid_reader_1]} /dev/ttyS35`
 end
 
 if connectedDevPaths[:rfid_reader_2]
-  `sudo ln -s #{connectedDevPaths[:knock_sensor_2]} /dev/ttyS36`
+  `sudo ln -s #{connectedDevPaths[:rfid_reader_2]} /dev/ttyS36`
 end
 
 puts "=== DONE\n\n"
