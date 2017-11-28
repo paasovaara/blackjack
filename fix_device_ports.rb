@@ -41,6 +41,15 @@ puts "=== DONE\n\n"
 
 puts "=== Symlinking /dev/tty ports to the correct /dev/ttySxx ports`"
 
+`sudo rm /dev/ttyS33`
+`sudo rm /var/lock/LCK..ttyS33`
+`sudo rm /dev/ttyS34`
+`sudo rm /var/lock/LCK..ttyS34`
+`sudo rm /dev/ttyS35`
+`sudo rm /var/lock/LCK..ttyS35`
+`sudo rm /dev/ttyS36`
+`sudo rm /var/lock/LCK..ttyS36`
+
 if connectedDevPaths[:knock_sensor_1]
   `sudo ln -s #{connectedDevPaths[:knock_sensor_1]} /dev/ttyS33`
 end
@@ -48,4 +57,13 @@ end
 if connectedDevPaths[:knock_sensor_2]
   `sudo ln -s #{connectedDevPaths[:knock_sensor_2]} /dev/ttyS34`
 end
+
+if connectedDevPaths[:rfid_reader_1]
+  `sudo ln -s #{connectedDevPaths[:knock_sensor_2]} /dev/ttyS35`
+end
+
+if connectedDevPaths[:rfid_reader_2]
+  `sudo ln -s #{connectedDevPaths[:knock_sensor_2]} /dev/ttyS36`
+end
+
 puts "=== DONE\n\n"

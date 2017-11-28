@@ -1,7 +1,3 @@
 #!/bin/bash
 
 sudo chmod o+w -R /dev/bus/usb/00*
-sudo rm /dev/ttyS33
-sudo rm /dev/ttyS34
-sudo rm /dev/ttyS35
-sudo rm /dev/ttyS36
