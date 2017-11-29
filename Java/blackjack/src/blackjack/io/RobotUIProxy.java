@@ -37,7 +37,7 @@ public class RobotUIProxy implements GameListener {
         UI_DELAYS.waitForBets = 0;
         UI_DELAYS.shuffle = 2000;
         UI_DELAYS.turnChanged = 0;
-        UI_DELAYS.revealDealerCard = 0;
+        UI_DELAYS.revealDealerCard = 500;
         UI_DELAYS.dealCard = 1500;
         UI_DELAYS.hitMe = 600;
         UI_DELAYS.stay = 0;
@@ -51,7 +51,7 @@ public class RobotUIProxy implements GameListener {
         ROBOT_DELAYS.waitForBets = 5500;
         ROBOT_DELAYS.shuffle = 0;
         ROBOT_DELAYS.turnChanged = 3000;
-        ROBOT_DELAYS.revealDealerCard = 4000;
+        ROBOT_DELAYS.revealDealerCard = 3600;
         ROBOT_DELAYS.dealCard = 3500;
         ROBOT_DELAYS.hitMe = 1000;
         ROBOT_DELAYS.stay = 2000;
