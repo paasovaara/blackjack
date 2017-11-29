@@ -137,8 +137,6 @@ public class GameNode extends CompositeNode.SequenceNode {
             }
             else {
                 m_context.setVariable(GameContext.KEY_TIMES_WAITED, timesWaited + 1);
-
-                m_listeners.forEach(GameListener::waitingForBets);
                 return Types.Status.Failure;
             }
         }
