@@ -107,10 +107,11 @@ public class GameNode extends CompositeNode.SequenceNode {
     private class InitGameVariablesNode extends LeafNode {
         @Override
         public Types.Status tick(ExecutionContext context) {
+            //This is the only variable that passes between rounds
             Integer timesWaited = (Integer)m_context.getVariable(GameContext.KEY_TIMES_WAITED);
             if (timesWaited == null)
                 timesWaited = 0;
-
+            //clear all variables
             m_context.clear();
             m_context.setVariable(GameContext.KEY_TIMES_WAITED, timesWaited);
 
@@ -118,6 +119,8 @@ public class GameNode extends CompositeNode.SequenceNode {
                 m_deck.shuffle();
                 notifyDealerAction(GameContext.DEALER_PLAYER_ID, null, null, DealerAction.Shuffle);
             }
+
+            m_listeners.forEach(GameListener::waitingForBets);
 
             List<Bet> bets = m_input.getBets();
             m_context.setPlayers(bets);
@@ -450,12 +453,12 @@ public class GameNode extends CompositeNode.SequenceNode {
             options.add(PlayerAction.Stay);
             options.add(PlayerAction.QuitGame);
             //we could add the other options like double, split, etc here also but let's keep it simple for now.
-            PlayerAction action = m_input.getInput(m_playerId, m_context, options);
+            PlayerAction action = m_input.getInput(m_playerId, m_context, options, false);
             if (action == PlayerAction.Undecided) {
                 //Try to help the player and give another go
                 //This could be also implemented as a selectorNode with multiple children..
                 giveAdvice(m_playerId, m_context);
-                action = m_input.getInput(m_playerId, m_context, options);
+                action = m_input.getInput(m_playerId, m_context, options, true);
                 //Can't wait any longer..
                 if (action == PlayerAction.Undecided) {
                     action = PlayerAction.Stay;

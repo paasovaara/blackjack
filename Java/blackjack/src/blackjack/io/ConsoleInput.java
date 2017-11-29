@@ -78,7 +78,7 @@ public class ConsoleInput implements InputManager {
     }
 
     @Override
-    public PlayerAction getInput(int playerId, GameContext gameState, Set<PlayerAction> options) {
+    public PlayerAction getInput(int playerId, GameContext gameState, Set<PlayerAction> options, boolean longTimeout) {
         while(true) {
             try {
                 String key = GameContext.playerHandKey(playerId);

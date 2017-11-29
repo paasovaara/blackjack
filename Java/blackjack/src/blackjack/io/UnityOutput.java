@@ -155,6 +155,7 @@ public class UnityOutput extends ConsoleOutput implements BetManager.BetChangeLi
     @Override
     public void betChanged(int playerId, int newBet) {
         if (m_updateBets) {
+            //System.out.println("BET CHANGED FOR UI: " + newBet);
             String msg = "bet{<p>}{<b>}";
             msg = msg.replaceAll("<p>", Integer.toString(playerId))
                     .replaceAll("<b>", Integer.toString(newBet));

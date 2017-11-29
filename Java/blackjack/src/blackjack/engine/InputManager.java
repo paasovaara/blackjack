@@ -16,5 +16,5 @@ public interface InputManager {
      */
     //PlayerAction getInput(int playerId, GameContext gameState);
 
-    PlayerAction getInput(int playerId, GameContext gameState, Set<PlayerAction> options);
+    PlayerAction getInput(int playerId, GameContext gameState, Set<PlayerAction> options, boolean longTimeout);
 }

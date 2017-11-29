@@ -16,7 +16,8 @@ public class SensorInput implements InputManager  {
     BetManager m_betManager = new BetManager();
 
     public static final long TIMEOUT_READ_BETS_MS = 30000;
-    public static final long TIMEOUT_READ_INPUT_MS = 10000;
+    public static final long SHORT_TIMEOUT_READ_INPUT_MS = 6000;
+    public static final long LONG_TIMEOUT_READ_INPUT_MS = 20000;
 
     class PlayerInputListener extends SensorListener {
         PlayerInputListener(int playerId) {
@@ -55,7 +56,7 @@ public class SensorInput implements InputManager  {
     }
 
     @Override
-    public PlayerAction getInput(int playerId, GameContext gameState, Set<PlayerAction> options) {
+    public PlayerAction getInput(int playerId, GameContext gameState, Set<PlayerAction> options, boolean longTimeout) {
         System.out.println("Starting to wait for sensor input");
         SensorListener listener = null;
         if (playerId == 0) {
@@ -67,7 +68,8 @@ public class SensorInput implements InputManager  {
         if (listener == null)
             throw new RuntimeException("Player id invalid for SensorInput");
 
-        String msg = listener.blockUntilMessage(TIMEOUT_READ_INPUT_MS);
+        long timeout = longTimeout ? LONG_TIMEOUT_READ_INPUT_MS : SHORT_TIMEOUT_READ_INPUT_MS;
+        String msg = listener.blockUntilMessage(timeout);
         System.out.println("Message waited, result: " + msg);
         if (msg == null) {
             System.out.println("Timed out, no input.");
