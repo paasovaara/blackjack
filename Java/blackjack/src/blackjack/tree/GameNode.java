@@ -245,7 +245,8 @@ public class GameNode extends CompositeNode.SequenceNode {
             //In this point we could offer insurance if visible card would be 10 or 11.
             boolean dealerHasBj = false;
             if (hand.isBlackJack()) {
-                hand.revealHiddenCard();
+                Card c = hand.revealHiddenCard();
+                notifyDealerAction(GameContext.DEALER_PLAYER_ID, c, hand, DealerAction.RevealDealerCard);
                 notifyDealerAction(GameContext.DEALER_PLAYER_ID, null, null, DealerAction.Blackjack);
                 result.setResult(GameContext.DEALER_PLAYER_ID, GameResult.Result.Blackjack);
                 dealerHasBj = true;

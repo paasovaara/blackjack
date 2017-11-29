@@ -47,7 +47,10 @@ public class Hand {
 
     public boolean isBlackJack() {
         if (m_cards.size() == 2) {
-            return getMaxPipCount() == 21;
+            Card c1 = m_cards.getFirst();
+            Card c2 = m_cards.getLast();
+            return (c1.getRank().pips() == 10 && c2.getRank() == Rank.Ace) ||
+                    (c2.getRank().pips() == 10 && c1.getRank() == Rank.Ace);
         }
         else {
             return false;
