@@ -77,6 +77,7 @@ public class RobotUIProxy implements GameListener {
     private Delays m_uiDelays = NO_DELAYS;
     private Delays m_robotDelays = NO_DELAYS;
 
+    private SensorInput m_sensors; //HACK; THIS SHOULD NOT BE HERE
     public RobotUIProxy(boolean console, boolean ui, boolean robot, SensorInput sensors) {
         if (console) {
             m_console = new ConsoleOutput();
@@ -90,7 +91,9 @@ public class RobotUIProxy implements GameListener {
                 m_uiDelays = UI_DELAYS;
                 if (sensors != null) {
                     sensors.getBetManager().addListener(unity);
-                    m_unity.setUpdateBets(false);
+                    sensors.setUnityOutput(unity);//MAJOR HACK
+                    //m_unity.setUpdateBets(false);
+
                 }
             }
             catch (Exception e) {
@@ -131,7 +134,7 @@ public class RobotUIProxy implements GameListener {
 
     private void setBetUpdateActive(boolean update) {
         if (m_unity != null) {
-            m_unity.setUpdateBets(update);
+            //m_unity.setUpdateBets(update);
         }
     }
     @Override

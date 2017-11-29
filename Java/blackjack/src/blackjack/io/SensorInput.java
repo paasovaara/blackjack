@@ -44,7 +44,11 @@ public class SensorInput implements InputManager  {
 
         m_server.startServer();
     }
-
+    //MAJOR HACK
+    UnityOutput m_unity;
+    public void setUnityOutput(UnityOutput unity) {
+        m_unity = unity;
+    }
     public BetManager getBetManager() {
         return m_betManager;
     }
@@ -52,7 +56,16 @@ public class SensorInput implements InputManager  {
     @Override
     public List<Bet> getBets() {
         //Read using RFID
-        return m_betManager.readBets(TIMEOUT_READ_BETS_MS);
+        m_betManager.clearTags();
+        if (m_unity != null) {
+            m_unity.setUpdateBets(true);
+        }
+        List<Bet> bets = m_betManager.readBets(TIMEOUT_READ_BETS_MS);
+        if (m_unity != null) {
+            m_unity.setUpdateBets(false);
+        }
+        return bets;
+
     }
 
     @Override

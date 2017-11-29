@@ -27,7 +27,7 @@ public class BetManager {
     class BetListener extends SensorListener implements Runnable {
         private final Set<String> m_tags = new HashSet<>();
         private boolean m_running = false;
-        final int READ_TIMEOUT_MS = 1000;
+        final int READ_TIMEOUT_MS = 2000;
         private int m_playerId;
 
         private Set<String> m_blackList = new HashSet<>();
@@ -50,6 +50,8 @@ public class BetManager {
                 synchronized (m_tags) {
                     if (tag == null) {
                         if (m_tags.size() > 0) {
+                            System.out.println("Removing tags");
+
                             m_tags.clear();
                             notifyChange(0);
                         }
@@ -61,6 +63,7 @@ public class BetManager {
                                 m_tags.add(tag);
                                 Bet bet = parseBet(m_playerId, m_tags);
                                 notifyChange(bet.betAmount);
+
                             }
                             else {
                                 //System.out.println("Tag " + tag + " is blacklisted, please place another one");
@@ -130,10 +133,16 @@ public class BetManager {
         m_bets2.stop();
     }
 
-    public List<Bet> readBets(final long timeout) {
-        System.out.println("Starting to read bets with timeout " + timeout);
+    public void clearTags() {
         m_bets1.clearTags();
         m_bets2.clearTags();
+
+    }
+
+    public List<Bet> readBets(final long timeout) {
+        System.out.println("Starting to read bets with timeout " + timeout);
+        //m_bets1.clearTags();
+        //m_bets2.clearTags();
         //Block until timeout or both players have placed their bets.
         //Not beautiful but works I hope: TODO refactor
         List<Bet> bets = new LinkedList<>();
