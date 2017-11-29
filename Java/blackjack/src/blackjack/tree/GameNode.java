@@ -206,6 +206,13 @@ public class GameNode extends CompositeNode.SequenceNode {
         public DealInitHandNode(int playerId, Hand hand, boolean dealer) {
             addChild(new DealSingleCardNode(playerId, hand, false));
             addChild(new DealSingleCardNode(playerId, hand, dealer));
+            if (!dealer) {
+                //Let's notify immediately after the deal if player has blackjack
+                DecoratorNode alwaysSucceed = new DecoratorNode.SuccessNode();
+                alwaysSucceed.addChild(new CheckIfBlackjackNode(playerId, true));
+                addChild(alwaysSucceed);
+            }
+
         }
     }
 
@@ -259,7 +266,7 @@ public class GameNode extends CompositeNode.SequenceNode {
                 String key = GameContext.playerHandKey(id);
                 Hand playerHand = (Hand)m_context.getVariable(key);
                 if (playerHand.isBlackJack()) {
-                    notifyDealerAction(id, null, null, DealerAction.Blackjack);
+                    //notifyDealerAction(id, null, null, DealerAction.Blackjack);
                     GameResult.Result playerRes = dealerHasBj ? GameResult.Result.Push : GameResult.Result.Blackjack;
                     result.setResult(id, playerRes);
                     blackjackCount++;
@@ -327,7 +334,7 @@ public class GameNode extends CompositeNode.SequenceNode {
 
     private class PlayPlayerHandIfNecessary extends SelectorNode {
         public PlayPlayerHandIfNecessary(int id) {
-            addChild(new CheckIfBlackjackNode(id));
+            addChild(new CheckIfBlackjackNode(id, false));//We've already done notifications if needed.
             //let turn change always fail so it doesn't prevent for play to happen
             Node turnChange = new NotifyTurnChangeNode(id);
             Node failer = new DecoratorNode.FailureNode();
@@ -340,44 +347,51 @@ public class GameNode extends CompositeNode.SequenceNode {
 
     private class CheckIfBlackjackNode extends LeafNode {
         private int m_playerId = 0;
-        public CheckIfBlackjackNode(int id) {
+        private boolean m_notify = false;
+        public CheckIfBlackjackNode(int id, boolean notify) {
             m_playerId = id;
+            m_notify = notify;
         }
 
         @Override
         public Types.Status tick(ExecutionContext context) {
             String key = GameContext.playerHandKey(m_playerId);
             Hand hand = (Hand) context.getVariable(key);
-            if (hand.isBlackJack())
+            if (hand.isBlackJack()) {
+                if (m_notify) {
+                    notifyDealerAction(m_playerId, null, null, DealerAction.Blackjack);
+                }
                 return Types.Status.Success;
-            else
+            }
+            else {
                 return Types.Status.Failure;
+            }
         }
     }
 
 
     private class PlayDealerHandIfNecessary extends SelectorNode {
         public PlayDealerHandIfNecessary() {
-            addChild(new CheckIfAllBustedNode());
+            addChild(new CheckIfAllBustedOrWonNode());
             addChild(new PlayDealerHandNode());
         }
     }
 
-    private class CheckIfAllBustedNode extends LeafNode {
+    private class CheckIfAllBustedOrWonNode extends LeafNode {
         @Override
         public Types.Status tick(ExecutionContext context) {
             List<Integer> players = m_context.getPlayers();
 
-            int busted = 0;
+            int bustedOrWon = 0;
             for (Integer id: players) {
                 String key = GameContext.playerHandKey(id);
                 Hand hand = (Hand) m_context.getVariable(key);
-                if (hand.isBusted())
-                    busted++;
+                if (hand.isBusted() || hand.getBestPipCount() == 21)
+                    bustedOrWon++;
             }
             //if all busted we stop execution, otherwise we continue
             int playerCount = players.size();
-            return (busted == playerCount) ? Types.Status.Success : Types.Status.Failure;
+            return (bustedOrWon == playerCount) ? Types.Status.Success : Types.Status.Failure;
         }
     }
 
