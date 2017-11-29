@@ -289,8 +289,7 @@ public class GameNode extends CompositeNode.SequenceNode {
 
             List<Integer> players = m_context.getPlayers();
             for (Integer id: players) {
-                addChild(new NotifyTurnChangeNode(id));
-                addChild(new PlayPlayerHandNode(id));
+                addChild(new PlayPlayerHandIfNecessary(id));
             }
             addChild(new NotifyTurnChangeNode(GameContext.DEALER_PLAYER_ID));
             addChild(new RevealDealerHandNode());
@@ -324,6 +323,37 @@ public class GameNode extends CompositeNode.SequenceNode {
             super.initialize(context);
         }
     }
+
+    private class PlayPlayerHandIfNecessary extends SelectorNode {
+        public PlayPlayerHandIfNecessary(int id) {
+            addChild(new CheckIfBlackjackNode(id));
+            //let turn change always fail so it doesn't prevent for play to happen
+            Node turnChange = new NotifyTurnChangeNode(id);
+            Node failer = new DecoratorNode.FailureNode();
+            failer.addChild(turnChange);
+
+            addChild(failer);
+            addChild(new PlayPlayerHandNode(id));
+        }
+    }
+
+    private class CheckIfBlackjackNode extends LeafNode {
+        private int m_playerId = 0;
+        public CheckIfBlackjackNode(int id) {
+            m_playerId = id;
+        }
+
+        @Override
+        public Types.Status tick(ExecutionContext context) {
+            String key = GameContext.playerHandKey(m_playerId);
+            Hand hand = (Hand) context.getVariable(key);
+            if (hand.isBlackJack())
+                return Types.Status.Success;
+            else
+                return Types.Status.Failure;
+        }
+    }
+
 
     private class PlayDealerHandIfNecessary extends SelectorNode {
         public PlayDealerHandIfNecessary() {
