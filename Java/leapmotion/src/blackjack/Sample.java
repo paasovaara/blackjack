@@ -76,7 +76,7 @@ class SampleListener extends Listener {
             info("Hand present");
         }*/
         boolean notify = false;
-        for(Hand hand : frame.hands()) {
+        /*for(Hand hand : frame.hands()) {
             String handType = hand.isLeft() ? "Left hand" : "Right hand";
             debug("  " + handType + ", id: " + hand.id()
                     + ", palm position: " + hand.palmPosition());
@@ -92,10 +92,19 @@ class SampleListener extends Listener {
             else {
                 debug("Hand in invalid roll: " + handNormalRoll);
             }
+        }*/
+        notify = !frame.hands().isEmpty();
+
+        if (!notify) {
+            notify = !frame.fingers().isEmpty();
+            if (notify) {
+                debug("Saw fingers, notifying: " + frame.fingers().count());
+            }
+
         }
 
         if (notify) {
-            info("Hand present");
+            info("Hand or fingers present");
             sendEvent();
         }
     }
