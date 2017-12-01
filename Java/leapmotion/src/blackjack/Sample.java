@@ -10,6 +10,8 @@ package blackjack;
 
 import java.io.IOException;
 import java.lang.Math;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import blackjack.utils.*;
 import com.leapmotion.leap.*;
@@ -18,6 +20,8 @@ import com.leapmotion.leap.Gesture.State;
 class SampleListener extends Listener {
     EventSender m_sender = new EventSender();
     String m_payload = "stay{0}";
+    private int m_frameCounter = 0;
+    private long m_frameTimer = System.currentTimeMillis();
 
     public void onInit(Controller controller) {
         System.out.println("Initialized");
@@ -107,6 +111,30 @@ class SampleListener extends Listener {
             info("Hand or fingers present");
             sendEvent();
         }
+
+        m_frameCounter++;
+    }
+    /*
+    private void maybePrintFps() {
+        final int TIMER_INTERVAL_MS = 10000;
+        m_frameCounter++;
+        long now = System.currentTimeMillis();
+        if (now - m_frameTimer >= TIMER_INTERVAL_MS) {
+            float fps = ((float)m_frameCounter * 1000.0f) / (float)TIMER_INTERVAL_MS;
+            info("FPS: " + fps);
+            m_frameTimer = now;
+            m_frameCounter = 0;
+        }
+    }*/
+
+    public void printFps() {
+        long now = System.currentTimeMillis();
+        long elapsed = now - m_frameTimer;
+
+        float fps = ((float)m_frameCounter * 1000.0f) / (float)elapsed;
+        info("FPS: " + fps);
+        m_frameTimer = now;
+        m_frameCounter = 0;
     }
 
     private static boolean printDebug = false;
@@ -126,13 +154,22 @@ class SampleListener extends Listener {
 class Sample {
     public static void main(String[] args) {
         // Create a sample listener and controller
-        SampleListener listener = new SampleListener();
+        final SampleListener listener = new SampleListener();
         Controller controller = new Controller();
 
         // Have the sample listener receive events from the controller
         controller.setPolicy(Controller.PolicyFlag.POLICY_BACKGROUND_FRAMES);
         controller.addListener(listener);
 
+        final int TIMER_INTERVAL_MS = 10000;
+
+        java.util.Timer timer = new Timer(true);
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                listener.printFps();
+            }
+        }, TIMER_INTERVAL_MS, TIMER_INTERVAL_MS);
         // Keep this process running until Enter is pressed
         System.out.println("Press Enter to quit...");
         try {
