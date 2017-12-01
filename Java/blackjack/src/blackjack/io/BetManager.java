@@ -169,8 +169,8 @@ public class BetManager {
 
         }
         //Blacklist current tags for next round so player must change them between rounds
-        m_bets1.setBlacklist(tags1);
-        m_bets2.setBlacklist(tags2);
+        //m_bets1.setBlacklist(tags1);
+        //m_bets2.setBlacklist(tags2);
 
         return bets;
     }
