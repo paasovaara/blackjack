@@ -1,6 +1,6 @@
 require 'libusb'
 
-`./scripts/fix_permissions`
+`./fix_permissions`
 
 usb = LIBUSB::Context.new
 

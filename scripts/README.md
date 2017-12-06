@@ -9,6 +9,8 @@ Using these scripts is optional, you can just launch everything manually.
 
 ## Prerequisite:
 
+Modify [fix_device_ports.rb-script](fix_device_ports.rb) and map the serial numbers for all connected HW to this script. You can use list_devices.rb script to find them out after connecting all devices.
+
 Currently only tested on Ubuntu.
 
 Recommend using ```rbenv``` to install & manage ruby versions. This is already done in production laptop.
