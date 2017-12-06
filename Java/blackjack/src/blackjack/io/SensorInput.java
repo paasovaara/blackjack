@@ -17,7 +17,7 @@ public class SensorInput implements InputManager  {
 
     public static final long TIMEOUT_READ_BETS_MS = 10000;
     public static final long SHORT_TIMEOUT_READ_INPUT_MS = 6000;
-    public static final long LONG_TIMEOUT_READ_INPUT_MS = 20000;
+    public static final long LONG_TIMEOUT_READ_INPUT_MS = 12000;
 
     class PlayerInputListener extends SensorListener {
         PlayerInputListener(int playerId) {
@@ -82,6 +82,7 @@ public class SensorInput implements InputManager  {
             throw new RuntimeException("Player id invalid for SensorInput");
 
         long timeout = longTimeout ? LONG_TIMEOUT_READ_INPUT_MS : SHORT_TIMEOUT_READ_INPUT_MS;
+        //long timeout = SHORT_TIMEOUT_READ_INPUT_MS;
         String msg = listener.blockUntilMessage(timeout);
         System.out.println("Message waited, result: " + msg);
         if (msg == null) {
