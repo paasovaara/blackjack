@@ -11,9 +11,14 @@ public class Main {
         for(int n = 0; n < args.length; n++) {
             set.add(args[n]);
         }
-	    boolean prod = set.contains("prod");
-        boolean sensors = set.contains("sensors");
-        boolean robot = set.contains("robot");
-        BlackJack.playGame(!prod, sensors, robot);
+        if (set.contains("simulate")) {
+            BlackJack.simulateGame();
+        }
+        else {
+            boolean prod = set.contains("prod");
+            boolean sensors = set.contains("sensors");
+            boolean robot = set.contains("robot");
+            BlackJack.playGame(!prod, sensors, robot);
+        }
     }
 }

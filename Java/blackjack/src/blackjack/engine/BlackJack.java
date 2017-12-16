@@ -29,6 +29,14 @@ public class BlackJack {
         return game;
     }
 
+    public static GameNode createAIGame() {
+        InputManager input = new AIPlayerInput();
+        GameNode game = new GameNode(input, DEFAULT_DECK_COUNT);
+        game.addListener(new ConsoleOutput());
+        return game;
+    }
+
+
     public static GameNode createRobotWithUIGame(boolean sensorInput, boolean robot) {
         InputManager input;
         SensorInput sensors = null;
@@ -62,6 +70,15 @@ public class BlackJack {
         m_executor.initialize(root, game.getContext());
         m_executor.start(100, 0);
     }
+
+    public static void simulateGame() {
+        GameNode game = createAIGame();
+        Node root = new DecoratorNode.FiniteRepeaterNode(5);
+        root.addChild(game);
+        m_executor.initialize(root, game.getContext());
+        m_executor.start(10, 0);
+    }
+
 
     //TODO think about this..
     public static void quitGame() {
