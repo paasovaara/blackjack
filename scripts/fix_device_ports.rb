@@ -1,9 +1,9 @@
 require 'libusb'
 
-`./scripts/fix_permissions`
+`./fix_permissions`
 
 def get_dev_path(device_identifier)
-  matching_output = `./scripts/list_devices`.split(/\n/).select{ |i| i[device_identifier] }[0]
+  matching_output = `./list_devices`.split(/\n/).select{ |i| i[device_identifier] }[0]
   if matching_output
     return matching_output.split(' ')[0]
   end
