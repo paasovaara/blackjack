@@ -30,7 +30,7 @@ public class BlackJack {
 
     public static GameNode createAIGame() {
         InputManager input = new AIPlayerInput();
-        GameNode game = new GameNode(input, GameSettings.DEFAULT);
+        GameNode game = new GameNode(input, GameSettings.AI_DEFAULT);
         game.addListener(new ConsoleOutput());
         return game;
     }
