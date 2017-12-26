@@ -1,0 +1,10 @@
+package blackjack.models;
+
+public class GameSettings {
+    public int deckCount = 1;
+    public float shuffleDeckRatio = 0.5f;
+    public int delayAfterResultsMs = 3000;
+    public int dealerActionLengthMs = 2000;
+
+    public static final GameSettings DEFAULT = new GameSettings();
+}

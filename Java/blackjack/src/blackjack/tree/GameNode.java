@@ -14,14 +14,13 @@ public class GameNode extends CompositeNode.SequenceNode {
     InputManager m_input;
     Deck m_deck;
     GameContext m_context;
-    private int m_deckCount = 1;
 
-    private static final float SHUFFLE_DECK_RATIO = 0.5f;
+    private GameSettings m_settings;
     private LinkedList<GameListener> m_listeners = new LinkedList<>();
 
-    public GameNode(InputManager input, int howManyDecks) {
+    public GameNode(InputManager input, GameSettings settings) {
         m_input = input;
-        m_deckCount = howManyDecks;
+        m_settings = settings;
         reset();
         createTree();
     }
@@ -81,7 +80,7 @@ public class GameNode extends CompositeNode.SequenceNode {
     }
 
     public void reset() {
-        m_deck = new Deck(m_deckCount);
+        m_deck = new Deck(m_settings.deckCount);
         m_deck.shuffle();
         notifyDealerAction(GameContext.DEALER_PLAYER_ID, null, null, DealerAction.Shuffle);
 
@@ -115,7 +114,7 @@ public class GameNode extends CompositeNode.SequenceNode {
             m_context.clear();
             m_context.setVariable(GameContext.KEY_TIMES_WAITED, timesWaited);
 
-            if (m_deck.deckRemaining() < SHUFFLE_DECK_RATIO) {
+            if (m_deck.deckRemaining() < m_settings.shuffleDeckRatio) {
                 m_deck.shuffle();
                 notifyDealerAction(GameContext.DEALER_PLAYER_ID, null, null, DealerAction.Shuffle);
             }
@@ -299,10 +298,10 @@ public class GameNode extends CompositeNode.SequenceNode {
             }
             addChild(new NotifyTurnChangeNode(GameContext.DEALER_PLAYER_ID));
             addChild(new RevealDealerHandNode());
-            addChild(new PlayDealerHandIfNecessary());
+            addChild(new PlayDealerHandIfNecessary(m_settings.dealerActionLengthMs));
 
             //Have a short pause after revealing winners
-            Node delay = new DecoratorNode.DelayAfterRunningNode(3000);
+            Node delay = new DecoratorNode.DelayAfterRunningNode(m_settings.delayAfterResultsMs);
             delay.addChild(new DetermineWinnerNode());
 
             addChild(delay);
@@ -369,9 +368,9 @@ public class GameNode extends CompositeNode.SequenceNode {
 
 
     private class PlayDealerHandIfNecessary extends SelectorNode {
-        public PlayDealerHandIfNecessary() {
+        public PlayDealerHandIfNecessary(int dealerActionLength) {
             addChild(new CheckIfAllBustedOrWonNode());
-            addChild(new PlayDealerHandNode());
+            addChild(new PlayDealerHandNode(dealerActionLength));
         }
     }
 
@@ -395,10 +394,10 @@ public class GameNode extends CompositeNode.SequenceNode {
 
 
     private class PlayDealerHandNode extends SequenceNode {
-        public PlayDealerHandNode() {
+        public PlayDealerHandNode(int lengthForEachActionMs) {
             Node repeater = new DecoratorNode.RepeatUntilSuccessNode();
             addChild(repeater);
-            Node delay = new DecoratorNode.DelayAfterRunningNode(2000);
+            Node delay = new DecoratorNode.DelayAfterRunningNode(lengthForEachActionMs);
             delay.addChild(new DealerHitUnder17Node());
             repeater.addChild(delay);
         }

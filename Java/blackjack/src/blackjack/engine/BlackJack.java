@@ -5,6 +5,7 @@ import behave.models.DecoratorNode;
 import behave.models.Node;
 import behave.tools.Log;
 import blackjack.io.*;
+import blackjack.models.GameSettings;
 import blackjack.tree.GameNode;
 import blackjack.utils.Config;
 import blackjack.utils.ConfigUtils;
@@ -16,22 +17,20 @@ import java.util.Random;
  * Bunch of static methods for creating the game
  */
 public class BlackJack {
-    public static final int DEFAULT_DECK_COUNT = 1;
-
     private static Executor m_executor = new Executor(); // TODO think if we need custom executor
 
     private static Random m_random = new Random();
 
     public static GameNode createConsoleGame() {
         InputManager input = new ConsoleInput();
-        GameNode game = new GameNode(input, DEFAULT_DECK_COUNT);
+        GameNode game = new GameNode(input, GameSettings.DEFAULT);
         game.addListener(new ConsoleOutput());
         return game;
     }
 
     public static GameNode createAIGame() {
         InputManager input = new AIPlayerInput();
-        GameNode game = new GameNode(input, DEFAULT_DECK_COUNT);
+        GameNode game = new GameNode(input, GameSettings.DEFAULT);
         game.addListener(new ConsoleOutput());
         return game;
     }
@@ -54,7 +53,7 @@ public class BlackJack {
         else {
             input = new ConsoleInput();
         }
-        GameNode game = new GameNode(input, DEFAULT_DECK_COUNT);
+        GameNode game = new GameNode(input, GameSettings.DEFAULT);
 
         RobotUIProxy listener = new RobotUIProxy(true, true, robot, sensors);
         game.addListener(listener);
