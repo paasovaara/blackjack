@@ -17,9 +17,8 @@ import java.util.Random;
  * Bunch of static methods for creating the game
  */
 public class BlackJack {
-    private static Executor m_executor = new Executor(); // TODO think if we need custom executor
-
-    private static Random m_random = new Random();
+    private static Executor m_defaultExecutor = new Executor(); // TODO think if we need custom executor
+    private static Executor m_aiExecutor = new AIGameExecutor();
 
     public static GameNode createConsoleGame() {
         InputManager input = new ConsoleInput();
@@ -66,22 +65,22 @@ public class BlackJack {
         GameNode game = console ? createConsoleGame() : createRobotWithUIGame(sensors, robot);
         Node root = new DecoratorNode.InfiniteRepeaterNode();
         root.addChild(game);
-        m_executor.initialize(root, game.getContext());
-        m_executor.start(100, 0);
+        m_defaultExecutor.initialize(root, game.getContext());
+        m_defaultExecutor.start(100, 0);
     }
 
     public static void simulateGame() {
         GameNode game = createAIGame();
         Node root = new DecoratorNode.FiniteRepeaterNode(5);
         root.addChild(game);
-        m_executor.initialize(root, game.getContext());
-        m_executor.start(10, 0);
+        m_aiExecutor.initialize(root, game.getContext());
+        m_aiExecutor.start(0, 0);
     }
 
 
     //TODO think about this..
     public static void quitGame() {
-        m_executor.stop();
+        m_defaultExecutor.stop();
     }
 
     private static int s_winnings = -1;

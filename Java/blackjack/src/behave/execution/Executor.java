@@ -9,10 +9,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class Executor {
-    private Node m_root;
-    private ExecutionContext m_context;
-    private Timer m_timer;
-    private long m_lastTickTimestamp = 0;
+    protected Node m_root;
+    protected ExecutionContext m_context;
+    protected Timer m_timer;
+    protected long m_lastTickTimestamp = 0;
 
     public void initialize(Node root) {
         initialize(root, new ExecutionContext());
