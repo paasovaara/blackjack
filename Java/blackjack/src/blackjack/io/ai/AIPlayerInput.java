@@ -1,4 +1,4 @@
-package blackjack.io;
+package blackjack.io.ai;
 
 import blackjack.engine.GameContext;
 import blackjack.engine.InputManager;

@@ -1,8 +1,10 @@
-package blackjack.io;
+package blackjack.io.views;
 
 import blackjack.engine.GameContext;
 import blackjack.engine.GameListener;
 import blackjack.engine.Simulator;
+import blackjack.io.console.ConsoleOutput;
+import blackjack.io.sensors.SensorInput;
 import blackjack.models.*;
 import blackjack.utils.Config;
 

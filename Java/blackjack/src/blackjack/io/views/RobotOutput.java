@@ -1,4 +1,4 @@
-package blackjack.io;
+package blackjack.io.views;
 
 import blackjack.engine.GameContext;
 import blackjack.engine.GameListener;
