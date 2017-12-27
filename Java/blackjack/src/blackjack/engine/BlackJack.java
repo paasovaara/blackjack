@@ -4,7 +4,7 @@ import behave.execution.Executor;
 import behave.models.DecoratorNode;
 import behave.models.Node;
 import behave.tools.Log;
-import blackjack.io.ai.AIPlayerInput;
+import blackjack.ai.AITrainingDataCollector;
 import blackjack.io.console.ConsoleInput;
 import blackjack.io.console.ConsoleOutput;
 import blackjack.io.sensors.SensorInput;
@@ -31,10 +31,17 @@ public class BlackJack {
     }
 
     public static GameNode createAIGame() {
-        InputManager input = new AIPlayerInput();
-        GameNode game = new GameNode(input, GameSettings.AI_DEFAULT);
-        game.addListener(new ConsoleOutput());
-        return game;
+        try {
+            AITrainingDataCollector trainingCollector = new AITrainingDataCollector();
+            trainingCollector.initialize("dataset.txt");
+            GameNode game = new GameNode(trainingCollector, GameSettings.AI_DEFAULT);
+            game.addListener(trainingCollector);
+            return game;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 
@@ -74,7 +81,7 @@ public class BlackJack {
 
     public static void simulateGame() {
         GameNode game = createAIGame();
-        Node root = new DecoratorNode.FiniteRepeaterNode(5000);
+        Node root = new DecoratorNode.FiniteRepeaterNode(50);
         root.addChild(game);
         m_aiExecutor.initialize(root, game.getContext());
         m_aiExecutor.start(0, 0);

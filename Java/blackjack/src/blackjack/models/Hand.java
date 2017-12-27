@@ -80,7 +80,7 @@ public class Hand {
         return getMinPipCount() > 21;
     }
 
-    private int getMinPipCount() {
+    public int getMinPipCount() {
         return calcSum(true);
     }
 
