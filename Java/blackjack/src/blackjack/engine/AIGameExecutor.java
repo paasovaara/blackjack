@@ -13,10 +13,24 @@ public class AIGameExecutor extends Executor {
             throw new RuntimeException("Already running");
         }
         m_running = true;
-        System.out.println("Starting the game, press any key to quit...");
+
 
         m_lastTickTimestamp = System.currentTimeMillis();
         m_root.initialize(m_context);
+
+        Thread readerThread = new Thread() {
+            public void run() {
+                System.out.println("Starting the game, press any key to quit...");
+                try {
+                    System.in.read();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                AIGameExecutor.this.stop();
+            }
+        };
+        readerThread.setDaemon(true);
+        readerThread.start();
 
         Thread t = new Thread() {
             public void run() {
@@ -26,13 +40,6 @@ public class AIGameExecutor extends Executor {
             }
         };
         t.start();
-
-        try {
-            System.in.read();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        stop();
     }
 
     @Override

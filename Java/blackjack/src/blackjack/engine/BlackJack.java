@@ -71,7 +71,7 @@ public class BlackJack {
 
     public static void simulateGame() {
         GameNode game = createAIGame();
-        Node root = new DecoratorNode.FiniteRepeaterNode(5);
+        Node root = new DecoratorNode.FiniteRepeaterNode(5000);
         root.addChild(game);
         m_aiExecutor.initialize(root, game.getContext());
         m_aiExecutor.start(0, 0);
