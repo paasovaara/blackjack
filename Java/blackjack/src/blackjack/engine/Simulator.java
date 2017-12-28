@@ -62,6 +62,8 @@ public class Simulator {
         }
     }
 
+    public static final int DEFAULT_ITERATION_COUNT = 50000;
+
     public static Card simulateCard(final Deck deck) {
         Deck copyDeck = new Deck(deck);
 
@@ -71,16 +73,24 @@ public class Simulator {
     }
 
     public static Statistics simulateHit(final Hand hand, final Hand dealerHand, final Deck deck) {
-        return simulateAction(PlayerAction.Hit, hand, dealerHand, deck);
+        return simulateHit(hand, dealerHand, deck, DEFAULT_ITERATION_COUNT);
+    }
+
+    public static Statistics simulateHit(final Hand hand, final Hand dealerHand, final Deck deck, final int iterations) {
+        return simulateAction(PlayerAction.Hit, hand, dealerHand, deck, iterations);
     }
 
     public static Statistics simulateStay(final Hand hand, final Hand dealerHand, final Deck deck) {
-        return simulateAction(PlayerAction.Stay, hand, dealerHand, deck);
+        return simulateStay(hand, dealerHand, deck, DEFAULT_ITERATION_COUNT);
     }
 
-    private static Statistics simulateAction(PlayerAction action, final Hand hand, final Hand dealerHand, final Deck deck) {
+    public static Statistics simulateStay(final Hand hand, final Hand dealerHand, final Deck deck, final int iterations) {
+        return simulateAction(PlayerAction.Stay, hand, dealerHand, deck, iterations);
+    }
+
+    private static Statistics simulateAction(PlayerAction action, final Hand hand, final Hand dealerHand, final Deck deck, final int iterations) {
         Statistics s = new Statistics();
-        final int iterations = 100000;
+
         s.iterations = iterations;
 
         for(int n = 0; n < iterations; n++) {
