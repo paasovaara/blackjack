@@ -6,6 +6,15 @@ public class TrainingSample {
     public int dealerPips;
     public int correctAction;
 
+    public TrainingSample(){};
+
+    public TrainingSample(int best, int min, int dealer, int correct) {
+        bestPips = best;
+        minPips = min;
+        dealerPips = dealer;
+        correctAction = correct;
+    }
+
     @Override
     public String toString() {
         return Integer.toString(bestPips) + "," +

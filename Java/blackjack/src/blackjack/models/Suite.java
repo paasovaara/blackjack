@@ -13,6 +13,16 @@ public enum Suite {
         return m_asInt;
     }
 
+    public static Suite fromId(int id) {
+        switch (id) {
+            case 0: return Hearts;
+            case 1: return Diamonds;
+            case 2: return Clubs;
+            case 3: return Spades;
+            default: throw new RuntimeException("Invalid Suite id! " + id);
+        }
+    }
+
     public String toString() {
         switch (this) {
             case Hearts: return "Hearts";

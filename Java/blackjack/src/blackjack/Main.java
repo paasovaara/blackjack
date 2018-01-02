@@ -12,7 +12,10 @@ public class Main {
             set.add(args[n]);
         }
         if (set.contains("simulate")) {
-            BlackJack.simulateGame();
+            BlackJack.generateTrainingDataBySimulating();
+        }
+        else if (set.contains("train")) {
+            BlackJack.trainAiGame();
         }
         else {
             boolean prod = set.contains("prod");

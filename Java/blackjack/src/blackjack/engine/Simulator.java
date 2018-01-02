@@ -87,7 +87,7 @@ public class Simulator {
     public static Statistics simulateStay(final Hand hand, final Hand dealerHand, final Deck deck, final int iterations) {
         return simulateAction(PlayerAction.Stay, hand, dealerHand, deck, iterations);
     }
-
+    //TODO simulate game till the end.
     private static Statistics simulateAction(PlayerAction action, final Hand hand, final Hand dealerHand, final Deck deck, final int iterations) {
         Statistics s = new Statistics();
 
@@ -128,12 +128,12 @@ public class Simulator {
 
     public static void main(String[] args) {
         Hand h = new Hand();
-        h.addCard(new Card(Suite.Clubs, Rank.Six));
-        h.addCard(new Card(Suite.Clubs, Rank.Seven));
+        h.addCard(new Card(Suite.Clubs, Rank.Two));
+        h.addCard(new Card(Suite.Clubs, Rank.Two));
 
         Hand dealer = new Hand();
         //Deal only one initial card, to simulate a hidden card which is randomly picked
-        dealer.addCard(new Card(Suite.Hearts, Rank.Two));
+        dealer.addCard(new Card(Suite.Hearts, Rank.Ace));
 
         Deck d = new Deck(1);
 

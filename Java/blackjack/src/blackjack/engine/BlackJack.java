@@ -5,6 +5,7 @@ import behave.models.DecoratorNode;
 import behave.models.Node;
 import behave.tools.Log;
 import blackjack.ai.AITrainingDataCollector;
+import blackjack.ai.AITrainingDataGenerator;
 import blackjack.io.console.ConsoleInput;
 import blackjack.io.console.ConsoleOutput;
 import blackjack.io.sensors.SensorInput;
@@ -44,6 +45,15 @@ public class BlackJack {
         }
     }
 
+    public static void generateTrainingDataBySimulating() {
+        try {
+            AITrainingDataGenerator.generateAndSave("dataset-simulated.txt");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public static GameNode createRobotWithUIGame(boolean sensorInput, boolean robot) {
         InputManager input;
@@ -79,7 +89,7 @@ public class BlackJack {
         m_defaultExecutor.start(100, 0);
     }
 
-    public static void simulateGame() {
+    public static void trainAiGame() {
         GameNode game = createAIGame();
         Node root = new DecoratorNode.FiniteRepeaterNode(50);
         root.addChild(game);
