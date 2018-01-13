@@ -15,9 +15,6 @@ figure; hold on;
 % Find indices 
 positive = find(y == 1);
 negative = find(y == 0);
-size(positive)
-size(negative)
-size(y)
 
 plot(X(positive, 1), X(positive, 2), 'k+', 'LineWidth', 2, 'MarkerSize', 7);
 

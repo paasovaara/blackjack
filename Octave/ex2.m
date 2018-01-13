@@ -140,8 +140,10 @@ csvwrite('model-simple.csv', theta);
 %  Predict probability for a hand with pips 17 and dealer 10
 
 prob = sigmoid([1 17 10] * theta);
+hit = prob >= 0.5;
 fprintf(['For hand 17 against dealer 10 we predict ' ...
-         'probability of %f\n'], prob);
+         'probability of %f for hitting, so action is: %f\n'], prob, hit);
+
 %fprintf('Expected value: 0.775 +/- 0.002\n\n');
 
 % Compute accuracy on our training set
