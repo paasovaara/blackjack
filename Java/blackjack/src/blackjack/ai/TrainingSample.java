@@ -1,17 +1,14 @@
 package blackjack.ai;
 
-public class TrainingSample {
-    public int bestPips;
-    public int minPips;
-    public int dealerPips;
+public class TrainingSample extends Sample {
     public int correctAction;
 
-    public TrainingSample(){};
+    public TrainingSample(){
+        super(0, 0, 0);
+    };
 
     public TrainingSample(int best, int min, int dealer, int correct) {
-        bestPips = best;
-        minPips = min;
-        dealerPips = dealer;
+        super(best, min, dealer);
         correctAction = correct;
     }
 
