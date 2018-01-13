@@ -65,6 +65,7 @@ public class ConsoleOutput implements GameListener {
     public void blackjack(int playerId, GameContext context) {
         if (playerId == -1)  {
             System.out.println("Dealer has blackjack!");
+            System.out.println(AsciiArt.printHands(context));
         }
         else {
             System.out.println("Player "+ playerId + " has blackjack!");
@@ -88,6 +89,7 @@ public class ConsoleOutput implements GameListener {
         }
         else {
             System.out.println("\tDealt dealer a card " + card);
+            System.out.println(AsciiArt.printHands(context));
         }
         System.out.println("Current hand " + hand);
     }
@@ -95,7 +97,6 @@ public class ConsoleOutput implements GameListener {
     @Override
     public void stay(int playerId, Hand hand, GameContext context) {
         System.out.println("Staying, Current hand " + hand);
-
     }
 
     @Override
@@ -106,6 +107,7 @@ public class ConsoleOutput implements GameListener {
     @Override
     public void gameEnded(GameResult results, GameContext context) {
         System.out.println("GAME OVER");
+        System.out.println(AsciiArt.printHands(context));
         System.out.println(results);
     }
 

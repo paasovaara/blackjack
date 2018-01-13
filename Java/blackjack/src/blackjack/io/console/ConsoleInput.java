@@ -81,10 +81,8 @@ public class ConsoleInput implements InputManager {
     public PlayerAction getInput(int playerId, GameContext gameState, Set<PlayerAction> options, boolean longTimeout) {
         while(true) {
             try {
-                String key = GameContext.playerHandKey(playerId);
-                Hand hand = (Hand)gameState.getVariable(key);
-                Hand dealerHand =(Hand)gameState.getVariable(GameContext.KEY_DEALER_HAND);
-                printInput("Player[" + playerId + "]: Your hand " + hand.toString() + ";  Dealer hand " +dealerHand.toString()+"\nChoose (h)it, (s)tay, (q)uit, (a)dvice or (d)ebug:");
+                String print = AsciiArt.printHands(gameState) + "\nChoose (h)it, (s)tay, (q)uit, (a)dvice or (d)ebug:";
+                printInput(print);
                 //Now hardcoding the options, TODO read from options-set
                 String input = readInput().trim().toLowerCase();
                 if (input.equals("h")) {
