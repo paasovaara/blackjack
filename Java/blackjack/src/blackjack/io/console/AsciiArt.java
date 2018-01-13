@@ -24,13 +24,13 @@ public class AsciiArt {
         Hand dealerHand =(Hand)gameState.getVariable(GameContext.KEY_DEALER_HAND);
         buf.append("\t\t\t\t");
         buf.append(Integer.toString(dealerHand.getBestPipCount()));
+        buf.append("\n");
         if (isDealerTurn(curPlayer)) {
             buf.append("\t\t\t\t^\n");
         }
         else {
             buf.append("\n");
         }
-        buf.append("\n");
         List<Integer> players = gameState.getPlayers();
         for(int id: players) {
             String key = GameContext.playerHandKey(id);
