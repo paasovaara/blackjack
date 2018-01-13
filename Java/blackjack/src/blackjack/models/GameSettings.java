@@ -6,6 +6,7 @@ public class GameSettings {
     public int delayAfterResultsMs = 3000;
     public int dealerActionLengthMs = 2000;
     public boolean useDefaultBet = true;
+    public String AIModelFile = "model-simple.csv";
 
     public static final GameSettings DEFAULT = new GameSettings();
     public static final GameSettings AI_DEFAULT;
@@ -14,5 +15,6 @@ public class GameSettings {
         AI_DEFAULT.delayAfterResultsMs = 0;
         AI_DEFAULT.dealerActionLengthMs = 0;
         AI_DEFAULT.useDefaultBet = true;
+        AI_DEFAULT.AIModelFile = "model-simple.csv";
     }
 }
