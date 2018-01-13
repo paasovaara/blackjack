@@ -124,6 +124,8 @@ hold off;
 fprintf('\nProgram paused. Press enter to continue.\n');
 pause;
 
+csvwrite('model-simple.csv', theta);
+
 %% ============== Part 4: Predict and Accuracies ==============
 %  After learning the parameters, you'll like to use it to predict the outcomes
 %  on unseen data. In this part, you will use the logistic regression model
@@ -135,13 +137,12 @@ pause;
 %
 %  Your task is to complete the code in predict.m
 
-%  Predict probability for a student with score 45 on exam 1 
-%  and score 85 on exam 2 
+%  Predict probability for a hand with pips 17 and dealer 10
 
-prob = sigmoid([1 45 85] * theta);
-fprintf(['For a student with scores 45 and 85, we predict an admission ' ...
+prob = sigmoid([1 17 10] * theta);
+fprintf(['For hand 17 against dealer 10 we predict ' ...
          'probability of %f\n'], prob);
-fprintf('Expected value: 0.775 +/- 0.002\n\n');
+%fprintf('Expected value: 0.775 +/- 0.002\n\n');
 
 % Compute accuracy on our training set
 p = predict(theta, X);
