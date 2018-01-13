@@ -5,6 +5,7 @@ public class GameSettings {
     public float shuffleDeckRatio = 0.5f;
     public int delayAfterResultsMs = 3000;
     public int dealerActionLengthMs = 2000;
+    public boolean useDefaultBet = true;
 
     public static final GameSettings DEFAULT = new GameSettings();
     public static final GameSettings AI_DEFAULT;
@@ -12,5 +13,6 @@ public class GameSettings {
         AI_DEFAULT = new GameSettings();
         AI_DEFAULT.delayAfterResultsMs = 0;
         AI_DEFAULT.dealerActionLengthMs = 0;
+        AI_DEFAULT.useDefaultBet = true;
     }
 }

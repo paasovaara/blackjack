@@ -25,8 +25,9 @@ public class BlackJack {
     private static Executor m_aiExecutor = new AIGameExecutor();
 
     public static GameNode createConsoleGame() {
-        InputManager input = new ConsoleInput();
-        GameNode game = new GameNode(input, GameSettings.DEFAULT);
+        GameSettings settings = GameSettings.DEFAULT;
+        InputManager input = new ConsoleInput(settings);
+        GameNode game = new GameNode(input, settings);
         game.addListener(new ConsoleOutput());
         return game;
     }
@@ -58,6 +59,7 @@ public class BlackJack {
     public static GameNode createRobotWithUIGame(boolean sensorInput, boolean robot) {
         InputManager input;
         SensorInput sensors = null;
+        GameSettings settings = GameSettings.DEFAULT;
         if (sensorInput) {
             sensors = new SensorInput();
             try {
@@ -70,9 +72,9 @@ public class BlackJack {
             input = sensors;
         }
         else {
-            input = new ConsoleInput();
+            input = new ConsoleInput(settings);
         }
-        GameNode game = new GameNode(input, GameSettings.DEFAULT);
+        GameNode game = new GameNode(input, settings);
 
         RobotUIProxy listener = new RobotUIProxy(true, true, robot, sensors);
         game.addListener(listener);

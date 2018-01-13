@@ -3,6 +3,7 @@ package blackjack.io.console;
 import blackjack.engine.GameContext;
 import blackjack.engine.InputManager;
 import blackjack.models.Bet;
+import blackjack.models.GameSettings;
 import blackjack.models.Hand;
 import blackjack.models.PlayerAction;
 
@@ -15,9 +16,11 @@ import java.util.Set;
 
 public class ConsoleInput implements InputManager {
     BufferedReader m_in;
+    private boolean m_useDefaultBets;
 
-    public ConsoleInput() {
+    public ConsoleInput(GameSettings settings) {
         m_in = new BufferedReader(new InputStreamReader(System.in));
+        m_useDefaultBets = settings.useDefaultBet;
     }
 
     private String readInput() throws IOException {
@@ -33,11 +36,16 @@ public class ConsoleInput implements InputManager {
         System.out.print(">");
     }
 
-    private int getPlayerCount() {
+    private int getPlayerCount(boolean human) {
         int players = -1;
         while(players < 0) {
             try {
-                printInput("How many players?");
+                if (human) {
+                    printInput("How many players?");
+                }
+                else {
+                    printInput("How many AI?");
+                }
                 String in = readInput();
                 players = Integer.parseInt(in.trim());
             }
@@ -65,15 +73,16 @@ public class ConsoleInput implements InputManager {
 
     @Override
     public List<Bet> getBets() {
-        int players = getPlayerCount();
+        int players = getPlayerCount(true);
         LinkedList<Bet> bets = new LinkedList<>();
         for(int n = 0; n < players; n++) {
-            int betValue = getBet(n);
+            int betValue = m_useDefaultBets ? 1 : getBet(n);
             if (betValue > 0) {
                 Bet bet = new Bet(n, betValue);
                 bets.add(bet);
             }
         }
+
         return bets;
     }
 
