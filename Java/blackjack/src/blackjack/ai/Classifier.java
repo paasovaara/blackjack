@@ -1,5 +1,7 @@
 package blackjack.ai;
 
+import behave.tools.Log;
+
 import java.io.File;
 import java.nio.file.Files;
 import java.util.List;
@@ -15,6 +17,8 @@ public class Classifier {
 
     public Classifier(double[] theta) {
         m_theta = theta;
+        int length = m_theta.length;
+        Log.info("Created classifier with " + (length - 1)+ " features (Theta length " + length + ")");
     }
 
     // Override this method for more complex models.
@@ -22,10 +26,11 @@ public class Classifier {
         double[] sampleData = sampleToFloatArr(sample);
         //TODO use a proper matrix library
         double z = 0.0;
-        for (int n = 0; n < sampleData.length; n++) {
+        for (int n = 0; n < m_theta.length; n++) {
             z += sampleData[n] * m_theta[n];
         }
         double estimate = sigmoid(z);
+        Log.debug("should hit for " + z + "? estimate " + estimate);
         return estimate > m_threshold;
     }
 
@@ -33,11 +38,12 @@ public class Classifier {
         return 1.0 / (1.0 + Math.exp(-z));
     }
 
-    protected static double[] sampleToFloatArr(Sample sample) {
-        double[] arr = new double[3];
+    protected double[] sampleToFloatArr(Sample sample) {
+        double[] arr = new double[4];
         arr[0] = 1;
         arr[1] = sample.bestPips;
         arr[2] = sample.dealerPips;
+        arr[3] = sample.minPips;
         return arr;
     }
 
