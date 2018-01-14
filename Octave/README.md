@@ -17,7 +17,7 @@ Create the dataset using classes from package blackjack.ai in the [Java-project]
 
 ### Simple model ver 1.
 
-dataset-simulated1.txt contains results from monte carlo simulation where we only peek the next card, never more than one. This results that sometimes model suggest to stay even if player pips < 11 (when you should never stay) and also it seems to prefer to stay more than it wants to hit. TODO => simulate multiple depths
+dataset-simulated1.txt contains results from monte carlo simulation where we only peek the next card, never more than one. This could result that more complicated model would suggest to stay even if player pips < 11 (when you should never stay) and also it seems to prefer to stay more than it wants to hit. TODO => simulate multiple depths
 
 Also first iteration only uses playerBestPips and dealerBestPips
 
