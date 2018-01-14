@@ -2,33 +2,33 @@
 clear ; close all; clc
 
 %% Load Data
-%  The first two columns contains the X values and the third column
-%  contains the label (y).
+% dataset format:
+% playerBestPips[1-20], dealerBestPips[1-11], playerMinPips[1-20], shouldHitOrStay [hit=1,stay=0]
 
-data = load('ex2data2.txt');
-X = data(:, [1, 2]); y = data(:, 3);
+data = load('dataset-simulated1.txt');
+% let's ignore column 3 (playerMinPips) for now
+X = data(:, [1, 2]); y = data(:, 4);
 
 plotData(X, y);
 
-% Put some labels
-hold on;
+fprintf(['Plotting data with + indicating (y = 1) examples and o ' ...
+         'indicating (y = 0) examples.\n']);
 
+plotData(X, y);
+
+% Put some labels 
+hold on;
 % Labels and Legend
-xlabel('Microchip Test 1')
-ylabel('Microchip Test 2')
+xlabel('Player best hand')
+ylabel('Dealer best hand')
 
 % Specified in plot order
-legend('y = 1', 'y = 0')
+legend('Should hit', 'Should stay')
 hold off;
 
 
-%% =========== Part 1: Regularized Logistic Regression ============
-%  In this part, you are given a dataset with data points that are not
-%  linearly separable. However, you would still like to use logistic
-%  regression to classify the data points.
-%
-%  To do so, you introduce more features to use -- in particular, you add
-%  polynomial features to our data matrix (similar to polynomial
+%% Regularized Logistic Regression
+%  Let's add more polynomial features our data matrix (similar to polynomial
 %  regression).
 %
 
@@ -49,14 +49,11 @@ lambda = 1;
 [cost, grad] = costFunctionReg(initial_theta, X, y, lambda);
 
 fprintf('Cost at initial theta (zeros): %f\n', cost);
-fprintf('Expected cost (approx): 0.693\n');
 fprintf('Gradient at initial theta (zeros) - first five values only:\n');
 fprintf(' %f \n', grad(1:5));
-fprintf('Expected gradients (approx) - first five values only:\n');
-fprintf(' 0.0085\n 0.0188\n 0.0001\n 0.0503\n 0.0115\n');
 
-fprintf('\nProgram paused. Press enter to continue.\n');
-pause;
+%fprintf('\nProgram paused. Press enter to continue.\n');
+%pause;
 
 % Compute and display cost and gradient
 % with all-ones theta and lambda = 10
@@ -70,8 +67,8 @@ fprintf(' %f \n', grad(1:5));
 fprintf('Expected gradients (approx) - first five values only:\n');
 fprintf(' 0.3460\n 0.1614\n 0.1948\n 0.2269\n 0.0922\n');
 
-fprintf('\nProgram paused. Press enter to continue.\n');
-pause;
+%fprintf('\nProgram paused. Press enter to continue.\n');
+%pause;
 
 %% ============= Part 2: Regularization and Accuracies =============
 %  Optional Exercise:
@@ -97,14 +94,18 @@ options = optimset('GradObj', 'on', 'MaxIter', 400);
 [theta, J, exit_flag] = ...
 	fminunc(@(t)(costFunctionReg(t, X, y, lambda)), initial_theta, options);
 
+  
+% Save the model
+csvwrite('model-polynomial.csv', theta);
+
 % Plot Boundary
 plotDecisionBoundary(theta, X, y);
 hold on;
 title(sprintf('lambda = %g', lambda))
 
 % Labels and Legend
-xlabel('Microchip Test 1')
-ylabel('Microchip Test 2')
+xlabel('Player best hand')
+ylabel('Dealer best hand')
 
 legend('y = 1', 'y = 0', 'Decision boundary')
 hold off;
@@ -113,5 +114,4 @@ hold off;
 p = predict(theta, X);
 
 fprintf('Train Accuracy: %f\n', mean(double(p == y)) * 100);
-fprintf('Expected accuracy (with lambda = 1): 83.1 (approx)\n');
 
