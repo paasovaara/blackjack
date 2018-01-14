@@ -88,7 +88,11 @@ public class GameNode extends CompositeNode.SequenceNode {
         m_context.setVariable(GameContext.KEY_DECK, m_deck);
         //TODO remove all children and call createTree.
 
-        //We could also put the InputManager inside the context?
+        //This data storage logic probably shouldn't be inside this class. TODO think where to put
+        if (m_settings.clearScoreAtStartup) {
+            BlackJack.saveTotalWinnings(0);
+        }
+
     }
 
     private void createTree() {
