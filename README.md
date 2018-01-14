@@ -27,7 +27,7 @@ We used Parallax RFID readers but you should be able to use any. Knock sensors w
 
 ## Running
 
-[Java/blackjack-project](/Java/blackjack/README.md) contains the actual app which controls the game. It will open a UDP server for listening incoming messages from sensors and based on the input and the game progress it will command the UI and the robot, also with UDP messages.
+[Java/blackjack-project](/Java/blackjack) contains the actual app which controls the game. It will open a UDP server for listening incoming messages from sensors and based on the input and the game progress it will command the UI and the robot, also with UDP messages.
 
 Robot and UI message protocols are similar but not identical, due to different needs. Protocol could be refactored and possibly converted to use f.ex JSON payloads instead of proprietary string messages.
 
