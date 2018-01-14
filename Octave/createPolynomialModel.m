@@ -36,7 +36,8 @@ hold off;
 
 % Note that mapFeature also adds a column of ones for us, so the intercept
 % term is handled
-X = mapFeature(X(:,1), X(:,2));
+degree = 6; % How many degrees, 2->
+X = mapFeature(X(:,1), X(:,2), degree);
 
 % Initialize fitting parameters
 initial_theta = zeros(size(X, 2), 1);
@@ -96,10 +97,11 @@ options = optimset('GradObj', 'on', 'MaxIter', 400);
 
   
 % Save the model
-csvwrite('model-polynomial.csv', theta);
+filename = strcat("model-polynomial-", num2str(degree), ".csv")
+csvwrite(filename, theta);
 
 % Plot Boundary
-plotDecisionBoundary(theta, X, y);
+plotDecisionBoundary(theta, X, y, degree);
 hold on;
 title(sprintf('lambda = %g', lambda))
 
