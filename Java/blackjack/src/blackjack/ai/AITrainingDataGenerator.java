@@ -12,11 +12,16 @@ import java.util.LinkedList;
  * Different approach than with class AITrainingDataCollector.
  * Here we go through all the hands and determine the correct action by simulating (playing the game many times).
  *
- * Problem with this model is that when chances are low on both actions (player has 4, dealer ace) the model might
- * assume to stay, even though the correct action always would be to hit, since can only improve his chances and cannot get busted.
- * => instead of playing till the end, we should check if next position is better by hitting?
+ * Currently we run only one round of simulation. Having more depth in simulations we would probably get better
+ * data on close-call situations. TODO
  */
 public class AITrainingDataGenerator {
+    /**
+     * Problem with this model might be that when chances are low on both actions (player has 4, dealer ace) the model might
+     * assume to stay, even though the correct action always would be to hit, since can only improve his chances and cannot get busted.
+     * => let's always hit if player cannot go over, benefits the player always.
+     */
+    private static boolean m_alwaysHitOnLowCards = true;
 
     public static void generateAndSave(String filename) throws Exception {
         LinkedList<TrainingSample> samples = generateSamples();
@@ -51,19 +56,25 @@ public class AITrainingDataGenerator {
                     final Deck secondCopy = new Deck(deckCopy);
 
                     Card dealerCard = secondCopy.pick(Suite.Spades, Rank.fromId(k));
-
-                    Hand playerHand = createHand(firstCard, secondCard);
                     Hand dealerHand = createHand(dealerCard);
 
-                    Simulator.Statistics statsHit = Simulator.simulateHit(playerHand, dealerHand, secondCopy);
-                    Simulator.Statistics statsStay = Simulator.simulateStay(playerHand, dealerHand, secondCopy);
                     int preferredAction;
-                    if (statsHit.expectedROI() >= statsStay.expectedROI()) {
+                    Hand playerHand = createHand(firstCard, secondCard);
+                    if (m_alwaysHitOnLowCards && playerHand.getBestPipCount() <= 11) {
+                        //Always hit if there's no possibility of going over. Will benefit the player always.
                         preferredAction = 1;
                     }
                     else {
-                        preferredAction = 0;
+                        Simulator.Statistics statsHit = Simulator.simulateHit(playerHand, dealerHand, secondCopy);
+                        Simulator.Statistics statsStay = Simulator.simulateStay(playerHand, dealerHand, secondCopy);
+                        if (statsHit.expectedROI() >= statsStay.expectedROI()) {
+                            preferredAction = 1;
+                        }
+                        else {
+                            preferredAction = 0;
+                        }
                     }
+
                     TrainingSample sample = new TrainingSample(
                         playerHand.getBestPipCount(), playerHand.getMinPipCount(), dealerHand.getBestPipCount(), preferredAction
                     );

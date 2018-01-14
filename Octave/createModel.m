@@ -5,7 +5,7 @@ clear ; close all; clc
 % dataset format:
 % playerBestPips[1-20], dealerBestPips[1-11], playerMinPips[1-20], shouldHitOrStay [hit=1,stay=0]
 
-data = load('dataset-simulated1.txt');
+data = load('dataset-simulated2.txt');
 % let's ignore column 3 (playerMinPips) for now
 X = data(:, [1, 2]); y = data(:, 4);
 
