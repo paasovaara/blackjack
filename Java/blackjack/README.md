@@ -6,7 +6,7 @@ This is the actual game. It will open UDP server socket to listen incoming senso
 
 Application entry point is blackjack.Main. For simple test run you can run the app without any flags. This will get input from the console and print out the game.
 
-See [Main-class](Java/blackjack/src/blackjack/Main.java) for more app arguments.
+See [Main-class](/src/blackjack/Main.java) for more app arguments.
 
 ## AI
 
