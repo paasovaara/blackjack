@@ -109,7 +109,7 @@ title(sprintf('lambda = %g', lambda))
 xlabel('Player best hand')
 ylabel('Dealer best hand')
 
-legend('y = 1', 'y = 0', 'Decision boundary')
+legend('y = 1', 'y = 0', 'Decision boundary', 'location', 'southwest')
 hold off;
 
 % Compute accuracy on our training set

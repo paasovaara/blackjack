@@ -23,7 +23,7 @@ if size(X, 2) <= 3
     plot(plot_x, plot_y)
     
     % Legend, specific for the exercise
-    legend('Hit', 'Stay', 'Decision Boundary')
+    legend('Hit', 'Stay', 'Decision Boundary', 'location', 'southwest')
     %axis([30, 100, 30, 100])
 else
     % Here is the grid range
