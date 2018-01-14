@@ -2,17 +2,15 @@ package blackjack.models;
 
 import behave.tools.Log;
 
-import java.util.Collections;
-import java.util.EmptyStackException;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * Class to represent card deck. This class is not thread safe.
  */
 public class Deck {
 
-    private Stack<Card> m_cardsRemaining;
-    private Stack<Card> m_cardsDealt;
+    private LinkedList<Card> m_cardsRemaining;
+    private LinkedList<Card> m_cardsDealt;
 
     public Deck(int howMany) {
         createDeck(howMany);
@@ -23,16 +21,16 @@ public class Deck {
     }
 
     public Deck(Deck copy) {
-        m_cardsDealt = new Stack<>();
+        m_cardsDealt = new LinkedList<>();
         //Should we deep-copy the cards also?
         m_cardsDealt.addAll(copy.m_cardsDealt);
-        m_cardsRemaining = new Stack<>();
+        m_cardsRemaining = new LinkedList<>();
         m_cardsRemaining.addAll(copy.m_cardsRemaining);
     }
 
     private void createDeck(int howMany) {
-        m_cardsRemaining = new Stack<>();
-        m_cardsDealt = new Stack<>();
+        m_cardsRemaining = new LinkedList<>();
+        m_cardsDealt = new LinkedList<>();
 
         for(int m = 0; m < howMany; m++) {
             for(int n = Rank.MIN_ID; n <= Rank.MAX_ID; n++) {
@@ -85,6 +83,21 @@ public class Deck {
             e.printStackTrace();
         }
         return c;
+    }
+
+    public Card pick(Suite suite, Rank rank) {
+        ListIterator<Card> itr = m_cardsRemaining.listIterator();
+        Card card = null;
+        while(itr.hasNext()) {
+            Card next = itr.next();
+            if (next.getRank() == rank && next.getSuite() == suite) {
+                card = next;
+                itr.remove();
+                m_cardsDealt.push(card);
+                break;
+            }
+        }
+        return card;
     }
 
     public String toString() {

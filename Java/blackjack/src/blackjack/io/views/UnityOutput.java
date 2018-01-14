@@ -1,7 +1,8 @@
-package blackjack.io;
+package blackjack.io.views;
 
 import blackjack.engine.GameContext;
-import blackjack.engine.GameListener;
+import blackjack.io.console.ConsoleOutput;
+import blackjack.io.sensors.BetManager;
 import blackjack.models.*;
 import blackjack.utils.Config;
 import blackjack.utils.EventSender;

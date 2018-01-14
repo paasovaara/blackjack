@@ -1,4 +1,4 @@
-package blackjack.io;
+package blackjack.io.sensors;
 
 import blackjack.models.Bet;
 import blackjack.utils.ConfigUtils;

@@ -1,4 +1,4 @@
-package blackjack.io;
+package blackjack.io.sensors;
 
 import blackjack.utils.UDPServer;
 

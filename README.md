@@ -6,6 +6,7 @@ This is gonna be the coolest blackjack table ever, hosted by a robot.
 - Java/leapmotion has code for detecting "stay" gesture.
 - Java/blackjack has code for the blackjack engine which is the "brains"
 - Java/knock-sensor has code for reading serial port and converting that to UDP traffic. for Knock sensors and RFID readers.
+- Octave-folder contains scripts for creating the AI model using [Octave](https://www.gnu.org/software/octave/)
 
 Front end will be coded with Unity and the star of the show is the [InMoov robot](http://inmoov.fr/).
 
