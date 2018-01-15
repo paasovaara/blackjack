@@ -105,35 +105,4 @@ public class BlackJack {
         m_defaultExecutor.stop();
     }
 
-    private static int s_winnings = -1;
-    public static int readTotalWinnings() {
-        if (s_winnings < 0) {
-            try {
-                Properties props = ConfigUtils.readPropertiesFile("winnings.properties");
-                String strWins = props.getProperty("winnings", "0");
-                s_winnings = Integer.parseInt(strWins);
-            }
-            catch (Exception e){
-                System.out.println("Could not read winnings from file");
-                e.printStackTrace();
-                s_winnings = 0;
-            }
-
-        }
-        return s_winnings;
-    }
-
-    public static void saveTotalWinnings(int winnings) {
-        s_winnings = winnings;
-        try {
-            Properties props = new Properties();
-            props.setProperty("winnings", Integer.toString(s_winnings));
-            ConfigUtils.writePropertiesFile("winnings.properties", props);
-        }
-        catch (Exception e) {
-            System.out.println("Failed to wrinte winnings to file");
-            e.printStackTrace();
-        }
-    }
-
 }

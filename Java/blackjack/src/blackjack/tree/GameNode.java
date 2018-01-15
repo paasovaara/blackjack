@@ -90,7 +90,7 @@ public class GameNode extends CompositeNode.SequenceNode {
 
         //This data storage logic probably shouldn't be inside this class. TODO think where to put
         if (m_settings.clearScoreAtStartup) {
-            BlackJack.saveTotalWinnings(0);
+            GameResult.resetAllTimeScore();
         }
 
     }
@@ -131,7 +131,7 @@ public class GameNode extends CompositeNode.SequenceNode {
             int playerCount = bets.size();
             m_context.setVariable(GameContext.KEY_PLAYER_COUNT, playerCount);
 
-            GameResult result = new GameResult(BlackJack.readTotalWinnings());
+            GameResult result = new GameResult();
             result.setBets(bets);
             m_context.setVariable(GameContext.KEY_RESULTS, result);
 
@@ -284,6 +284,7 @@ public class GameNode extends CompositeNode.SequenceNode {
                 for (GameListener l: m_listeners) {
                     l.gameEnded(result, m_context);
                 }
+                result.gameOver();
                 return Types.Status.Success;
             }
             else {
@@ -551,6 +552,7 @@ public class GameNode extends CompositeNode.SequenceNode {
                 GameResult.Result result = Hand.compareHands(hand, dealerHand);
                 notifyListeners("Player " + id + " result is " + result + " with hand " + hand.getBestPipCount());
                 gameResults.setResult(id, result);
+                gameResults.gameOver();
             }
 
             for (GameListener l: m_listeners) {
