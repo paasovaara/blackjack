@@ -48,7 +48,7 @@ public class BlackJack {
 
     public static void generateTrainingDataBySimulating() {
         try {
-            AITrainingDataGenerator.generateAndSave("dataset-simulated.txt");
+            AITrainingDataGenerator.generateAndSave("dataset-simulated2.txt");
         }
         catch (Exception e) {
             e.printStackTrace();

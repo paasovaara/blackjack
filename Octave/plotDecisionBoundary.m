@@ -1,4 +1,4 @@
-function plotDecisionBoundary(theta, X, y)
+function plotDecisionBoundary(theta, X, y, degree)
 %PLOTDECISIONBOUNDARY Plots the data points X and y into a new figure with
 %the decision boundary defined by theta
 %   PLOTDECISIONBOUNDARY(theta, X,y) plots the data points with + for the 
@@ -23,18 +23,18 @@ if size(X, 2) <= 3
     plot(plot_x, plot_y)
     
     % Legend, specific for the exercise
-    legend('Hit', 'Stay', 'Decision Boundary')
+    legend('Hit', 'Stay', 'Decision Boundary', 'location', 'southwest')
     %axis([30, 100, 30, 100])
 else
     % Here is the grid range
-    u = linspace(-1, 1.5, 50);
-    v = linspace(-1, 1.5, 50);
+    u = linspace(1, 21, 50);
+    v = linspace(1, 11, 50);
 
     z = zeros(length(u), length(v));
     % Evaluate z = theta*x over the grid
     for i = 1:length(u)
         for j = 1:length(v)
-            z(i,j) = mapFeature(u(i), v(j))*theta;
+            z(i,j) = mapFeature(u(i), v(j), degree)*theta;
         end
     end
     z = z'; % important to transpose z before calling contour

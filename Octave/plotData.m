@@ -12,7 +12,7 @@ negative = find(y == 0);
 
 plot(X(positive, 1), X(positive, 2), 'k+', 'LineWidth', 2, 'MarkerSize', 7);
 
-plot(X(negative, 1), X(negative, 2), 'ko', 'MarkerFaceColor', 'yellow', 'MarkerSize', 7);
+plot(X(negative, 1), X(negative, 2), 'ko', 'MarkerSize', 7);
 
 
 hold off;

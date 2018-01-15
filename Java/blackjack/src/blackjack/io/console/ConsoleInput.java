@@ -1,6 +1,7 @@
 package blackjack.io.console;
 
 import blackjack.ai.Classifier;
+import blackjack.ai.PolynomialClassifier;
 import blackjack.ai.Sample;
 import blackjack.engine.GameContext;
 import blackjack.engine.InputManager;
@@ -28,7 +29,12 @@ public class ConsoleInput implements InputManager {
         m_useDefaultBets = settings.useDefaultBet;
 
         if (settings.AIModelFile != null) {
-            m_classifier = new Classifier(settings.AIModelFile);
+            if (settings.usePolynomialModel) {
+                m_classifier = new PolynomialClassifier(settings.AIModelFile, settings.polynomialModelDegree);
+            }
+            else {
+                m_classifier = new Classifier(settings.AIModelFile);
+            }
         }
     }
 
