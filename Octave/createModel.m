@@ -5,9 +5,15 @@ clear ; close all; clc
 % dataset format:
 % playerBestPips[1-20], dealerBestPips[1-11], playerMinPips[1-20], shouldHitOrStay [hit=1,stay=0]
 
-data = load('dataset-simulated2.txt');
+trainingSet = load('dataset-simulated3.txt');
 % let's ignore column 3 (playerMinPips) for now
-X = data(:, [1, 2]); y = data(:, 4);
+X = trainingSet(:, [1, 2]); 
+y = trainingSet(:, 4);
+
+testSet = load('testset-simulated3.txt');
+% let's ignore column 3 (playerMinPips) for now
+X_test = testSet(:, [1, 2]); 
+y_test = testSet(:, 4);
 
 %% ==================== Part 1: Plotting ====================
 %  We start the exercise by first plotting the data to understand the 
@@ -33,9 +39,11 @@ hold off;
 
 %  Setup the data matrix appropriately, and add ones for the intercept term
 [m, n] = size(X);
+[m_test, n_test] = size(X_test);
 
 % Add intercept term to x and X_test
 X = [ones(m, 1) X];
+X_test = [ones(m_test, 1) X_test];
 
 % Initialize fitting parameters
 initial_theta = zeros(n + 1, 1);
@@ -77,9 +85,6 @@ ylabel('Dealer best hand')
 legend('Should hit', 'Should stay')
 hold off;
 
-fprintf('\nProgram paused. Press enter to continue.\n');
-pause;
-
 csvwrite('model-simple.csv', theta);
 
 %% ============== Part 4: Predict and Accuracies ==============
@@ -100,9 +105,8 @@ fprintf(['For hand 17 against dealer 10 we predict ' ...
 
 % Compute accuracy on our training set
 p = predict(theta, X);
-
 fprintf('Train Accuracy: %f\n', mean(double(p == y)) * 100);
-fprintf('Expected accuracy (approx): 89.0\n');
-fprintf('\n');
 
-
+% Compute accuracy on our training set
+p_test = predict(theta, X_test);
+fprintf('Train Accuracy for test set: %f\n', mean(double(p_test == y_test)) * 100);
