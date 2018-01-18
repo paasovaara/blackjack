@@ -21,6 +21,8 @@ public class ConsoleInput implements InputManager {
     BufferedReader m_in;
     private boolean m_useDefaultBets;
 
+    private boolean m_playOnYourOwn = false;
+
     private List<Integer> m_aiPlayers = new LinkedList<>();
     private Classifier m_classifier;
 
@@ -88,8 +90,8 @@ public class ConsoleInput implements InputManager {
 
     @Override
     public List<Bet> getBets() {
-        int players = getPlayerCount(true);
-        int aiPlayers = getPlayerCount(false);
+        int players = m_playOnYourOwn ? 0 : getPlayerCount(true);
+        int aiPlayers = m_playOnYourOwn ? 1 : getPlayerCount(false);
 
         createAiPlayers(aiPlayers, players);
 
@@ -138,7 +140,9 @@ public class ConsoleInput implements InputManager {
                     PlayerAction action = getAiPlayerAction(playerId, gameState);
                     printInfo(action == PlayerAction.Hit ? "Hit me baby" : "I'm staying");
                     //We shouldn't do this here but just to keep things simple..
-                    Thread.currentThread().sleep(1000);
+                    if (!m_playOnYourOwn) {
+                        Thread.currentThread().sleep(1000);
+                    }
                     return action;
                 }
                 else {
