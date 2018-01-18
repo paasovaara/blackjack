@@ -5,9 +5,16 @@ clear ; close all; clc
 % dataset format:
 % playerBestPips[1-20], dealerBestPips[1-11], playerMinPips[1-20], shouldHitOrStay [hit=1,stay=0]
 
-data = load('dataset-simulated2.txt');
+trainingSet = load('dataset-simulated3.txt');
 % let's ignore column 3 (playerMinPips) for now
-X = data(:, [1, 2]); y = data(:, 4);
+X = trainingSet(:, [1, 2]); 
+y = trainingSet(:, 4);
+
+testSet = load('testset-simulated3.txt');
+% let's ignore column 3 (playerMinPips) for now
+X_test = testSet(:, [1, 2]); 
+y_test = testSet(:, 4);
+
 
 plotData(X, y);
 
@@ -39,10 +46,10 @@ hold off;
 
 degree = 5; % How many degrees, 2->
 % Set regularization parameter lambda (you should vary and test this)
-lambda = 0.9;
+lambda = 0.7;
 
 X = mapFeature(X(:,1), X(:,2), degree);
-
+X_test = mapFeature(X_test(:,1), X_test(:,2), degree);
 %% ============= Part 2: Regularization and Accuracies =============
 %  Optional Exercise:
 %  In this part, you will get to try different values of lambda and
@@ -82,7 +89,11 @@ legend('y = 1', 'y = 0', 'Decision boundary', 'location', 'southwest')
 hold off;
 
 % Compute accuracy on our training set
-p = predict(theta, X);
+fprintf('Model results when degree %f and lambda %f\n', degree, lambda);
 
+p = predict(theta, X);
 fprintf('Train Accuracy: %f\n', mean(double(p == y)) * 100);
 
+% Compute accuracy on our training set
+p_test = predict(theta, X_test);
+fprintf('Train Accuracy for test set: %f\n', mean(double(p_test == y_test)) * 100);
