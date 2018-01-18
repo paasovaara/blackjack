@@ -6,7 +6,10 @@ import blackjack.models.*;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Different approach than with class AITrainingDataCollector.
@@ -24,9 +27,33 @@ public class AITrainingDataGenerator {
     private static boolean m_alwaysHitOnLowCards = true;
 
     public static void generateAndSave(String filename) throws Exception {
-        LinkedList<TrainingSample> samples = generateSamples();
-        Log.info("Generated " + samples.size() + " samples.");
+        generateAndSave(filename, null, 0.3f);
+    }
 
+    public static void generateAndSave(String filename, String testSetFilename, float testSetRatio) throws Exception {
+        LinkedList<TrainingSample> samples = generateSamples();
+        int sampleCount = samples.size();
+        Log.info("Generated " + sampleCount + " samples.");
+        Collections.shuffle(samples);
+
+        if (testSetFilename != null) {
+            int testSetSize = Math.round(testSetRatio * (float)sampleCount);
+            LinkedList<TrainingSample> testSet = new LinkedList<>();
+
+            ListIterator<TrainingSample> itr  = samples.listIterator(sampleCount - testSetSize);
+            while(itr.hasNext()) {
+                TrainingSample s = itr.next();
+                itr.remove();
+                testSet.add(s);
+            }
+
+            Log.info("Split into training set of size " + samples.size() + " and test set of size " + testSet.size());
+            saveSamplesToFile(testSet, testSetFilename);
+        }
+        saveSamplesToFile(samples, filename);
+    }
+
+    private static void saveSamplesToFile(List<TrainingSample> samples, String filename) throws Exception {
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(filename, false))) {
             for(TrainingSample sample: samples) {
                 writer.append(sample.toString());
