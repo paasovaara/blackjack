@@ -32,9 +32,9 @@ public class GameResult {
     private List<Bet> m_bets = new LinkedList<>();
 
     static class AllTimeScore {
-        int winnings = 0;
-        int losses = 0;
-        int games = 0;
+        double winnings = 0;
+        double losses = 0;
+        double games = 0;
     }
     private static AllTimeScore m_allTimeScore = readAllTimeScore();
 
@@ -44,7 +44,7 @@ public class GameResult {
     }
 
     public int getTotalWinnings() {
-        return m_allTimeScore.winnings;
+        return (int)Math.round(m_allTimeScore.winnings);
     }
 
     /**
@@ -65,8 +65,11 @@ public class GameResult {
         m_results.put(playerKey, result);
         //TODO player specific scores
         int bet = findBetAmount(playerId);
-        if (result == Result.Blackjack || result == Result.Won) {
+        if (result == Result.Won) {
             m_allTimeScore.winnings += bet;
+        }
+        else if (result == Result.Blackjack) {
+            m_allTimeScore.winnings += 1.5 * bet;
         }
         else if (result == Result.Lost || result == Result.Busted) {
             m_allTimeScore.losses += bet;
@@ -111,9 +114,9 @@ public class GameResult {
         AllTimeScore score = new AllTimeScore();
         try {
             Properties props = ConfigUtils.readPropertiesFile("alltime.scores");
-            score.winnings = Integer.parseInt(props.getProperty("winnings", "0"));
-            score.losses = Integer.parseInt(props.getProperty("losses", "0"));
-            score.games = Integer.parseInt(props.getProperty("games", "0"));
+            score.winnings = Double.parseDouble(props.getProperty("winnings", "0"));
+            score.losses = Double.parseDouble(props.getProperty("losses", "0"));
+            score.games = Double.parseDouble(props.getProperty("games", "0"));
         }
         catch (Exception e){
             System.out.println("Could not read scores from file");
@@ -126,9 +129,9 @@ public class GameResult {
     static void saveAllTimeScore(AllTimeScore score) {
         try {
             Properties props = new Properties();
-            props.setProperty("winnings", Integer.toString(score.winnings));
-            props.setProperty("losses", Integer.toString(score.losses));
-            props.setProperty("games", Integer.toString(score.games));
+            props.setProperty("winnings", Double.toString(score.winnings));
+            props.setProperty("losses", Double.toString(score.losses));
+            props.setProperty("games", Double.toString(score.games));
             ConfigUtils.writePropertiesFile("alltime.scores", props);
         }
         catch (Exception e) {
