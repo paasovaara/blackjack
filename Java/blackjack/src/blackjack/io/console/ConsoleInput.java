@@ -32,7 +32,8 @@ public class ConsoleInput implements InputManager {
 
         if (settings.AIModelFile != null) {
             if (settings.usePolynomialModel) {
-                m_classifier = new PolynomialClassifier(settings.AIModelFile, settings.polynomialModelDegree);
+                //TODO refactor the model file to include the metadata, not just the coefficients.
+                m_classifier = new PolynomialClassifier(settings.AIModelFile, settings.polynomialModelDegree, settings.includeMinPips);
             }
             else {
                 m_classifier = new Classifier(settings.AIModelFile);

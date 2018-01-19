@@ -4,9 +4,11 @@ import java.util.Vector;
 
 public class PolynomialClassifier extends Classifier {
     int m_degrees;
-    public PolynomialClassifier(String modelFile, int degrees) {
+    boolean m_includeMinPips;
+    public PolynomialClassifier(String modelFile, int degrees, boolean includeMinPips) {
         super(modelFile);
         m_degrees = degrees;
+        m_includeMinPips = includeMinPips;
     }
 
     @Override
@@ -23,12 +25,16 @@ public class PolynomialClassifier extends Classifier {
                 polynomials.add(val);
             }
         }
+        if (m_includeMinPips) {
+            //as last add the minPips
+            polynomials.add((double)sample.minPips);
+        }
         return polynomials.stream().mapToDouble(d -> d).toArray();
     }
 
 
     public static void main(String[] args) {
-        PolynomialClassifier c = new PolynomialClassifier("model-polynomial-5.csv", 5);
+        PolynomialClassifier c = new PolynomialClassifier("model-polynomial-5.csv", 5, false);
 
         Sample s = new Sample(17, 17, 10);
         double[] test = c.sampleToFloatArr(s);
