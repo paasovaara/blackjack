@@ -21,7 +21,7 @@ public class ConsoleInput implements InputManager {
     BufferedReader m_in;
     private boolean m_useDefaultBets;
 
-    private boolean m_playOnYourOwn = false;
+    private boolean m_playOnYourOwn;
 
     private List<Integer> m_aiPlayers = new LinkedList<>();
     private Classifier m_classifier;
@@ -29,6 +29,7 @@ public class ConsoleInput implements InputManager {
     public ConsoleInput(GameSettings settings) {
         m_in = new BufferedReader(new InputStreamReader(System.in));
         m_useDefaultBets = settings.useDefaultBet;
+        m_playOnYourOwn = settings.playOnlyAgainstItself;
 
         if (settings.AIModelFile != null) {
             if (settings.usePolynomialModel) {
