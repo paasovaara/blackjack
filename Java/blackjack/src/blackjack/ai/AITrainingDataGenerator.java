@@ -101,9 +101,9 @@ public class AITrainingDataGenerator {
                             preferredAction = 0;
                         }
                     }
-
+                    int deckWeight = 0; //TODO simulate this also
                     TrainingSample sample = new TrainingSample(
-                        playerHand.getBestPipCount(), playerHand.getMinPipCount(), dealerHand.getBestPipCount(), preferredAction
+                        playerHand.getBestPipCount(), playerHand.getMinPipCount(), dealerHand.getBestPipCount(), deckWeight, preferredAction
                     );
                     Log.info("Correct action for hand " + playerHand.getBestPipCount() + " when dealer has " + dealerHand.getBestPipCount() + " is to " + preferredAction);
                     samples.add(sample);

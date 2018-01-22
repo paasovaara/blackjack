@@ -36,7 +36,7 @@ public class PolynomialClassifier extends Classifier {
     public static void main(String[] args) {
         PolynomialClassifier c = new PolynomialClassifier("model-polynomial-5.csv", 5, false);
 
-        Sample s = new Sample(17, 17, 10);
+        Sample s = new Sample(17, 17, 10, 0);
         double[] test = c.sampleToFloatArr(s);
 
         boolean shouldHit = c.predict(s);

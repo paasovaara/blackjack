@@ -26,8 +26,10 @@ public class BlackJack {
 
     public static GameNode createConsoleGame() {
         GameSettings settings = GameSettings.DEFAULT;
-        InputManager input = new ConsoleInput(settings);
+        ConsoleInput input = new ConsoleInput(settings);
         GameNode game = new GameNode(input, settings);
+        input.initialize(game);
+
         game.addListener(new ConsoleOutput());
         return game;
     }
@@ -48,7 +50,7 @@ public class BlackJack {
 
     public static void generateTrainingDataBySimulating() {
         try {
-            AITrainingDataGenerator.generateAndSave("dataset-simulated3.txt", "testset-simulated3.txt", 0.3f);
+            AITrainingDataGenerator.generateAndSave("dataset-simulated4.txt", "testset-simulated4.txt", 0.3f);
         }
         catch (Exception e) {
             e.printStackTrace();

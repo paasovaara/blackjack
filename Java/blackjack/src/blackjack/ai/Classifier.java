@@ -71,7 +71,7 @@ public class Classifier {
 
     public static void main(String[] args) {
         Classifier c = new Classifier("model-simple.csv");
-        boolean shouldHit = c.predict(new Sample(17, 17, 10));
+        boolean shouldHit = c.predict(new Sample(17, 17, 10, 0));
         System.out.println("Should hit? " + shouldHit);
     }
 }
