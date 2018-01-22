@@ -2,6 +2,7 @@ package blackjack.tree;
 
 import behave.execution.ExecutionContext;
 import behave.models.*;
+import blackjack.ai.CardCounter;
 import blackjack.engine.*;
 import blackjack.models.*;
 
@@ -13,6 +14,8 @@ import java.util.*;
 public class GameNode extends CompositeNode.SequenceNode {
     InputManager m_input;
     Deck m_deck;
+    CardCounter m_cardCounter;
+
     GameContext m_context;
 
     private GameSettings m_settings;
@@ -80,12 +83,18 @@ public class GameNode extends CompositeNode.SequenceNode {
     }
 
     public void reset() {
+        m_context = new GameContext();
+
         m_deck = new Deck(m_settings.deckCount);
+        m_context.setVariable(GameContext.KEY_DECK, m_deck);
+
+        m_cardCounter = new CardCounter();
+        addListener(m_cardCounter);
+        m_context.setVariable(GameContext.KEY_CARD_COUNTER, m_cardCounter);
+
         m_deck.shuffle();
         notifyDealerAction(GameContext.DEALER_PLAYER_ID, null, null, DealerAction.Shuffle);
 
-        m_context = new GameContext();
-        m_context.setVariable(GameContext.KEY_DECK, m_deck);
         //TODO remove all children and call createTree.
 
         //This data storage logic probably shouldn't be inside this class. TODO think where to put
@@ -110,13 +119,14 @@ public class GameNode extends CompositeNode.SequenceNode {
     private class InitGameVariablesNode extends LeafNode {
         @Override
         public Types.Status tick(ExecutionContext context) {
-            //This is the only variable that passes between rounds
             Integer timesWaited = (Integer)m_context.getVariable(GameContext.KEY_TIMES_WAITED);
             if (timesWaited == null)
                 timesWaited = 0;
-            //clear all variables
+            //clear all variables. TODO figure out better way to store persistent variables between rounds. add flag to Context?
             m_context.clear();
             m_context.setVariable(GameContext.KEY_TIMES_WAITED, timesWaited);
+            m_context.setVariable(GameContext.KEY_DECK, m_deck);
+            m_context.setVariable(GameContext.KEY_CARD_COUNTER, m_cardCounter);
 
             if (m_deck.deckRemaining() < m_settings.shuffleDeckRatio) {
                 m_deck.shuffle();

@@ -28,7 +28,6 @@ public class ConsoleInput implements InputManager {
     //TODO refactor AI into separate class
     private List<Integer> m_aiPlayers = new LinkedList<>();
     private Classifier m_classifier;
-    private CardCounter m_counter;
 
     public ConsoleInput(GameSettings settings) {
         m_in = new BufferedReader(new InputStreamReader(System.in));
@@ -44,14 +43,6 @@ public class ConsoleInput implements InputManager {
                 m_classifier = new Classifier(settings.AIModelFile);
             }
         }
-    }
-
-    public void initialize(GameNode game) {
-        // Now CardCounter is only available when ConsoleInput is used.
-        // We could let GameNode create the CardCounter and include it to the GameContext.
-        // In that case we could also use Decorator-pattern and let CardCounter wrap (extend) Deck instead of GameListener.
-        m_counter = new CardCounter();
-        game.addListener(m_counter);
     }
 
     private String readInput() throws IOException {
@@ -124,6 +115,7 @@ public class ConsoleInput implements InputManager {
     }
 
     private void createAiPlayers(int count, int startIndex) {
+        m_aiPlayers.clear();
         // For now it's enough just have a dumb list of id's
         // If needed create a separate class
         for (int id = startIndex; id < count + startIndex; id++) {
@@ -139,7 +131,10 @@ public class ConsoleInput implements InputManager {
         Hand hand = (Hand)gameState.getVariable(GameContext.playerHandKey(playerId));
         Hand dealer = (Hand)gameState.getVariable(GameContext.KEY_DEALER_HAND);
 
-        int deckWeight = m_counter != null ? m_counter.getCount() : 0;
+        CardCounter counter = (CardCounter)gameState.getVariable(GameContext.KEY_CARD_COUNTER);
+        int deckWeight = counter != null ? counter.getCount() : 0;
+        printInfo("Deck weight atm is " + deckWeight);
+
         Sample input = new Sample(hand.getBestPipCount(), hand.getMinPipCount(), dealer.getBestPipCount(), deckWeight);
         boolean shouldHit = m_classifier.predict(input);
         return shouldHit ? PlayerAction.Hit : PlayerAction.Stay;

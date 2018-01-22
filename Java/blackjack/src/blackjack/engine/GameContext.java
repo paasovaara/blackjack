@@ -8,6 +8,7 @@ import java.util.List;
 
 public class GameContext extends ExecutionContext {
     public static final String KEY_DECK = "deck";
+    public static final String KEY_CARD_COUNTER = "cardcounter";
     public static final String KEY_TIMES_WAITED = "waited";
     public static final String KEY_PLAYER_IDS_IN_GAME = "playerids";
     public static final String KEY_PLAYER_COUNT = "playercount";

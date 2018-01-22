@@ -28,7 +28,6 @@ public class BlackJack {
         GameSettings settings = GameSettings.DEFAULT;
         ConsoleInput input = new ConsoleInput(settings);
         GameNode game = new GameNode(input, settings);
-        input.initialize(game);
 
         game.addListener(new ConsoleOutput());
         return game;

@@ -37,6 +37,7 @@ public class CardCounter implements GameListener {
 
     private void addToCount(Card c) {
         m_count += getValue(c);
+        m_cardsDealt++;
     }
 
     @Override
