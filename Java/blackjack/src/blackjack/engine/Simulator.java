@@ -73,14 +73,14 @@ public class Simulator {
         }
     }
 
-    public static final int DEFAULT_ITERATION_COUNT = 50000;
+    public static final int DEFAULT_ITERATION_COUNT = 20000;
 
     public static Statistics simulateHit(final Hand hand, final Hand dealerHand, final Deck deck) {
         return simulateHit(hand, dealerHand, deck, DEFAULT_ITERATION_COUNT);
     }
 
     public static Statistics simulateHit(final Hand hand, final Hand dealerHand, final Deck deck, final int iterations) {
-        return simulateAction(PlayerAction.Hit, hand, dealerHand, deck, iterations);
+        return simulateActionMultiThreaded(PlayerAction.Hit, hand, dealerHand, deck, iterations);
     }
 
     public static Statistics simulateStay(final Hand hand, final Hand dealerHand, final Deck deck) {
@@ -88,7 +88,7 @@ public class Simulator {
     }
 
     public static Statistics simulateStay(final Hand hand, final Hand dealerHand, final Deck deck, final int iterations) {
-        return simulateAction(PlayerAction.Stay, hand, dealerHand, deck, iterations);
+        return simulateActionMultiThreaded(PlayerAction.Stay, hand, dealerHand, deck, iterations);
     }
 
     //TODO simulate game till the end.
@@ -188,7 +188,7 @@ public class Simulator {
         System.out.println(hit.toString());
 
         System.out.println("= Starting ================");
-        int iterations = 500000;
+        int iterations = 20000;
         Statistics singleThread = Simulator.simulateAction(PlayerAction.Hit, h, dealer, d, iterations);
         System.out.println("= HIT Single thread ================");
         System.out.println(singleThread.toString());

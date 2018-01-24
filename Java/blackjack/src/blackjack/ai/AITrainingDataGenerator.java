@@ -158,7 +158,7 @@ public class AITrainingDataGenerator {
         TrainingSample sample = new TrainingSample(
             playerHand.getBestPipCount(), playerHand.getMinPipCount(), dealerHand.getBestPipCount(), deckWeight, preferredAction
         );
-        Log.info("Correct action for hand " + playerHand.getBestPipCount() + " when dealer has " + dealerHand.getBestPipCount() + " is to " + preferredAction);
+        Log.debug("Correct action for hand " + playerHand.getBestPipCount() + " when dealer has " + dealerHand.getBestPipCount() + " is to " + preferredAction);
         return sample;
     }
 
