@@ -97,7 +97,7 @@ public class Simulator {
 
         Runtime runtime = Runtime.getRuntime();
         int cpuCount = runtime.availableProcessors();
-        int threadCount = cpuCount - 1;
+        int threadCount = cpuCount - 1; // Might be that less would be more, doesn't necessarily scale in linear manner.
         threadCount = threadCount > 0 ? threadCount : 1;
 
         int iterationsPerThread = iterations / threadCount;
@@ -162,7 +162,7 @@ public class Simulator {
             }
         }
 
-        Log.info("Simulation elapsed in " + (System.currentTimeMillis() - startTime) + " ms for iterations: " + iterations);
+        Log.debug("Simulation elapsed in " + (System.currentTimeMillis() - startTime) + " ms for iterations: " + iterations);
 
         return s;
     }
@@ -178,7 +178,7 @@ public class Simulator {
         dealer.addCard(new Card(Suite.Hearts, Rank.Ace));
 
         Deck d = new Deck(1);
-        /*
+
         Statistics stay = Simulator.simulateStay(h, dealer, d);
         System.out.println("= STAY ================");
         System.out.println(stay.toString());
@@ -186,7 +186,7 @@ public class Simulator {
         Statistics hit = Simulator.simulateHit(h, dealer, d);
         System.out.println("= HIT ================");
         System.out.println(hit.toString());
-*/
+
         System.out.println("= Starting ================");
         int iterations = 500000;
         Statistics singleThread = Simulator.simulateAction(PlayerAction.Hit, h, dealer, d, iterations);
