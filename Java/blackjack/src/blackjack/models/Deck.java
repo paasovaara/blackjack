@@ -90,15 +90,22 @@ public class Deck {
         Card card = null;
         while(itr.hasNext()) {
             Card next = itr.next();
-            if (next.getRank() == rank && next.getSuite() == suite) {
-                card = next;
-                itr.remove();
-                m_cardsDealt.push(card);
-                break;
+            if (next.getRank() == rank) {
+                if (suite == null || next.getSuite() == suite) {
+                    card = next;
+                    itr.remove();
+                    m_cardsDealt.push(card);
+                    break;
+                }
             }
         }
         return card;
     }
+
+    public Card pick(Rank rank) {
+        return pick(null, rank);
+    }
+
 
     public String toString() {
 

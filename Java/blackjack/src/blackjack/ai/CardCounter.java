@@ -31,11 +31,18 @@ public class CardCounter implements GameListener {
         }
     }
 
+    public CardCounter() {}
+
+    public CardCounter(CardCounter copy) {
+        m_cardsDealt = copy.m_cardsDealt;
+        m_count = copy.m_count;
+    }
+
     public int getCount() {
         return m_count;
     }
 
-    private void addToCount(Card c) {
+    protected void addToCount(Card c) {
         m_count += getValue(c);
         m_cardsDealt++;
     }
