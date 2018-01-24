@@ -85,6 +85,23 @@ public class Deck {
         return c;
     }
 
+    public Card getCard(int index) {
+        try {
+            return m_cardsRemaining.get(index);
+        }
+        catch (IndexOutOfBoundsException e) {
+            e.printStackTrace();
+            Log.error("Failed to get index " + index + " when deck size is " + m_cardsRemaining.size());
+            return null;
+        }
+    }
+
+    public Card getRandomCard() {
+        double r = Math.random();
+        int index = (int)Math.floor(r * (double)cardsLeft());
+        return getCard(index);
+    }
+
     public Card pick(Suite suite, Rank rank) {
         ListIterator<Card> itr = m_cardsRemaining.listIterator();
         Card card = null;

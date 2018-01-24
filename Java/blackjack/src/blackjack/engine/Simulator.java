@@ -97,7 +97,7 @@ public class Simulator {
 
         Runtime runtime = Runtime.getRuntime();
         int cpuCount = runtime.availableProcessors();
-        int threadCount = 2;//cpuCount - 1;
+        int threadCount = cpuCount - 1;
         threadCount = threadCount > 0 ? threadCount : 1;
 
         int iterationsPerThread = iterations / threadCount;
@@ -108,21 +108,13 @@ public class Simulator {
 
         ExecutorService executor = Executors.newFixedThreadPool(threadCount);
         try {
-            List<Future<Statistics>> futures = new LinkedList<>();
-            for (Callable<Statistics> c : callables) {
-                futures.add(executor.submit(c));
-            }
-
-            /*List<Future<Statistics>> futures = executor.invokeAll(callables);*/
+            List<Future<Statistics>> futures = executor.invokeAll(callables);
             for (Future<Statistics> f: futures) {
                 cumulative.add(f.get());
             }
         }
-        catch (InterruptedException ex) {
+        catch (Exception ex) {
             ex.printStackTrace();
-        }
-        catch (ExecutionException ex2) {
-            ex2.printStackTrace();
         }
         executor.shutdown();
 
@@ -140,10 +132,9 @@ public class Simulator {
         for(int n = 0; n < iterations; n++) {
             Hand copyHand = new Hand(hand);
             Deck copyDeck = new Deck(deck);
-            copyDeck.shuffle(false);
 
             if (action == PlayerAction.Hit) {
-                Card c = copyDeck.getNextCard();
+                Card c = copyDeck.getRandomCard();
                 copyHand.addCard(c);
             }
 
@@ -157,7 +148,8 @@ public class Simulator {
             if (dealerHand != null) {
                 Hand dealerCopy = new Hand(dealerHand);
                 while (dealerCopy.getBestPipCount() < 17) {
-                    Card c2 = copyDeck.getNextCard();
+                    Card c2 = copyDeck.getRandomCard();
+
                     dealerCopy.addCard(c2);
                 }
                 GameResult.Result result = Hand.compareHands(copyHand, dealerCopy);
