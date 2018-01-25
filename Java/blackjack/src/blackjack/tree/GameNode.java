@@ -291,6 +291,11 @@ public class GameNode extends CompositeNode.SequenceNode {
             // This is the case if dealer has BlackJack and/or all players have blackjack
             int playerCount = players.size();
             if (dealerHasBj || blackjackCount == playerCount) {
+                if (!dealerHasBj) {
+                    //We haven't yet revealed this..
+                    Card c = hand.revealHiddenCard();
+                    notifyDealerAction(GameContext.DEALER_PLAYER_ID, c, hand, DealerAction.RevealDealerCard);
+                }
                 for (GameListener l: m_listeners) {
                     l.gameEnded(result, m_context);
                 }
