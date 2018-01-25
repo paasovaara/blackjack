@@ -5,18 +5,18 @@ clear ; close all; clc
 % dataset format:
 % playerBestPips[1-20], dealerBestPips[1-11], playerMinPips[1-20], shouldHitOrStay [hit=1,stay=0]
 
-trainingSet = load('dataset-simulated3.txt');
+trainingSet = load('dataset-simulated4.txt');
 % let's ignore column 3 (playerMinPips) for now
 X = trainingSet(:, [1, 2]); 
-y = trainingSet(:, 4);
-x_extraFeat = trainingSet(:, 3);
+y = trainingSet(:, 5);
+x_extraFeats = trainingSet(:, [3, 4]);
 
 
-testSet = load('testset-simulated3.txt');
+testSet = load('testset-simulated4.txt');
 % let's ignore column 3 (playerMinPips) for now
 X_test = testSet(:, [1, 2]); 
-y_test = testSet(:, 4);
-x_test_extraFeat = testSet(:, 3);
+y_test = testSet(:, 5);
+x_test_extraFeats = testSet(:, [3, 4]);
 
 plotData(X, y);
 
@@ -48,13 +48,13 @@ hold off;
 
 degree = 5; % How many degrees, 2->
 % Set regularization parameter lambda (you should vary and test this)
-lambda = 0.7;
+lambda = 116;%0.81;
 
 X = mapFeature(X(:,1), X(:,2), degree);
 X_test = mapFeature(X_test(:,1), X_test(:,2), degree);
 % let's add the last feature also
-X = [X x_extraFeat];
-X_test = [X_test x_test_extraFeat];
+X = [X x_extraFeats];
+X_test = [X_test x_test_extraFeats];
 
 %% ============= Part 2: Regularization and Accuracies =============
 %  Optional Exercise:
@@ -79,7 +79,7 @@ options = optimset('GradObj', 'on', 'MaxIter', 400);
 
   
 % Save the model
-filename = strcat("model-polynomial-all-feats-", num2str(degree), ".csv")
+filename = strcat("model-polynomial-all-feats2-", num2str(degree), ".csv")
 csvwrite(filename, theta);
 
 % Plot Boundary
