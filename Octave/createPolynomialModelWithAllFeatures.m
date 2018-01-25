@@ -48,7 +48,7 @@ hold off;
 
 degree = 5; % How many degrees, 2->
 % Set regularization parameter lambda (you should vary and test this)
-lambda = 116;%0.81;
+lambda = 0.81; % original best value was 0.7, with card counting that doesn't work. TODO test also 116.
 
 X = mapFeature(X(:,1), X(:,2), degree);
 X_test = mapFeature(X_test(:,1), X_test(:,2), degree);
