@@ -37,7 +37,7 @@ public class ConsoleInput implements InputManager {
         if (settings.AIModelFile != null) {
             if (settings.usePolynomialModel) {
                 //TODO refactor the model file to include the metadata, not just the coefficients.
-                m_classifier = new PolynomialClassifier(settings.AIModelFile, settings.polynomialModelDegree, settings.includeMinPips);
+                m_classifier = new PolynomialClassifier(settings);
             }
             else {
                 m_classifier = new Classifier(settings.AIModelFile);
@@ -133,7 +133,7 @@ public class ConsoleInput implements InputManager {
 
         CardCounter counter = (CardCounter)gameState.getVariable(GameContext.KEY_CARD_COUNTER);
         int deckWeight = counter != null ? counter.getCount() : 0;
-        printInfo("Deck weight atm is " + deckWeight);
+        //printInfo("Deck weight atm is " + deckWeight);
 
         Sample input = new Sample(hand.getBestPipCount(), hand.getMinPipCount(), dealer.getBestPipCount(), deckWeight);
         boolean shouldHit = m_classifier.predict(input);

@@ -10,10 +10,11 @@ public class GameSettings {
 
     public boolean playOnlyAgainstItself = false; // Start simulation by having AI to play only against itself (no human players)
 
-    public String AIModelFile = "model-polynomial-all-feats-5.csv";
+    public String AIModelFile = "model-polynomial-all-feats2-5.csv";
     public boolean usePolynomialModel = true;
     public int polynomialModelDegree = 5;
     public boolean includeMinPips = true;
+    public boolean includeDeckWeight = true;
 
     public static final GameSettings DEFAULT = new GameSettings();
     public static final GameSettings AI_DEFAULT;

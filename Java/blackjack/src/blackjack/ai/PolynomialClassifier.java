@@ -1,14 +1,19 @@
 package blackjack.ai;
 
+import blackjack.models.GameSettings;
+
 import java.util.Vector;
 
 public class PolynomialClassifier extends Classifier {
     int m_degrees;
     boolean m_includeMinPips;
-    public PolynomialClassifier(String modelFile, int degrees, boolean includeMinPips) {
-        super(modelFile);
-        m_degrees = degrees;
-        m_includeMinPips = includeMinPips;
+    boolean m_includeDeckWeight;
+
+    public PolynomialClassifier(GameSettings settings) {
+        super(settings.AIModelFile);
+        m_degrees = settings.polynomialModelDegree;
+        m_includeMinPips = settings.includeMinPips;
+        m_includeDeckWeight = settings.includeDeckWeight;
     }
 
     @Override
@@ -26,15 +31,17 @@ public class PolynomialClassifier extends Classifier {
             }
         }
         if (m_includeMinPips) {
-            //as last add the minPips
             polynomials.add((double)sample.minPips);
+        }
+        if (m_includeDeckWeight) {
+            polynomials.add((double)sample.deckWeight);
         }
         return polynomials.stream().mapToDouble(d -> d).toArray();
     }
 
 
     public static void main(String[] args) {
-        PolynomialClassifier c = new PolynomialClassifier("model-polynomial-5.csv", 5, false);
+        PolynomialClassifier c = new PolynomialClassifier(GameSettings.AI_DEFAULT);
 
         Sample s = new Sample(17, 17, 10, 0);
         double[] test = c.sampleToFloatArr(s);
